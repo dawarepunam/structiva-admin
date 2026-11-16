@@ -235,19 +235,12 @@ export default function FuelAuditTable() {
 
       {/* Historical Fuel Ledger Modal */}
       {selectedMachine && (
-        <div style={{
-          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-          backgroundColor: 'rgba(15, 23, 42, 0.75)', backdropFilter: 'blur(5px)',
-          zIndex: 60, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16
-        }} onClick={() => setSelectedMachine(null)}>
-          <div style={{
-            background: '#ffffff', borderRadius: 16, width: '100%', maxWidth: 720,
-            maxHeight: '90vh', overflowY: 'auto', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
-          }} onClick={e => e.stopPropagation()}>
+        <div className={styles.modalOverlay} onClick={() => setSelectedMachine(null)}>
+          <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
             {/* Header */}
-            <div style={{ background: '#0f172a', padding: '1.25rem 1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: '#ffffff' }}>
+            <div className={styles.modalHeader}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-                <SafeImage src={selectedMachine.vehicleImage} alt={selectedMachine.vehicle} fallbackType="machine" style={{ width: 60, height: 50, borderRadius: 8, objectFit: 'cover', border: '2px solid #f59e0b' }} />
+                <SafeImage src={selectedMachine.vehicleImage} alt={selectedMachine.vehicle} fallbackType="machine" style={{ width: 60, height: 50, borderRadius: 8, objectFit: 'cover', border: '2px solid #f59e0b', flexShrink: 0 }} />
                 <div>
                   <span style={{ color: '#f59e0b', fontSize: '0.75rem', fontWeight: 800 }}>REG: {selectedMachine.regNumber}</span>
                   <h2 style={{ fontSize: '1.2rem', fontWeight: 800, margin: '2px 0' }}>{selectedMachine.vehicle}</h2>
@@ -259,9 +252,9 @@ export default function FuelAuditTable() {
               </button>
             </div>
 
-            <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+            <div className={styles.modalBody}>
               {/* Analytics Metric Cards */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}>
+              <div className={styles.metricGrid3}>
                 <div style={{ background: '#f8fafc', padding: 12, borderRadius: 8, border: '1px solid #e2e8f0', textAlign: 'center' }}>
                   <span style={{ fontSize: '0.7rem', color: '#64748b', fontWeight: 700 }}>MONTHLY DIESEL</span>
                   <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#0f172a' }}>{selectedMachine.totalMonthlyDieselLiters} Litres</div>
@@ -281,8 +274,8 @@ export default function FuelAuditTable() {
                 <h4 style={{ fontSize: '0.9rem', fontWeight: 800, color: '#0f172a', marginBottom: 8, display: 'flex', alignItems: 'center', gap: 6 }}>
                   <Calendar size={15} color="#f59e0b" /> Complete Historical Fuel Logbook (Previous Refuels)
                 </h4>
-                <div style={{ border: '1px solid #e2e8f0', borderRadius: 8, overflow: 'hidden' }}>
-                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.8rem', textAlign: 'left' }}>
+                <div style={{ border: '1px solid #e2e8f0', borderRadius: 8, overflowX: 'auto' }}>
+                  <table style={{ width: '100%', minWidth: 540, borderCollapse: 'collapse', fontSize: '0.8rem', textAlign: 'left' }}>
                     <thead style={{ background: '#f1f5f9' }}>
                       <tr>
                         <th style={{ padding: '8px 12px', color: '#475569' }}>Date</th>
@@ -311,7 +304,7 @@ export default function FuelAuditTable() {
 
               {/* Action Resolution if Anomaly */}
               {selectedMachine.status !== 'Optimal' && (
-                <div style={{ background: '#fff1f2', border: '1px solid #fecdd3', padding: 12, borderRadius: 8, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div style={{ background: '#fff1f2', border: '1px solid #fecdd3', padding: 12, borderRadius: 8, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10 }}>
                   <div>
                     <strong style={{ color: '#be123c', fontSize: '0.85rem' }}>Excess Fuel Discrepancy Flagged (+30 Litres)</strong>
                     <p style={{ fontSize: '0.75rem', color: '#881337', margin: 0 }}>Driver Akash Jadhav has not justified the excess consumption.</p>
@@ -341,34 +334,27 @@ export default function FuelAuditTable() {
 
       {/* Dual Slip & Odometer Modal */}
       {viewReceipt && (
-        <div style={{
-          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-          backgroundColor: 'rgba(15, 23, 42, 0.75)', backdropFilter: 'blur(5px)',
-          zIndex: 60, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16
-        }} onClick={() => setViewReceipt(null)}>
-          <div style={{
-            background: '#ffffff', borderRadius: 16, width: '100%', maxWidth: 580,
-            overflow: 'hidden', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
-          }} onClick={e => e.stopPropagation()}>
-            <div style={{ background: '#0f172a', color: '#ffffff', padding: '1rem 1.25rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div className={styles.modalOverlay} onClick={() => setViewReceipt(null)}>
+          <div className={styles.modalContent} style={{ maxWidth: 580 }} onClick={e => e.stopPropagation()}>
+            <div className={styles.modalHeader}>
               <h3 style={{ fontSize: '1rem', fontWeight: 800 }}>Dual Verification: Pump Invoice & Meter Proof</h3>
               <button onClick={() => setViewReceipt(null)} style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer' }}>
                 <X size={18} />
               </button>
             </div>
 
-            <div style={{ padding: 16, display: 'flex', flexDirection: 'column', gap: 14 }}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+            <div className={styles.modalBody}>
+              <div className={styles.slipGrid2}>
                 <div>
                   <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#64748b', display: 'block', marginBottom: 4 }}>1. PETROL PUMP INVOICE SLIP</span>
-                  <div style={{ height: 200, borderRadius: 8, overflow: 'hidden', border: '1px solid #e2e8f0' }}>
-                    <img src={viewReceipt.receiptSlipImage} alt="Pump Slip" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  <div className={styles.slipImgWrapper}>
+                    <img src={viewReceipt.receiptSlipImage} alt="Pump Slip" className={styles.slipImg} />
                   </div>
                 </div>
                 <div>
                   <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#64748b', display: 'block', marginBottom: 4 }}>2. TRUCK / JCB METER PROOF</span>
-                  <div style={{ height: 200, borderRadius: 8, overflow: 'hidden', border: '1px solid #e2e8f0' }}>
-                    <img src={viewReceipt.odometerPhoto} alt="Odometer" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  <div className={styles.slipImgWrapper}>
+                    <img src={viewReceipt.odometerPhoto} alt="Odometer" className={styles.slipImg} />
                   </div>
                 </div>
               </div>
