@@ -1,0 +1,41 @@
+.layoutContainer {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f8fafc;
+  width: 100%;
+}
+
+.mainContent {
+  flex: 1;
+  margin-left: 260px;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  width: calc(100% - 260px);
+}
+
+.pageBody {
+  padding: 1.75rem 2rem;
+  flex: 1;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Tablet & iPad (1024px and below) */
+@media (max-width: 1024px) {
+  .mainContent {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .pageBody {
+    padding: 1.25rem 1.5rem;
+  }
+}
+
+/* Mobile, Android, iPhone (768px and below) */
+@media (max-width: 768px) {
+  .pageBody {
+    padding: 1rem 0.75rem;
+  }
+}
