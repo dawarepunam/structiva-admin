@@ -2,6 +2,7 @@
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  width: 100%;
 }
 
 .kpiRow {
@@ -47,6 +48,13 @@
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  width: 100%;
+}
+
+.tableResponsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .panelHeader {
@@ -56,6 +64,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
 }
 
 .panelTitle {
@@ -71,10 +81,11 @@
   display: flex;
   gap: 0.75rem;
   align-items: center;
+  flex-wrap: wrap;
 }
 
 .selectInput {
-  padding: 0.4rem 0.75rem;
+  padding: 0.45rem 0.75rem;
   font-size: 0.8rem;
   border: 1px solid #cbd5e1;
   border-radius: 6px;
@@ -87,7 +98,7 @@
   background-color: #0f172a;
   color: #ffffff;
   border: none;
-  padding: 0.45rem 0.9rem;
+  padding: 0.5rem 0.9rem;
   border-radius: 6px;
   font-size: 0.8rem;
   font-weight: 600;
@@ -96,6 +107,7 @@
   align-items: center;
   gap: 0.35rem;
   transition: all 0.2s;
+  white-space: nowrap;
 }
 
 .btnLockMuster:hover {
@@ -104,6 +116,7 @@
 
 .table {
   width: 100%;
+  min-width: 720px;
   border-collapse: collapse;
   font-size: 0.85rem;
   text-align: left;
@@ -115,6 +128,7 @@
   font-weight: 600;
   color: #475569;
   border-bottom: 1px solid #e2e8f0;
+  white-space: nowrap;
 }
 
 .table td {
@@ -130,6 +144,7 @@
   font-size: 0.75rem;
   padding: 0.2rem 0.5rem;
   border-radius: 9999px;
+  display: inline-block;
 }
 
 .badgeOvertime {
@@ -139,6 +154,7 @@
   font-size: 0.75rem;
   padding: 0.2rem 0.5rem;
   border-radius: 9999px;
+  display: inline-block;
 }
 
 .badgeHalfDay {
@@ -148,6 +164,7 @@
   font-size: 0.75rem;
   padding: 0.2rem 0.5rem;
   border-radius: 9999px;
+  display: inline-block;
 }
 
 .geoBadge {
@@ -157,6 +174,7 @@
   padding: 0.15rem 0.45rem;
   border-radius: 4px;
   font-family: monospace;
+  white-space: nowrap;
 }
 
 .btnAction {
@@ -167,10 +185,88 @@
   background: #ffffff;
   cursor: pointer;
   font-weight: 500;
+  white-space: nowrap;
 }
 
 .btnAction:hover {
   background-color: #fee2e2;
   border-color: #ef4444;
   color: #dc2626;
+}
+
+/* Modals */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(5px);
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.modalContent {
+  background: #ffffff;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 650px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+}
+
+.modalHeader {
+  background: #0f172a;
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #ffffff;
+}
+
+.modalBody {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.statsGrid3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+@media (max-width: 768px) {
+  .panelHeader {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 1rem;
+  }
+
+  .actionControls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .selectInput, .btnLockMuster {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .statsGrid3 {
+    grid-template-columns: 1fr;
+  }
+
+  .modalBody {
+    padding: 1rem;
+  }
+
+  .modalHeader {
+    padding: 1rem;
+  }
 }

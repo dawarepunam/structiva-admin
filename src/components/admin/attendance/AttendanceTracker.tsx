@@ -276,91 +276,87 @@ export default function AttendanceTracker() {
           </div>
         </div>
 
-        <table className={styles.table}>
-          <thead>
-            <tr>
-              <th>Worker Dossier (Click to Inspect)</th>
-              <th>Assigned Site</th>
-              <th>Reported By (Supervisor)</th>
-              <th>Status</th>
-              <th>Hours</th>
-              <th>Daily Wage Accrued</th>
-              <th>GPS Geofence</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filtered.map(r => (
-              <tr 
-                key={r.id} 
-                style={{ backgroundColor: r.isFlagged ? '#fff1f2' : 'transparent', cursor: 'pointer' }}
-                onClick={() => setSelectedWorker(r)}
-              >
-                <td>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                    <SafeImage 
-                      src={r.avatar} 
-                      alt={r.workerName} 
-                      fallbackType="worker"
-                      style={{ width: 40, height: 40, borderRadius: '50%', objectFit: 'cover', border: '2px solid #f59e0b' }} 
-                    />
-                    <div>
-                      <div style={{ fontWeight: 800, color: '#0f172a' }}>{r.workerName}</div>
-                      <div style={{ fontSize: '0.72rem', color: '#64748b' }}>{r.workerCode} • {r.skill}</div>
-                    </div>
-                  </div>
-                </td>
-                <td>{r.site}</td>
-                <td>
-                  <div style={{ fontWeight: 600 }}>{r.supervisor}</div>
-                  <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Logged at {r.timeMarked}</div>
-                </td>
-                <td>
-                  <span className={
-                    r.status === 'Present' ? styles.badgePresent : 
-                    r.status === 'Overtime' ? styles.badgeOvertime : styles.badgeHalfDay
-                  }>
-                    {r.status}
-                  </span>
-                </td>
-                <td style={{ fontWeight: 700 }}>{r.hoursLogged} hrs</td>
-                <td style={{ fontWeight: 800, color: r.isFlagged ? '#dc2626' : '#0f172a' }}>
-                  {r.isFlagged ? 'Disputed (₹0)' : `₹ ${r.calculatedWage.toLocaleString('en-IN')}`}
-                </td>
-                <td>
-                  <span className={styles.geoBadge}>
-                    <MapPin size={11} style={{ display: 'inline', marginRight: 2 }} />
-                    Verified On-Site
-                  </span>
-                </td>
-                <td>
-                  <button 
-                    className={styles.btnAction} 
-                    onClick={(e) => toggleFlag(r.id, e)}
-                    style={{ color: r.isFlagged ? '#dc2626' : '#475569' }}
-                  >
-                    <Flag size={12} style={{ display: 'inline', marginRight: 3 }} />
-                    {r.isFlagged ? 'Unflag' : 'Dispute'}
-                  </button>
-                </td>
+        {/* Table wrapped in responsive horizontal scroller */}
+        <div className={styles.tableResponsive}>
+          <table className={styles.table}>
+            <thead>
+              <tr>
+                <th>Worker Dossier (Click to Inspect)</th>
+                <th>Assigned Site</th>
+                <th>Reported By (Supervisor)</th>
+                <th>Status</th>
+                <th>Hours</th>
+                <th>Daily Wage Accrued</th>
+                <th>GPS Geofence</th>
+                <th>Action</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {filtered.map(r => (
+                <tr 
+                  key={r.id} 
+                  style={{ backgroundColor: r.isFlagged ? '#fff1f2' : 'transparent', cursor: 'pointer' }}
+                  onClick={() => setSelectedWorker(r)}
+                >
+                  <td>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                      <SafeImage 
+                        src={r.avatar} 
+                        alt={r.workerName} 
+                        fallbackType="worker"
+                        style={{ width: 40, height: 40, borderRadius: '50%', objectFit: 'cover', border: '2px solid #f59e0b' }} 
+                      />
+                      <div>
+                        <div style={{ fontWeight: 800, color: '#0f172a' }}>{r.workerName}</div>
+                        <div style={{ fontSize: '0.72rem', color: '#64748b' }}>{r.workerCode} • {r.skill}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td>{r.site}</td>
+                  <td>
+                    <div style={{ fontWeight: 600 }}>{r.supervisor}</div>
+                    <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Logged at {r.timeMarked}</div>
+                  </td>
+                  <td>
+                    <span className={
+                      r.status === 'Present' ? styles.badgePresent : 
+                      r.status === 'Overtime' ? styles.badgeOvertime : styles.badgeHalfDay
+                    }>
+                      {r.status}
+                    </span>
+                  </td>
+                  <td style={{ fontWeight: 700 }}>{r.hoursLogged} hrs</td>
+                  <td style={{ fontWeight: 800, color: r.isFlagged ? '#dc2626' : '#0f172a' }}>
+                    {r.isFlagged ? 'Disputed (₹0)' : `₹ ${r.calculatedWage.toLocaleString('en-IN')}`}
+                  </td>
+                  <td>
+                    <span className={styles.geoBadge}>
+                      <MapPin size={11} style={{ display: 'inline', marginRight: 2 }} />
+                      Verified On-Site
+                    </span>
+                  </td>
+                  <td>
+                    <button 
+                      className={styles.btnAction} 
+                      onClick={(e) => toggleFlag(r.id, e)}
+                      style={{ color: r.isFlagged ? '#dc2626' : '#475569' }}
+                    >
+                      <Flag size={12} style={{ display: 'inline', marginRight: 3 }} />
+                      {r.isFlagged ? 'Unflag' : 'Dispute'}
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {/* Worker Comprehensive Attendance Ledger Modal */}
       {selectedWorker && (
-        <div style={{
-          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-          backgroundColor: 'rgba(15, 23, 42, 0.75)', backdropFilter: 'blur(5px)',
-          zIndex: 60, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16
-        }} onClick={() => setSelectedWorker(null)}>
-          <div style={{
-            background: '#ffffff', borderRadius: 16, width: '100%', maxWidth: 650,
-            maxHeight: '90vh', overflowY: 'auto', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
-          }} onClick={e => e.stopPropagation()}>
-            <div style={{ background: '#0f172a', padding: '1.25rem 1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: '#ffffff' }}>
+        <div className={styles.modalOverlay} onClick={() => setSelectedWorker(null)}>
+          <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
+            <div className={styles.modalHeader}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                 <SafeImage src={selectedWorker.avatar} alt={selectedWorker.workerName} fallbackType="worker" style={{ width: 52, height: 52, borderRadius: '50%', border: '2px solid #f59e0b', objectFit: 'cover' }} />
                 <div>
@@ -374,9 +370,9 @@ export default function AttendanceTracker() {
               </button>
             </div>
 
-            <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+            <div className={styles.modalBody}>
               {/* Monthly Summary Ledger */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}>
+              <div className={styles.statsGrid3}>
                 <div style={{ background: '#f8fafc', padding: 12, borderRadius: 8, border: '1px solid #e2e8f0', textAlign: 'center' }}>
                   <span style={{ fontSize: '0.7rem', color: '#64748b', fontWeight: 700 }}>DAYS PRESENT (NOV)</span>
                   <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#0f172a' }}>{selectedWorker.totalPresentDaysMonth} Days</div>
@@ -396,8 +392,8 @@ export default function AttendanceTracker() {
                 <h4 style={{ fontSize: '0.9rem', fontWeight: 800, color: '#0f172a', marginBottom: 8, display: 'flex', alignItems: 'center', gap: 6 }}>
                   <Calendar size={15} color="#f59e0b" /> Historical Attendance & Daily Ledger
                 </h4>
-                <div style={{ border: '1px solid #e2e8f0', borderRadius: 8, overflow: 'hidden' }}>
-                  <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.8rem', textAlign: 'left' }}>
+                <div style={{ border: '1px solid #e2e8f0', borderRadius: 8, overflowX: 'auto' }}>
+                  <table style={{ width: '100%', minWidth: 480, borderCollapse: 'collapse', fontSize: '0.8rem', textAlign: 'left' }}>
                     <thead style={{ background: '#f1f5f9' }}>
                       <tr>
                         <th style={{ padding: '8px 12px', color: '#475569' }}>Date</th>

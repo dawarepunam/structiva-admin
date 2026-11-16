@@ -2,12 +2,14 @@
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  width: 100%;
 }
 
 .kpiRow {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 1.25rem;
+  width: 100%;
 }
 
 .kpiCard {
@@ -28,6 +30,13 @@
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  width: 100%;
+}
+
+.tableResponsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .panelHeader {
@@ -37,10 +46,13 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
 }
 
 .table {
   width: 100%;
+  min-width: 680px;
   border-collapse: collapse;
   font-size: 0.85rem;
   text-align: left;
@@ -52,6 +64,7 @@
   font-weight: 600;
   color: #475569;
   border-bottom: 1px solid #e2e8f0;
+  white-space: nowrap;
 }
 
 .table td {
@@ -60,23 +73,44 @@
   color: #1e293b;
 }
 
-.badgeOptimal {
+.badgeNormal {
   background-color: #d1fae5;
   color: #065f46;
   font-weight: 600;
   font-size: 0.75rem;
   padding: 0.2rem 0.5rem;
   border-radius: 9999px;
+  display: inline-block;
+  white-space: nowrap;
 }
 
-.badgeAnomaly {
+.badgeTheft {
   background-color: #fee2e2;
   color: #991b1b;
   font-weight: 600;
   font-size: 0.75rem;
   padding: 0.2rem 0.5rem;
   border-radius: 9999px;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.btnVerify {
+  background-color: #f59e0b;
+  color: #0f172a;
+  border: none;
+  padding: 0.4rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .panelHeader {
+    padding: 1rem;
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }

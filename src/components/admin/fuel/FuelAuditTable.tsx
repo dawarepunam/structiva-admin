@@ -161,74 +161,76 @@ export default function FuelAuditTable() {
           <span style={{ fontSize: '0.8rem', color: '#64748b' }}>Click machine to inspect historical fuel logbook</span>
         </div>
 
-        <table className={styles.table}>
-          <thead>
-            <tr>
-              <th>Vehicle Asset (Click to Inspect)</th>
-              <th>Deployed Site & Driver</th>
-              <th>Today's Fuel Disbursed</th>
-              <th>Operating Metrics</th>
-              <th>Pump Receipt & Meter</th>
-              <th>Audit Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {audits.map(f => (
-              <tr key={f.id} style={{ cursor: 'pointer' }} onClick={() => setSelectedMachine(f)}>
-                <td>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                    <SafeImage 
-                      src={f.vehicleImage} 
-                      alt={f.vehicle} 
-                      fallbackType="machine"
-                      style={{ width: 52, height: 44, borderRadius: 8, objectFit: 'cover', border: '1px solid #cbd5e1' }} 
-                    />
-                    <div>
-                      <div style={{ fontWeight: 800, color: '#0f172a' }}>{f.vehicle}</div>
-                      <div style={{ fontSize: '0.72rem', color: '#f59e0b', fontWeight: 700 }}>{f.regNumber}</div>
-                    </div>
-                  </div>
-                </td>
-                <td>
-                  <div style={{ fontWeight: 600 }}>{f.site}</div>
-                  <div style={{ fontSize: '0.75rem', color: '#64748b' }}>Driver: {f.driver}</div>
-                </td>
-                <td>
-                  <div style={{ fontWeight: 800, color: '#0f172a' }}>{f.litersFilled} Litres</div>
-                  <div style={{ fontSize: '0.75rem', color: '#059669', fontWeight: 600 }}>₹ {f.totalCost.toLocaleString('en-IN')}</div>
-                </td>
-                <td>
-                  <div style={{ fontWeight: 600 }}>{f.engineHoursRun} {f.vehicle.includes('Tipper') ? 'KM' : 'Hours'}</div>
-                  <div style={{ fontSize: '0.72rem', color: '#94a3b8' }}>Target: ~{f.expectedLiters} L</div>
-                </td>
-                <td>
-                  <button 
-                    onClick={(e) => { e.stopPropagation(); setViewReceipt(f); }}
-                    style={{
-                      background: '#f8fafc', border: '1px solid #cbd5e1', padding: '5px 10px',
-                      borderRadius: 6, fontSize: '0.75rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 5, fontWeight: 700
-                    }}
-                  >
-                    <Eye size={13} color="#f59e0b" /> View Slips
-                  </button>
-                </td>
-                <td>
-                  {f.status === 'Optimal' ? (
-                    <span className={styles.badgeOptimal}>
-                      <CheckCircle2 size={12} style={{ display: 'inline', marginRight: 2 }} />
-                      Optimal Burn
-                    </span>
-                  ) : (
-                    <span className={styles.badgeAnomaly}>
-                      <AlertTriangle size={12} />
-                      Mismatch (+30L)
-                    </span>
-                  )}
-                </td>
+        <div className={styles.tableResponsive}>
+          <table className={styles.table}>
+            <thead>
+              <tr>
+                <th>Vehicle Asset (Click to Inspect)</th>
+                <th>Deployed Site & Driver</th>
+                <th>Today's Fuel Disbursed</th>
+                <th>Operating Metrics</th>
+                <th>Pump Receipt & Meter</th>
+                <th>Audit Status</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {audits.map(f => (
+                <tr key={f.id} style={{ cursor: 'pointer' }} onClick={() => setSelectedMachine(f)}>
+                  <td>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                      <SafeImage 
+                        src={f.vehicleImage} 
+                        alt={f.vehicle} 
+                        fallbackType="machine"
+                        style={{ width: 52, height: 44, borderRadius: 8, objectFit: 'cover', border: '1px solid #cbd5e1' }} 
+                      />
+                      <div>
+                        <div style={{ fontWeight: 800, color: '#0f172a' }}>{f.vehicle}</div>
+                        <div style={{ fontSize: '0.72rem', color: '#f59e0b', fontWeight: 700 }}>{f.regNumber}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div style={{ fontWeight: 600 }}>{f.site}</div>
+                    <div style={{ fontSize: '0.75rem', color: '#64748b' }}>Driver: {f.driver}</div>
+                  </td>
+                  <td>
+                    <div style={{ fontWeight: 800, color: '#0f172a' }}>{f.litersFilled} Litres</div>
+                    <div style={{ fontSize: '0.75rem', color: '#059669', fontWeight: 600 }}>₹ {f.totalCost.toLocaleString('en-IN')}</div>
+                  </td>
+                  <td>
+                    <div style={{ fontWeight: 600 }}>{f.engineHoursRun} {f.vehicle.includes('Tipper') ? 'KM' : 'Hours'}</div>
+                    <div style={{ fontSize: '0.72rem', color: '#94a3b8' }}>Target: ~{f.expectedLiters} L</div>
+                  </td>
+                  <td>
+                    <button 
+                      onClick={(e) => { e.stopPropagation(); setViewReceipt(f); }}
+                      style={{
+                        background: '#f8fafc', border: '1px solid #cbd5e1', padding: '5px 10px',
+                        borderRadius: 6, fontSize: '0.75rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 5, fontWeight: 700
+                      }}
+                    >
+                      <Eye size={13} color="#f59e0b" /> View Slips
+                    </button>
+                  </td>
+                  <td>
+                    {f.status === 'Optimal' ? (
+                      <span className={styles.badgeOptimal}>
+                        <CheckCircle2 size={12} style={{ display: 'inline', marginRight: 2 }} />
+                        Optimal Burn
+                      </span>
+                    ) : (
+                      <span className={styles.badgeAnomaly}>
+                        <AlertTriangle size={12} />
+                        Mismatch (+30L)
+                      </span>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {/* Historical Fuel Ledger Modal */}

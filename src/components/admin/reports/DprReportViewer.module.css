@@ -2,12 +2,14 @@
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  width: 100%;
 }
 
 .kpiRow {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 1.25rem;
+  width: 100%;
 }
 
 .kpiCard {
@@ -41,6 +43,7 @@
   border-radius: 14px;
   overflow: hidden;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+  width: 100%;
 }
 
 .panelHeader {
@@ -50,53 +53,45 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-}
-
-.btnPrint {
-  background: #0f172a;
-  color: #ffffff;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 8px;
-  font-weight: 700;
-  font-size: 0.85rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  transition: all 0.2s;
-  box-shadow: 0 2px 4px rgba(15, 23, 42, 0.2);
-}
-
-.btnPrint:hover {
-  background: #1e293b;
+  flex-wrap: wrap;
+  gap: 12px;
 }
 
 .dprSheet {
-  padding: 2.5rem;
+  padding: 2rem;
+  background: #ffffff;
   display: flex;
   flex-direction: column;
   gap: 1.75rem;
-  background: #ffffff;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .dprHeader {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  border-bottom: 3px solid #0f172a;
   padding-bottom: 1.25rem;
+  border-bottom: 2px solid #0f172a;
+  flex-wrap: wrap;
+  gap: 14px;
 }
 
-.companyTitle {
-  font-size: 1.5rem;
+.dprTitleBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.dprMainTitle {
+  font-size: 1.4rem;
   font-weight: 900;
   color: #0f172a;
-  letter-spacing: -0.02em;
+  margin: 0;
 }
 
-.companySub {
-  font-size: 0.82rem;
+.dprSubTitle {
+  font-size: 0.85rem;
   color: #64748b;
   font-weight: 600;
 }
@@ -108,8 +103,15 @@
   line-height: 1.5;
 }
 
+.tableResponsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
 .dprTable {
   width: 100%;
+  min-width: 600px;
   border-collapse: collapse;
   font-size: 0.85rem;
   text-align: left;
@@ -121,12 +123,34 @@
   font-weight: 700;
   color: #334155;
   border: 1px solid #cbd5e1;
+  white-space: nowrap;
 }
 
 .dprTable td {
   padding: 10px 14px;
   border: 1px solid #cbd5e1;
   color: #1e293b;
+}
+
+@media (max-width: 768px) {
+  .panelHeader {
+    padding: 1rem;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .dprSheet {
+    padding: 1rem;
+  }
+
+  .dprHeader {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .dprMetaBlock {
+    text-align: left;
+  }
 }
 
 /* Crisp Clean Print Styles - 100% Guaranteed Printable without blank pages */
@@ -144,7 +168,6 @@
     margin: 0 !important;
   }
 
-  :global(.AdminLayout_mainContent__3_c09),
   :global([class*="AdminLayout_mainContent"]) {
     margin-left: 0 !important;
     width: 100% !important;

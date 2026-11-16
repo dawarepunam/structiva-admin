@@ -139,47 +139,49 @@ export default function DprReportViewer() {
             <h4 style={{ fontSize: '0.9rem', fontWeight: 800, color: '#0f172a', marginBottom: 8, display: 'flex', alignItems: 'center', gap: 6 }}>
               <HardHat size={16} color="#f59e0b" /> 2. Workforce Attendance & Accrued Daily Payroll
             </h4>
-            <table className={styles.dprTable}>
-              <thead>
-                <tr>
-                  <th>Category</th>
-                  <th>Headcount Present</th>
-                  <th>Standard Hours</th>
-                  <th>Overtime Logged</th>
-                  <th>Accrued Daily Wage</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td><strong>Skilled Trade (Masons, Operators, Bar Benders)</strong></td>
-                  <td>62 Men</td>
-                  <td>496 Man-Hours</td>
-                  <td>18.5 Man-Hours</td>
-                  <td style={{ fontWeight: 700 }}>₹ 28,450</td>
-                </tr>
-                <tr>
-                  <td><strong>Semi-Skilled (Carpenters, Shuttering Helpers)</strong></td>
-                  <td>48 Men</td>
-                  <td>384 Man-Hours</td>
-                  <td>8.0 Man-Hours</td>
-                  <td style={{ fontWeight: 700 }}>₹ 14,200</td>
-                </tr>
-                <tr>
-                  <td><strong>General Unskilled Civil Labour</strong></td>
-                  <td>32 Men</td>
-                  <td>256 Man-Hours</td>
-                  <td>0.0 Man-Hours</td>
-                  <td style={{ fontWeight: 700 }}>₹ 8,000</td>
-                </tr>
-                <tr style={{ background: '#f8fafc', fontWeight: 800 }}>
-                  <td>TOTAL DEPLOYED LABOUR FORCE</td>
-                  <td>142 Workers</td>
-                  <td>1,136 Man-Hours</td>
-                  <td>26.5 OT Hours</td>
-                  <td style={{ color: '#059669' }}>₹ 50,650</td>
-                </tr>
-              </tbody>
-            </table>
+            <div className={styles.tableResponsive}>
+              <table className={styles.dprTable}>
+                <thead>
+                  <tr>
+                    <th>Category</th>
+                    <th>Headcount Present</th>
+                    <th>Standard Hours</th>
+                    <th>Overtime Logged</th>
+                    <th>Accrued Daily Wage</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>Skilled Trade (Masons, Operators, Bar Benders)</strong></td>
+                    <td>62 Men</td>
+                    <td>496 Man-Hours</td>
+                    <td>18.5 Man-Hours</td>
+                    <td style={{ fontWeight: 700 }}>₹ 28,450</td>
+                  </tr>
+                  <tr>
+                    <td><strong>Semi-Skilled (Carpenters, Shuttering Helpers)</strong></td>
+                    <td>48 Men</td>
+                    <td>384 Man-Hours</td>
+                    <td>8.0 Man-Hours</td>
+                    <td style={{ fontWeight: 700 }}>₹ 14,200</td>
+                  </tr>
+                  <tr>
+                    <td><strong>General Unskilled Civil Labour</strong></td>
+                    <td>32 Men</td>
+                    <td>256 Man-Hours</td>
+                    <td>0.0 Man-Hours</td>
+                    <td style={{ fontWeight: 700 }}>₹ 8,000</td>
+                  </tr>
+                  <tr style={{ background: '#f8fafc', fontWeight: 800 }}>
+                    <td>TOTAL DEPLOYED LABOUR FORCE</td>
+                    <td>142 Workers</td>
+                    <td>1,136 Man-Hours</td>
+                    <td>26.5 OT Hours</td>
+                    <td style={{ color: '#059669' }}>₹ 50,650</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
 
           {/* Section 3: Heavy Fleet Utilization & Fuel Ledger */}
@@ -187,44 +189,46 @@ export default function DprReportViewer() {
             <h4 style={{ fontSize: '0.9rem', fontWeight: 800, color: '#0f172a', marginBottom: 8, display: 'flex', alignItems: 'center', gap: 6 }}>
               <Truck size={16} color="#f59e0b" /> 3. Heavy Assets Utilization & Diesel Burn Audit
             </h4>
-            <table className={styles.dprTable}>
-              <thead>
-                <tr>
-                  <th>Asset & Registration</th>
-                  <th>Operating Metric (Hrs / KM)</th>
-                  <th>Fuel Disbursed</th>
-                  <th>Efficiency Norm</th>
-                  <th>Audit Sign-Off</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td><strong>JCB 3DX Super (MH 12 AB 4590)</strong></td>
-                  <td>12.0 Hours</td>
-                  <td>60 Litres (₹ 5,550)</td>
-                  <td>5.0 L / hr (Optimal)</td>
-                  <td><span style={{ color: '#059669', fontWeight: 700 }}>Passed OEM Audit</span></td>
-                </tr>
-                <tr>
-                  <td><strong>Tata Prima Tipper 16m³ (MH 14 CD 7821)</strong></td>
-                  <td>140 KM</td>
-                  <td>110 Litres (₹ 10,175)</td>
-                  <td>1.28 KM/L (Heavy Slurry)</td>
-                  <td><span style={{ color: '#059669', fontWeight: 700 }}>Supervisor Justified</span></td>
-                </tr>
-                <tr>
-                  <td><strong>Sany 75T Crawler Crane (MH 12 EF 9081)</strong></td>
-                  <td>15.5 Hours</td>
-                  <td>95 Litres (₹ 8,787)</td>
-                  <td>6.1 L / hr (Optimal)</td>
-                  <td><span style={{ color: '#059669', fontWeight: 700 }}>Passed OEM Audit</span></td>
-                </tr>
-              </tbody>
-            </table>
+            <div className={styles.tableResponsive}>
+              <table className={styles.dprTable}>
+                <thead>
+                  <tr>
+                    <th>Asset & Registration</th>
+                    <th>Operating Metric (Hrs / KM)</th>
+                    <th>Fuel Disbursed</th>
+                    <th>Efficiency Norm</th>
+                    <th>Audit Sign-Off</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>JCB 3DX Super (MH 12 AB 4590)</strong></td>
+                    <td>12.0 Hours</td>
+                    <td>60 Litres (₹ 5,550)</td>
+                    <td>5.0 L / hr (Optimal)</td>
+                    <td><span style={{ color: '#059669', fontWeight: 700 }}>Passed OEM Audit</span></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Tata Prima Tipper 16m³ (MH 14 CD 7821)</strong></td>
+                    <td>140 KM</td>
+                    <td>110 Litres (₹ 10,175)</td>
+                    <td>1.28 KM/L (Heavy Slurry)</td>
+                    <td><span style={{ color: '#059669', fontWeight: 700 }}>Supervisor Justified</span></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Sany 75T Crawler Crane (MH 12 EF 9081)</strong></td>
+                    <td>15.5 Hours</td>
+                    <td>95 Litres (₹ 8,787)</td>
+                    <td>6.1 L / hr (Optimal)</td>
+                    <td><span style={{ color: '#059669', fontWeight: 700 }}>Passed OEM Audit</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
 
           {/* Signatures & Official Stamps */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24, marginTop: 24, paddingTop: 20, borderTop: '1px solid #cbd5e1' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 20, marginTop: 24, paddingTop: 20, borderTop: '1px solid #cbd5e1' }}>
             <div style={{ textAlign: 'center' }}>
               <div style={{ height: 40 }}></div>
               <div style={{ borderTop: '1px dashed #475569', paddingTop: 6, fontSize: '0.8rem', fontWeight: 700 }}>

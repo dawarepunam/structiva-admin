@@ -308,11 +308,13 @@ export default function WorkerTable() {
         <div className={styles.modalOverlay} onClick={() => setSelectedWorker(null)}>
           <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
             <div className={styles.modalHeader}>
-              <SafeImage src={selectedWorker.avatar} alt={selectedWorker.name} fallbackType="worker" className={styles.modalAvatar} />
-              <div>
-                <span style={{ color: '#f59e0b', fontSize: '0.75rem', fontWeight: 800 }}>{selectedWorker.code}</span>
-                <h2 style={{ fontSize: '1.25rem', fontWeight: 800, margin: '2px 0' }}>{selectedWorker.name}</h2>
-                <span style={{ fontSize: '0.8rem', color: '#cbd5e1' }}>{selectedWorker.skill}</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <SafeImage src={selectedWorker.avatar} alt={selectedWorker.name} fallbackType="worker" className={styles.modalAvatar} />
+                <div>
+                  <span style={{ color: '#f59e0b', fontSize: '0.75rem', fontWeight: 800 }}>{selectedWorker.code}</span>
+                  <h2 style={{ fontSize: '1.25rem', fontWeight: 800, margin: '2px 0' }}>{selectedWorker.name}</h2>
+                  <span style={{ fontSize: '0.8rem', color: '#cbd5e1' }}>{selectedWorker.skill}</span>
+                </div>
               </div>
               <button className={styles.modalClose} onClick={() => setSelectedWorker(null)}>
                 <X size={20} />
@@ -320,7 +322,7 @@ export default function WorkerTable() {
             </div>
 
             <div className={styles.modalBody}>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}>
+              <div className={styles.statsGrid3}>
                 <div style={{ background: '#f8fafc', padding: 12, borderRadius: 8, textAlign: 'center', border: '1px solid #e2e8f0' }}>
                   <span style={{ fontSize: '0.7rem', color: '#64748b', fontWeight: 700 }}>DAILY WAGE</span>
                   <div style={{ fontWeight: 800, color: '#0f172a', fontSize: '1.1rem' }}>₹ {selectedWorker.dailyWage}</div>
