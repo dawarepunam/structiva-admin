@@ -5,9 +5,10 @@
   width: 100%;
 }
 
+/* KPI Summary Cards Grid */
 .kpiRow {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(4, 1fr);
   gap: 1.25rem;
   width: 100%;
 }
@@ -21,6 +22,7 @@
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
+  min-width: 0;
 }
 
 .kpiLabel {
@@ -29,6 +31,9 @@
   color: #64748b;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .kpiValue {
@@ -77,21 +82,15 @@
   gap: 14px;
 }
 
-.dprTitleBlock {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.dprMainTitle {
-  font-size: 1.4rem;
+.companyTitle {
+  font-size: 1.35rem;
   font-weight: 900;
   color: #0f172a;
-  margin: 0;
+  letter-spacing: -0.01em;
 }
 
-.dprSubTitle {
-  font-size: 0.85rem;
+.companySub {
+  font-size: 0.8rem;
   color: #64748b;
   font-weight: 600;
 }
@@ -103,15 +102,18 @@
   line-height: 1.5;
 }
 
+/* Horizontal Responsive Scroll Container with smooth touch */
 .tableResponsive {
   width: 100%;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
 }
 
 .dprTable {
   width: 100%;
-  min-width: 600px;
+  min-width: 680px;
   border-collapse: collapse;
   font-size: 0.85rem;
   text-align: left;
@@ -132,7 +134,19 @@
   color: #1e293b;
 }
 
+/* Responsive Breakpoints */
+@media (max-width: 1200px) {
+  .kpiRow {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
 @media (max-width: 768px) {
+  .kpiRow {
+    grid-template-columns: 1fr;
+    gap: 0.85rem;
+  }
+
   .panelHeader {
     padding: 1rem;
     flex-direction: column;
@@ -140,7 +154,7 @@
   }
 
   .dprSheet {
-    padding: 1rem;
+    padding: 1rem 0.75rem;
   }
 
   .dprHeader {
@@ -150,6 +164,11 @@
 
   .dprMetaBlock {
     text-align: left;
+    font-size: 0.78rem;
+  }
+
+  .companyTitle {
+    font-size: 1.15rem;
   }
 }
 
@@ -181,6 +200,15 @@
   .dprSheet {
     padding: 0 !important;
     width: 100% !important;
+  }
+
+  .tableResponsive {
+    overflow-x: visible !important;
+    border: none !important;
+  }
+
+  .dprTable {
+    min-width: 100% !important;
   }
 
   .dprHeader {

@@ -98,40 +98,42 @@ export default function DprReportViewer() {
             <h4 style={{ fontSize: '0.9rem', fontWeight: 800, color: '#0f172a', marginBottom: 8, display: 'flex', alignItems: 'center', gap: 6 }}>
               <Building size={16} color="#f59e0b" /> 1. Civil Work & Site Execution Progress
             </h4>
-            <table className={styles.dprTable}>
-              <thead>
-                <tr>
-                  <th>Site Project</th>
-                  <th>Key Work Executed Today</th>
-                  <th>Target vs Actual</th>
-                  <th>Progress</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td><strong>Skyline Commercial Tower</strong></td>
-                  <td>Level 4 Slab Reinforcement & Column Concreting (M-40 Grade)</td>
-                  <td>Target: 140 m³ | Actual: 145 m³</td>
-                  <td><strong>68% Completed</strong></td>
-                  <td><span style={{ color: '#059669', fontWeight: 700 }}>✓ On Schedule</span></td>
-                </tr>
-                <tr>
-                  <td><strong>Eastern Expressway Flyover</strong></td>
-                  <td>Pier-4 Segmental Box Girder Launching & Cable Stressing</td>
-                  <td>Target: 2 Spans | Actual: 2 Spans</td>
-                  <td><strong>84% Completed</strong></td>
-                  <td><span style={{ color: '#059669', fontWeight: 700 }}>✓ Ahead by 3 Days</span></td>
-                </tr>
-                <tr>
-                  <td><strong>Metro Line Corridor Piling</strong></td>
-                  <td>Bored Cast-in-Situ Piling (1200mm Dia) & Bentonite Slurry Flush</td>
-                  <td>Target: 4 Piles | Actual: 3 Piles</td>
-                  <td><strong>42% Completed</strong></td>
-                  <td><span style={{ color: '#d97706', fontWeight: 700 }}>⚠ Utility Delay Resolved</span></td>
-                </tr>
-              </tbody>
-            </table>
+            <div className={styles.tableResponsive}>
+              <table className={styles.dprTable}>
+                <thead>
+                  <tr>
+                    <th>Site Project</th>
+                    <th>Key Work Executed Today</th>
+                    <th>Target vs Actual</th>
+                    <th>Progress</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>Skyline Commercial Tower</strong></td>
+                    <td>Level 4 Slab Reinforcement & Column Concreting (M-40 Grade)</td>
+                    <td>Target: 140 m³ | Actual: 145 m³</td>
+                    <td><strong>68% Completed</strong></td>
+                    <td><span style={{ color: '#059669', fontWeight: 700 }}>✓ On Schedule</span></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Eastern Expressway Flyover</strong></td>
+                    <td>Pier-4 Segmental Box Girder Launching & Cable Stressing</td>
+                    <td>Target: 2 Spans | Actual: 2 Spans</td>
+                    <td><strong>84% Completed</strong></td>
+                    <td><span style={{ color: '#059669', fontWeight: 700 }}>✓ Ahead by 3 Days</span></td>
+                  </tr>
+                  <tr>
+                    <td><strong>Metro Line Corridor Piling</strong></td>
+                    <td>Bored Cast-in-Situ Piling (1200mm Dia) & Bentonite Slurry Flush</td>
+                    <td>Target: 4 Piles | Actual: 3 Piles</td>
+                    <td><strong>42% Completed</strong></td>
+                    <td><span style={{ color: '#d97706', fontWeight: 700 }}>⚠ Utility Delay Resolved</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
 
           {/* Section 2: Workforce Muster Roll */}
