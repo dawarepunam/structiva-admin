@@ -65,14 +65,6 @@
 /* Mobile & Tablet Breakpoint */
 @media (max-width: 768px) {
   .footer {
-    padding: 0.85rem 1rem;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.5rem;
-  }
-
-  .rightSection {
-    gap: 0.85rem;
-    font-size: 0.72rem;
+    display: none; /* Hide heavy enterprise footer on mobile so it doesn't conflict with Mobile Bottom Navigation */
   }
 }

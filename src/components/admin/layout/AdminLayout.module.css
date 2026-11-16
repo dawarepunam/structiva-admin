@@ -58,6 +58,6 @@
 /* Mobile Screens (768px and below) */
 @media (max-width: 768px) {
   .pageBody {
-    padding: 0.85rem 0.75rem 80px 0.75rem; /* 80px bottom padding so content doesn't hide behind bottom nav */
+    padding: 0.85rem 0.75rem 90px 0.75rem; /* Generous bottom padding to ensure zero content hides behind Mobile Bottom Bar */
   }
 }
