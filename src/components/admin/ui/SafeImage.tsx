@@ -2,7 +2,8 @@
 
 import React from 'react';
 
-interface SafeImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
+interface SafeImageProps extends Omit<React.ImgHTMLAttributes<HTMLImageElement>, 'src'> {
+  src?: string | any;
   fallbackType?: 'project' | 'worker' | 'machine' | 'receipt';
 }
 
@@ -21,16 +22,19 @@ export default function SafeImage({
   style, 
   ...props 
 }: SafeImageProps) {
-  const [imgSrc, setImgSrc] = React.useState<string>(src || localFallbacks[fallbackType]);
+  const initialSrc = typeof src === 'string' ? src : localFallbacks[fallbackType];
+  const [imgSrc, setImgSrc] = React.useState<string>(initialSrc);
 
   React.useEffect(() => {
-    if (src) {
+    if (typeof src === 'string' && src) {
       setImgSrc(src);
+    } else if (!src) {
+      setImgSrc(localFallbacks[fallbackType]);
     }
-  }, [src]);
+  }, [src, fallbackType]);
 
   const handleError = () => {
-    // If remote fails, fallback to verified local high-res photo
+    // If remote or invalid fails, fallback to verified local high-res photo
     setImgSrc(localFallbacks[fallbackType]);
   };
 
