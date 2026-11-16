@@ -297,25 +297,61 @@
   gap: 10px;
 }
 
-/* Mobile Breakpoints */
+/* Mobile Breakpoints - Native App Card UI */
 @media (max-width: 768px) {
+  .container {
+    gap: 1rem;
+  }
+
   .topBar {
     flex-direction: column;
     align-items: stretch;
-    padding: 1rem;
+    padding: 0.75rem 1rem;
+    gap: 8px;
   }
 
   .searchBox {
     width: 100%;
+    padding: 0.4rem 0.75rem;
   }
 
   .btnAddWorker {
     width: 100%;
     justify-content: center;
+    padding: 0.5rem 1rem;
+    font-size: 0.8rem;
   }
 
   .workerGrid {
     grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  /* Compact Native Card */
+  .card {
+    padding: 0.85rem;
+    border-radius: 12px;
+    gap: 0.65rem;
+  }
+
+  .avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+  }
+
+  .name {
+    font-size: 0.95rem;
+  }
+
+  .cardBody {
+    padding: 6px 0;
+    gap: 4px;
+    font-size: 0.75rem;
+  }
+
+  .cardFooter {
+    font-size: 0.75rem;
   }
 
   .formGrid2 {

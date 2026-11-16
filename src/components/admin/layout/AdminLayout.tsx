@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import AdminSidebar from './AdminSidebar';
 import AdminHeader from './AdminHeader';
 import AdminFooter from './AdminFooter';
+import MobileBottomNav from './MobileBottomNav';
 import styles from './AdminLayout.module.css';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -37,6 +38,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           {children}
         </main>
         <AdminFooter />
+        <MobileBottomNav />
       </div>
     </div>
   );
