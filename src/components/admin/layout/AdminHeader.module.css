@@ -13,6 +13,30 @@
   box-sizing: border-box;
 }
 
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.menuToggleBtn {
+  display: none;
+  background: transparent;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  width: 38px;
+  height: 38px;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #0f172a;
+  transition: all 0.2s;
+}
+
+.menuToggleBtn:hover {
+  background-color: #f1f5f9;
+}
+
 .searchContainer {
   display: flex;
   align-items: center;
@@ -87,7 +111,13 @@
   border-radius: 8px;
 }
 
-/* Mobile & Tablet Responsiveness */
+/* Tablet & Mobile Breakpoints */
+@media (max-width: 1024px) {
+  .menuToggleBtn {
+    display: flex;
+  }
+}
+
 @media (max-width: 768px) {
   .header {
     padding: 0 1rem;

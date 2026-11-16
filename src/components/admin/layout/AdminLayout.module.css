@@ -3,6 +3,7 @@
   min-height: 100vh;
   background-color: #f8fafc;
   width: 100%;
+  position: relative;
 }
 
 .mainContent {
@@ -12,6 +13,7 @@
   flex-direction: column;
   min-width: 0;
   width: calc(100% - 260px);
+  transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .pageBody {
@@ -21,19 +23,39 @@
   box-sizing: border-box;
 }
 
-/* Tablet & iPad (1024px and below) */
+/* Backdrop for Mobile Sidebar Drawer */
+.backdrop {
+  display: none;
+}
+
+/* Tablet & Mobile Screens (1024px and below) */
 @media (max-width: 1024px) {
   .mainContent {
-    margin-left: 0;
-    width: 100%;
+    margin-left: 0 !important;
+    width: 100% !important;
   }
 
   .pageBody {
-    padding: 1.25rem 1.5rem;
+    padding: 1.25rem 1.25rem;
+  }
+
+  .backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 45;
+    animation: fadeIn 0.2s ease-out;
   }
 }
 
-/* Mobile, Android, iPhone (768px and below) */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Mobile Screens (768px and below) */
 @media (max-width: 768px) {
   .pageBody {
     padding: 1rem 0.75rem;

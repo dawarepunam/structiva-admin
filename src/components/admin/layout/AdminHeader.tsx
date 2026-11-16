@@ -2,18 +2,32 @@
 
 import React from 'react';
 import styles from './AdminHeader.module.css';
-import { Search, Bell, MapPin } from 'lucide-react';
+import { Search, Bell, MapPin, Menu } from 'lucide-react';
 
-export default function AdminHeader() {
+interface AdminHeaderProps {
+  onToggleSidebar?: () => void;
+}
+
+export default function AdminHeader({ onToggleSidebar }: AdminHeaderProps) {
   return (
     <header className={styles.header}>
-      <div className={styles.searchContainer}>
-        <Search size={16} color="#64748b" />
-        <input 
-          type="text" 
-          placeholder="Search projects, workers, machinery..." 
-          className={styles.searchInput} 
-        />
+      <div className={styles.headerLeft}>
+        <button 
+          className={styles.menuToggleBtn} 
+          onClick={onToggleSidebar}
+          aria-label="Toggle Navigation Menu"
+        >
+          <Menu size={20} />
+        </button>
+
+        <div className={styles.searchContainer}>
+          <Search size={16} color="#64748b" />
+          <input 
+            type="text" 
+            placeholder="Search projects, workers, machinery..." 
+            className={styles.searchInput} 
+          />
+        </div>
       </div>
 
       <div className={styles.headerActions}>

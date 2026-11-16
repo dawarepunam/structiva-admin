@@ -10,15 +10,36 @@
   left: 0;
   top: 0;
   bottom: 0;
-  z-index: 40;
+  z-index: 50;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .brand {
-  padding: 1.5rem 1.25rem;
+  padding: 1.25rem 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #1e293b;
+}
+
+.brandLeft {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  border-bottom: 1px solid #1e293b;
+}
+
+.closeMobileBtn {
+  display: none;
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 6px;
+}
+
+.closeMobileBtn:hover {
+  color: #ffffff;
 }
 
 .logoIcon {
@@ -144,4 +165,22 @@
 .userRole {
   font-size: 0.7rem;
   color: #94a3b8;
+}
+
+/* Responsive Drawer for Tablet & Mobile */
+@media (max-width: 1024px) {
+  .sidebar {
+    transform: translateX(-100%);
+    box-shadow: 10px 0 25px -5px rgba(0, 0, 0, 0.5);
+  }
+
+  .sidebarOpen {
+    transform: translateX(0) !important;
+  }
+
+  .closeMobileBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 }
