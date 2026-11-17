@@ -3,13 +3,13 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import styles from './WorkerProfile.module.css';
-import { 
-  getWorkerById, EnterpriseWorkerRecord, updateWorker, WorkerLeaveRecord, WorkerDocument 
+import {
+  getWorkerById, EnterpriseWorkerRecord, updateWorker, WorkerLeaveRecord, WorkerDocument
 } from '@/services/workerStorage';
 import SafeImage from '@/components/admin/ui/SafeImage';
-import { 
-  ArrowLeft, Phone, MapPin, ShieldCheck, Calendar, Clock, DollarSign, Award, 
-  FileText, Briefcase, CheckCircle2, AlertTriangle, AlertCircle, User, Activity, 
+import {
+  ArrowLeft, Phone, MapPin, ShieldCheck, Calendar, Clock, DollarSign, Award,
+  FileText, Briefcase, CheckCircle2, AlertTriangle, AlertCircle, User, Activity,
   ExternalLink, Download, Plus, ChevronRight, Edit3, HeartPulse, CreditCard,
   Building, UserCheck, Check, X
 } from 'lucide-react';
@@ -24,7 +24,7 @@ export default function WorkerProfilePage() {
   const [activeTab, setActiveTab] = useState<
     'overview' | 'personal' | 'skills' | 'projects' | 'attendance' | 'salary' | 'documents' | 'leaves' | 'activity'
   >('overview');
-  
+
   // Leave Modal State
   const [showLeaveModal, setShowLeaveModal] = useState(false);
   const [leaveForm, setLeaveForm] = useState({
@@ -110,11 +110,11 @@ export default function WorkerProfilePage() {
       <div className={styles.heroCard}>
         <div className={styles.heroLeft}>
           <div className={styles.avatarWrapper}>
-            <SafeImage 
-              src={worker.avatar} 
-              alt={worker.name} 
-              fallbackType="worker" 
-              className={styles.avatarImg} 
+            <SafeImage
+              src={worker.avatar}
+              alt={worker.name}
+              fallbackType="worker"
+              className={styles.avatarImg}
             />
             <span className={`${styles.statusDot} ${styles[currentStatus.toLowerCase()]}`} />
           </div>
@@ -174,7 +174,7 @@ export default function WorkerProfilePage() {
       {/* 9 Profile Tabs Navigation */}
       <div className={styles.tabsContainer}>
         <div className={styles.tabsScroller}>
-          <button 
+          <button
             className={`${styles.tabBtn} ${activeTab === 'overview' ? styles.tabBtnActive : ''}`}
             onClick={() => setActiveTab('overview')}
           >
@@ -182,7 +182,7 @@ export default function WorkerProfilePage() {
             <span>1. Overview</span>
           </button>
 
-          <button 
+          <button
             className={`${styles.tabBtn} ${activeTab === 'personal' ? styles.tabBtnActive : ''}`}
             onClick={() => setActiveTab('personal')}
           >
@@ -190,7 +190,7 @@ export default function WorkerProfilePage() {
             <span>2. Personal Details</span>
           </button>
 
-          <button 
+          <button
             className={`${styles.tabBtn} ${activeTab === 'skills' ? styles.tabBtnActive : ''}`}
             onClick={() => setActiveTab('skills')}
           >
@@ -198,7 +198,7 @@ export default function WorkerProfilePage() {
             <span>3. Work & Skills</span>
           </button>
 
-          <button 
+          <button
             className={`${styles.tabBtn} ${activeTab === 'projects' ? styles.tabBtnActive : ''}`}
             onClick={() => setActiveTab('projects')}
           >
@@ -206,7 +206,7 @@ export default function WorkerProfilePage() {
             <span>4. Project History</span>
           </button>
 
-          <button 
+          <button
             className={`${styles.tabBtn} ${activeTab === 'attendance' ? styles.tabBtnActive : ''}`}
             onClick={() => setActiveTab('attendance')}
           >
@@ -214,7 +214,7 @@ export default function WorkerProfilePage() {
             <span>5. Attendance</span>
           </button>
 
-          <button 
+          <button
             className={`${styles.tabBtn} ${activeTab === 'salary' ? styles.tabBtnActive : ''}`}
             onClick={() => setActiveTab('salary')}
           >
@@ -222,7 +222,7 @@ export default function WorkerProfilePage() {
             <span>6. Salary & Payments</span>
           </button>
 
-          <button 
+          <button
             className={`${styles.tabBtn} ${activeTab === 'documents' ? styles.tabBtnActive : ''}`}
             onClick={() => setActiveTab('documents')}
           >
@@ -230,7 +230,7 @@ export default function WorkerProfilePage() {
             <span>7. Documents ({worker.documents?.length || 0})</span>
           </button>
 
-          <button 
+          <button
             className={`${styles.tabBtn} ${activeTab === 'leaves' ? styles.tabBtnActive : ''}`}
             onClick={() => setActiveTab('leaves')}
           >
@@ -238,7 +238,7 @@ export default function WorkerProfilePage() {
             <span>8. Leave Mgmt ({worker.leaves?.length || 0})</span>
           </button>
 
-          <button 
+          <button
             className={`${styles.tabBtn} ${activeTab === 'activity' ? styles.tabBtnActive : ''}`}
             onClick={() => setActiveTab('activity')}
           >
@@ -806,8 +806,8 @@ export default function WorkerProfilePage() {
             <form onSubmit={handleApplyLeave} className={styles.leaveForm}>
               <div className={styles.formGroup}>
                 <label>Leave Category</label>
-                <select 
-                  value={leaveForm.type} 
+                <select
+                  value={leaveForm.type}
                   onChange={e => setLeaveForm({ ...leaveForm, type: e.target.value as any })}
                 >
                   <option value="Paid Leave">Paid Annual / Festival Leave</option>
@@ -819,18 +819,18 @@ export default function WorkerProfilePage() {
               <div className={styles.formRow2}>
                 <div className={styles.formGroup}>
                   <label>Start Date</label>
-                  <input 
-                    type="date" 
-                    value={leaveForm.startDate} 
+                  <input
+                    type="date"
+                    value={leaveForm.startDate}
                     onChange={e => setLeaveForm({ ...leaveForm, startDate: e.target.value })}
                     required
                   />
                 </div>
                 <div className={styles.formGroup}>
                   <label>End Date</label>
-                  <input 
-                    type="date" 
-                    value={leaveForm.endDate} 
+                  <input
+                    type="date"
+                    value={leaveForm.endDate}
                     onChange={e => setLeaveForm({ ...leaveForm, endDate: e.target.value })}
                     required
                   />
@@ -839,10 +839,10 @@ export default function WorkerProfilePage() {
 
               <div className={styles.formGroup}>
                 <label>Number of Days</label>
-                <input 
-                  type="number" 
-                  min="1" 
-                  value={leaveForm.days} 
+                <input
+                  type="number"
+                  min="1"
+                  value={leaveForm.days}
                   onChange={e => setLeaveForm({ ...leaveForm, days: Number(e.target.value) })}
                   required
                 />
@@ -850,10 +850,10 @@ export default function WorkerProfilePage() {
 
               <div className={styles.formGroup}>
                 <label>Reason for Leave *</label>
-                <textarea 
-                  rows={3} 
-                  required 
-                  value={leaveForm.reason} 
+                <textarea
+                  rows={3}
+                  required
+                  value={leaveForm.reason}
                   onChange={e => setLeaveForm({ ...leaveForm, reason: e.target.value })}
                   placeholder="Detail reason for absence, travel to hometown, or medical advice..."
                 />

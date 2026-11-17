@@ -173,7 +173,7 @@
 .contentSection {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 1rem;
 }
 
 .toolbarRow {
@@ -233,6 +233,16 @@
   background: #136961;
 }
 
+.clickHintNotice {
+  background: #f0fdf9;
+  border: 1px solid #ccfbf1;
+  color: #0f766e;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  margin: 0;
+}
+
 /* Muster Table */
 .tableCard {
   background: #ffffff;
@@ -247,6 +257,7 @@
   border-collapse: collapse;
   text-align: left;
   font-size: 0.85rem;
+  min-width: 820px;
 }
 
 .musterTable th {
@@ -265,6 +276,47 @@
   border-bottom: 1px solid #f1f5f9;
   color: #334155;
 }
+
+.tableRowClickable {
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.tableRowClickable:hover {
+  background: #f8fafc;
+}
+
+.workerCellWithImg {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.tableAvatarBox {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.musterAvatarImg {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 2px solid #e2e8f0;
+}
+
+.statusPip {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  border: 2px solid #ffffff;
+}
+
+.pipGreen { background: #10b981; }
+.pipRed { background: #ef4444; }
 
 .workerCol {
   display: flex;
@@ -294,10 +346,19 @@
 
 .timeCol {
   display: flex;
-  align-items: center;
-  gap: 4px;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 0.78rem;
+}
+
+.punchIn {
+  font-weight: 700;
+  color: #059669;
+}
+
+.punchOut {
   font-weight: 600;
-  color: #0f172a;
+  color: #64748b;
 }
 
 .methodPill {
@@ -360,18 +421,25 @@
   font-size: 0.92rem;
 }
 
-.approvalPill {
-  display: inline-block;
-  padding: 3px 8px;
-  border-radius: 6px;
-  font-size: 0.72rem;
+.btnViewLogsMini {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #e6f4f2;
+  color: #167C72;
+  border: none;
   font-weight: 700;
+  font-size: 0.75rem;
+  padding: 4px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
 }
 
-.approvalPill.autoverified { background: #d1fae5; color: #065f46; }
-.approvalPill.pendingexceptionreview { background: #fee2e2; color: #991b1b; }
-.approvalPill.approvedbysupervisor { background: #eff6ff; color: #1d4ed8; }
-.approvalPill.rejected { background: #f1f5f9; color: #64748b; }
+.btnViewLogsMini:hover {
+  background: #167C72;
+  color: #ffffff;
+}
 
 /* Check-In Grid & Form */
 .checkInGrid {
@@ -834,11 +902,13 @@
   margin: 0;
 }
 
-/* Review Modal */
+/* ========================================================================= */
+/* WORKER 7-DAY & MONTHLY INSPECTION MODAL (Android App & Desktop Optimized) */
+/* ========================================================================= */
 .modalBackdrop {
   position: fixed;
   inset: 0;
-  background: rgba(15, 23, 42, 0.65);
+  background: rgba(15, 23, 42, 0.7);
   backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
@@ -847,6 +917,441 @@
   padding: 1rem;
 }
 
+.inspectModalBox {
+  background: #ffffff;
+  border-radius: 18px;
+  width: 100%;
+  max-width: 860px;
+  max-height: 92vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+}
+
+@media (max-width: 600px) {
+  .inspectModalBox {
+    max-height: 95vh;
+    border-radius: 14px;
+    padding: 0;
+  }
+}
+
+.inspectModalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem 1.5rem;
+  background: #fafaf9;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.inspectProfileRow {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.inspectAvatarWrapper {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.inspectAvatarImg {
+  width: 64px;
+  height: 64px;
+  border-radius: 12px;
+  object-fit: cover;
+  border: 2px solid #e2e8f0;
+}
+
+.inspectPip {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  border: 2px solid #ffffff;
+}
+
+.inspectInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.inspectTitleRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.inspectTitleRow h3 {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0;
+}
+
+.inspectCodeBadge {
+  font-family: monospace;
+  font-size: 0.72rem;
+  font-weight: 700;
+  background: #f1f5f9;
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: #334155;
+}
+
+.inspectCategoryBadge {
+  font-size: 0.68rem;
+  font-weight: 700;
+  background: #e6f4f2;
+  color: #167C72;
+  padding: 2px 7px;
+  border-radius: 6px;
+  text-transform: uppercase;
+}
+
+.inspectSkillText {
+  font-size: 0.82rem;
+  color: #475569;
+  font-weight: 500;
+  margin: 0;
+}
+
+.inspectSiteMeta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  color: #64748b;
+  flex-wrap: wrap;
+}
+
+.metaIcon {
+  color: #167C72;
+}
+
+.closeBtn {
+  border: none;
+  background: transparent;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 6px;
+}
+
+.closeBtn:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.inspectModalBody {
+  padding: 1.5rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* Today's Evidence Card */
+.todayEvidenceCard {
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.todayEvidenceHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 0.75rem;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.evidenceHeaderLeft {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.navIconEmerald {
+  color: #167C72;
+  flex-shrink: 0;
+}
+
+.evidenceHeaderLeft strong {
+  display: block;
+  font-size: 0.92rem;
+  color: #0f172a;
+}
+
+.evidenceHeaderLeft span {
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
+.badgeValidGeofence {
+  background: #d1fae5;
+  color: #065f46;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 12px;
+}
+
+.badgeInvalidGeofence {
+  background: #fee2e2;
+  color: #991b1b;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 12px;
+}
+
+.todayEvidenceGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+@media (max-width: 768px) {
+  .todayEvidenceGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.todayStatBox {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  padding: 10px 12px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.todayStatLabel {
+  font-size: 0.7rem;
+  color: #64748b;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.todayStatVal {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.todayStatSub {
+  font-size: 0.68rem;
+  color: #94a3b8;
+}
+
+.textSuccessBig {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #059669;
+}
+
+.textDangerBig {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #dc2626;
+}
+
+.textEmeraldBig {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #167C72;
+}
+
+/* 7-Day History Table */
+.historySection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.historySectionHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.headerIconTeal {
+  color: #167C72;
+}
+
+.historySectionHeader h4 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+}
+
+.historyTableWrap {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  overflow-x: auto;
+}
+
+.historyTable {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.82rem;
+  min-width: 680px;
+}
+
+.historyTable th {
+  background: #f8fafc;
+  padding: 10px 12px;
+  font-size: 0.72rem;
+  color: #475569;
+  text-transform: uppercase;
+  font-weight: 600;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.historyTable td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #f1f5f9;
+  color: #334155;
+}
+
+.histTableRow:hover {
+  background: #f8fafc;
+}
+
+.dayNameSub {
+  font-size: 0.72rem;
+  color: #64748b;
+  margin-left: 4px;
+}
+
+.timeTagIn {
+  background: #ecfdf5;
+  color: #065f46;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.timeTagOut {
+  background: #f1f5f9;
+  color: #475569;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.distBadgeOk {
+  color: #059669;
+  font-weight: 700;
+}
+
+.distBadgeAlert {
+  color: #dc2626;
+  font-weight: 700;
+  background: #fee2e2;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.statusBadgeSmall {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 6px;
+}
+
+.statusBadgeSmall.present { background: #d1fae5; color: #065f46; }
+.statusBadgeSmall.halfday { background: #fef3c7; color: #92400e; }
+.statusBadgeSmall.absent { background: #fee2e2; color: #991b1b; }
+
+/* Monthly Summary */
+.monthlySummaryGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  background: #fafaf9;
+  padding: 1rem;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+}
+
+@media (max-width: 640px) {
+  .monthlySummaryGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.monthBox {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 0.72rem;
+  color: #64748b;
+}
+
+.monthBox strong {
+  font-size: 1.05rem;
+  color: #0f172a;
+}
+
+.inspectFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid #e2e8f0;
+  padding-top: 1rem;
+}
+
+.btnOpenFullProfile {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #167C72;
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 8px 16px;
+  border-radius: 8px;
+}
+
+.btnOpenFullProfile:hover {
+  background: #136961;
+}
+
+.btnCloseModal {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #475569;
+  font-weight: 600;
+  font-size: 0.82rem;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.btnCloseModal:hover {
+  background: #f1f5f9;
+}
+
+/* Review Exception Modal */
 .reviewModalBox {
   background: #ffffff;
   border-radius: 16px;
@@ -870,14 +1375,6 @@
   font-weight: 800;
   color: #0f172a;
   margin: 0;
-}
-
-.closeBtn {
-  border: none;
-  background: transparent;
-  color: #94a3b8;
-  cursor: pointer;
-  padding: 4px;
 }
 
 .reviewBody {
