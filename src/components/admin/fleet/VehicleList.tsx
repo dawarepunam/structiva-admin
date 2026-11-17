@@ -22,6 +22,13 @@ export default function VehicleList() {
   const [projects, setProjects] = useState<EnterpriseProjectRecord[]>([]);
   const [workers, setWorkers] = useState<EnterpriseWorkerRecord[]>([]);
   
+  // Search & Filter State
+  const [search, setSearch] = useState('');
+  const [classFilter, setClassFilter] = useState<'All' | 'Heavy Machinery' | 'Commercial Vehicle'>('All');
+  const [ownershipFilter, setOwnershipFilter] = useState('All');
+  const [statusFilter, setStatusFilter] = useState('All');
+  const [projectFilter, setProjectFilter] = useState('All');
+
   // Mutual Exclusive Card Filter State
   const [activeKpiCard, setActiveKpiCard] = useState<'All' | 'Heavy' | 'Vehicle' | 'Operating' | 'Maintenance' | 'Rented'>('All');
 
