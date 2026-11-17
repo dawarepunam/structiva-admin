@@ -52,7 +52,7 @@ export default function ProjectTable() {
     code: '',
     client: '',
     location: '',
-    category: 'Commercial Building' as const,
+    category: 'Commercial Building' as 'Commercial Building' | 'Highway Infrastructure' | 'Metro Rail transit' | 'Industrial Plant',
     budget: '',
     spent: '0',
     progress: '0',

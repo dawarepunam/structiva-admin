@@ -709,7 +709,7 @@ export default function ProjectDetailsPage() {
             <div className={styles.machineryGrid}>
               <div className={styles.machineCard}>
                 <div className={styles.machineThumb}>
-                  <SafeImage src="/images/jcb_real.jpg" alt="JCB 3DX" fallbackType="vehicle" className={styles.thumbImg} />
+                  <SafeImage src="/images/jcb_real.jpg" alt="JCB 3DX" fallbackType="machine" className={styles.thumbImg} />
                 </div>
                 <div className={styles.machineContent}>
                   <strong className={styles.machineName}>JCB 3DX Super (MH 12 AB 4590)</strong>
@@ -723,7 +723,7 @@ export default function ProjectDetailsPage() {
 
               <div className={styles.machineCard}>
                 <div className={styles.machineThumb}>
-                  <SafeImage src="/images/crane_real.jpg" alt="Sany Crane" fallbackType="vehicle" className={styles.thumbImg} />
+                  <SafeImage src="/images/crane_real.jpg" alt="Sany Crane" fallbackType="machine" className={styles.thumbImg} />
                 </div>
                 <div className={styles.machineContent}>
                   <strong className={styles.machineName}>Sany 75T Crawler Crane (MH 12 EF 9081)</strong>
