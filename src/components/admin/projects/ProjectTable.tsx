@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import styles from './ProjectTable.module.css';
 import { 
   Plus, 
@@ -28,6 +29,7 @@ import { EnterpriseProjectRecord, getStoredProjects, saveProjects } from '@/serv
 import { getStoredWorkers, EnterpriseWorkerRecord } from '@/services/workerStorage';
 
 export default function ProjectTable() {
+  const router = useRouter();
   const [projects, setProjects] = useState<EnterpriseProjectRecord[]>([]);
   const [workers, setWorkers] = useState<EnterpriseWorkerRecord[]>([]);
   const [search, setSearch] = useState('');
@@ -319,7 +321,13 @@ export default function ProjectTable() {
           {filtered.map(p => {
             const workerCount = getProjectWorkerCount(p.name);
             return (
-              <div key={p.id} className={styles.projectCard}>
+              <div 
+                key={p.id} 
+                className={styles.projectCard}
+                onClick={() => router.push(`/admin/projects/${p.id}`)}
+                role="button"
+                tabIndex={0}
+              >
                 {/* Image Cover */}
                 <div className={styles.imageCoverWrapper}>
                   <SafeImage 
@@ -396,10 +404,10 @@ export default function ProjectTable() {
                       <span className={styles.managerName}>Mgr: {p.projectManager.split(' ')[1] || p.projectManager}</span>
                     </div>
 
-                    <Link href={`/admin/projects/${p.id}`} className={styles.viewDetailsBtn}>
+                    <div className={styles.viewDetailsBtn}>
                       <span>View Details</span>
                       <ArrowRight size={13} />
-                    </Link>
+                    </div>
                   </div>
                 </div>
               </div>
