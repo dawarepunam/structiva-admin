@@ -1,0 +1,457 @@
+/* ========================================================
+   STRUCTIVA ENTERPRISE OS – SITE ACTIVITIES CSS MODULE
+   ======================================================== */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.topBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--porcelain-white);
+  padding: 0.85rem 1.25rem;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-subtle);
+  box-shadow: 0 1px 3px rgba(23, 43, 50, 0.03);
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.filterGroup {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.filterBox {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--warm-ivory);
+  padding: 0.4rem 0.85rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+}
+
+.filterIcon {
+  color: var(--premium-emerald);
+}
+
+.selectInput {
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.totalBadge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--premium-emerald);
+  background: rgba(22, 124, 114, 0.1);
+  padding: 4px 10px;
+  border-radius: 12px;
+}
+
+.logBtnPrimary {
+  background: var(--premium-emerald);
+  color: #FFFFFF;
+  border: none;
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 0.55rem 1.15rem;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(22, 124, 114, 0.35);
+  transition: background 0.2s;
+}
+
+.logBtnPrimary:hover {
+  background: var(--emerald-hover);
+}
+
+/* Activity Stream Grid */
+.activityGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 1.25rem;
+  width: 100%;
+}
+
+.activityCard {
+  background: var(--porcelain-white);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(23, 43, 50, 0.03);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.activityCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(23, 43, 50, 0.08);
+  border-color: var(--champagne-bronze);
+}
+
+.cardHeader {
+  padding: 0.75rem 1.15rem;
+  background: var(--warm-ivory);
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.headerMeta {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.actId {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--midnight-graphite);
+  background: var(--soft-stone);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.timeTag {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.68rem;
+  color: var(--text-secondary);
+}
+
+.statusBadge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 12px;
+}
+
+.statusBadge.completed {
+  background: var(--status-success-bg);
+  color: var(--status-success);
+}
+
+.statusBadge.inprogress {
+  background: var(--status-info-bg);
+  color: var(--status-info);
+}
+
+.statusBadge.delayed {
+  background: var(--status-danger-bg);
+  color: var(--status-danger);
+}
+
+.cardContent {
+  padding: 1.15rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  flex: 1;
+}
+
+.mediaRow {
+  display: flex;
+  gap: 0.85rem;
+}
+
+.thumbnailWrapper {
+  position: relative;
+  width: 90px;
+  height: 80px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--soft-stone);
+  flex-shrink: 0;
+  border: 1px solid var(--border-subtle);
+}
+
+.thumbnailImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.labourPill {
+  position: absolute;
+  bottom: 4px;
+  left: 4px;
+  right: 4px;
+  background: rgba(23, 43, 50, 0.85);
+  color: #FFFFFF;
+  font-size: 0.58rem;
+  font-weight: 700;
+  padding: 2px 4px;
+  border-radius: 4px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+}
+
+.infoCol {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.actTitle {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.locRow {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+}
+
+.locIcon {
+  color: var(--champagne-bronze);
+  flex-shrink: 0;
+}
+
+.supervisorRow {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.68rem;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+.supIcon {
+  color: var(--premium-emerald);
+}
+
+.descBox {
+  background: var(--warm-ivory);
+  padding: 0.65rem 0.85rem;
+  border-radius: var(--radius-sm);
+  border-left: 3px solid var(--premium-emerald);
+}
+
+.descText {
+  font-size: 0.75rem;
+  color: var(--text-primary);
+  line-height: 1.4;
+  margin: 0;
+}
+
+.progressSection {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.progressHeader {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.progressVal {
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+.progressBar {
+  height: 6px;
+  background: var(--soft-stone);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: var(--premium-emerald);
+  border-radius: 3px;
+}
+
+.detailsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.65rem;
+  padding-top: 0.65rem;
+  border-top: 1px dashed var(--border-subtle);
+}
+
+.detailItem {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.detailLabel {
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.detailVal {
+  font-size: 0.72rem;
+  color: var(--text-primary);
+  line-height: 1.35;
+  margin: 0;
+  font-weight: 500;
+}
+
+/* Modal Form Styles */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(23, 43, 50, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 110;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.modalBox {
+  background: var(--porcelain-white);
+  border-radius: var(--radius-lg);
+  width: 100%;
+  max-width: 580px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow-elevated);
+  border: 1px solid var(--border-subtle);
+}
+
+.modalHeader {
+  background: var(--deep-forest-teal);
+  color: #FFFFFF;
+  padding: 1rem 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.modalTitle {
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.closeBtn {
+  background: transparent;
+  border: none;
+  color: #ECEBE5;
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+
+.modalForm {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.formGrid2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.85rem;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.input, .textarea {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  font-size: 0.8rem;
+  outline: none;
+  background: var(--warm-ivory);
+  color: var(--text-primary);
+  font-family: inherit;
+}
+
+.input:focus, .textarea:focus {
+  border-color: var(--premium-emerald);
+  background: #FFFFFF;
+}
+
+.rangeInput {
+  accent-color: var(--premium-emerald);
+  cursor: pointer;
+}
+
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.cancelBtn {
+  background: var(--soft-stone);
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.submitBtn {
+  background: var(--premium-emerald);
+  color: #FFFFFF;
+  border: none;
+  padding: 0.5rem 1.25rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+@media (max-width: 600px) {
+  .activityGrid {
+    grid-template-columns: 1fr;
+  }
+  .formGrid2 {
+    grid-template-columns: 1fr;
+  }
+}

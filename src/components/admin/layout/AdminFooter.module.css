@@ -1,13 +1,17 @@
+/* ========================================================
+   STRUCTIVA ENTERPRISE OS – EXECUTIVE FOOTER
+   ======================================================== */
+
 .footer {
   min-height: 52px;
-  background-color: #ffffff;
-  border-top: 1px solid #e2e8f0;
+  background-color: var(--porcelain-white);
+  border-top: 1px solid var(--border-subtle);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.75rem 2rem;
+  padding: 0.85rem 2rem;
   font-size: 0.78rem;
-  color: #64748b;
+  color: var(--text-secondary);
   margin-top: auto;
   flex-wrap: wrap;
   gap: 0.75rem;
@@ -22,27 +26,32 @@
   flex-wrap: wrap;
 }
 
+.companyText {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
 .systemStatus {
   display: flex;
   align-items: center;
-  gap: 0.4rem;
-  font-weight: 500;
-  color: #10b981;
+  gap: 0.45rem;
+  font-weight: 600;
+  color: var(--status-success);
 }
 
 .statusDot {
   width: 7px;
   height: 7px;
-  background-color: #10b981;
+  background-color: var(--status-success);
   border-radius: 50%;
   animation: pulse 2s infinite;
   flex-shrink: 0;
 }
 
 @keyframes pulse {
-  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
-  70% { transform: scale(1); box-shadow: 0 0 0 5px rgba(16, 185, 129, 0); }
-  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(35, 132, 93, 0.7); }
+  70% { transform: scale(1); box-shadow: 0 0 0 5px rgba(35, 132, 93, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(35, 132, 93, 0); }
 }
 
 .rightSection {
@@ -53,18 +62,45 @@
 }
 
 .footerLink {
-  color: #64748b;
+  color: var(--text-secondary);
   text-decoration: none;
   transition: color 0.15s;
 }
 
 .footerLink:hover {
-  color: #0f172a;
+  color: var(--premium-emerald);
+}
+
+.buildBadge {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  background: var(--soft-stone);
+  padding: 2px 8px;
+  border-radius: 12px;
 }
 
 /* Mobile & Tablet Breakpoint */
 @media (max-width: 768px) {
   .footer {
-    display: none; /* Hide heavy enterprise footer on mobile so it doesn't conflict with Mobile Bottom Navigation */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 1.25rem 1rem 85px 1rem; /* Generous space so content is above bottom nav */
+    gap: 0.5rem;
+    background-color: var(--warm-ivory);
+    border-top: 1px solid var(--border-subtle);
+  }
+
+  .leftSection {
+    flex-direction: column;
+    gap: 0.35rem;
+    align-items: center;
+  }
+
+  .rightSection {
+    gap: 0.85rem;
+    font-size: 0.72rem;
+    justify-content: center;
   }
 }

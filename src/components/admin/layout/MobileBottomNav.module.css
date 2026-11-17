@@ -9,15 +9,15 @@
     bottom: 0;
     left: 0;
     right: 0;
-    height: 64px;
-    background: #0f172a;
-    border-top: 1px solid #1e293b;
+    height: 62px;
+    background: #172B32; /* Midnight Graphite MNC Theme */
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
     z-index: 100;
     justify-content: space-around;
     align-items: center;
     padding: 0 4px;
-    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.2);
-    backdrop-filter: blur(8px);
+    box-shadow: 0 -4px 20px rgba(23, 43, 50, 0.3);
+    backdrop-filter: blur(10px);
   }
 
   .navItem {
@@ -25,7 +25,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    color: #94a3b8;
+    color: #A8B9AA;
     text-decoration: none;
     font-size: 0.65rem;
     font-weight: 600;
@@ -36,15 +36,17 @@
   }
 
   .activeNavItem {
-    color: #f59e0b !important;
+    color: #FFFFFF !important;
   }
 
   .activeIconWrapper {
-    background: rgba(245, 158, 11, 0.15);
-    padding: 4px 12px;
+    background: rgba(22, 124, 114, 0.35);
+    color: #B58B59;
+    padding: 4px 14px;
     border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
+    border: 1px solid rgba(181, 139, 89, 0.3);
   }
 }

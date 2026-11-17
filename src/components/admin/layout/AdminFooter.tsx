@@ -7,7 +7,9 @@ export default function AdminFooter() {
   return (
     <footer className={styles.footer}>
       <div className={styles.leftSection}>
-        <span>© 2026 <strong>STRUCTIVA OS</strong>. Enterprise Infrastructure Intelligence.</span>
+        <span className={styles.companyText}>
+          © 2026 <strong>STRUCTIVA ENTERPRISE OS</strong>. Infrastructure Intelligence.
+        </span>
         <span>•</span>
         <div className={styles.systemStatus}>
           <span className={styles.statusDot}></span>
@@ -18,7 +20,7 @@ export default function AdminFooter() {
       <div className={styles.rightSection}>
         <a href="#audit" className={styles.footerLink}>Audit Trail</a>
         <a href="#security" className={styles.footerLink}>Security Policy</a>
-        <span>Build v2.4-enterprise</span>
+        <span className={styles.buildBadge}>Build v3.0-enterprise</span>
       </div>
     </footer>
   );

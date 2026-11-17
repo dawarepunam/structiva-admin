@@ -33,7 +33,7 @@ const navGroups = [
     group: 'Projects & Sites',
     items: [
       { name: 'Projects', href: '/admin/projects', icon: Building2 },
-      { name: 'Site Activities', href: '/admin/reports', icon: HardHat },
+      { name: 'Site Activities', href: '/admin/activities', icon: HardHat },
     ]
   },
   {
