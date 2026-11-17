@@ -72,6 +72,26 @@ html, body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Comprehensive Defensive Mobile App Rules */
+img, video, canvas, svg {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Force container cards & tables to never overflow viewport */
+main, section, article, div {
+  max-width: 100%;
+}
+
+@media (max-width: 768px) {
+  /* Prevent any unintentional horizontal bounce/overflow on touch */
+  html, body {
+    overflow-x: hidden !important;
+    position: relative;
+    width: 100% !important;
+  }
+}
+
 /* Custom Scrollbar for Enterprise Look */
 ::-webkit-scrollbar {
   width: 6px;
