@@ -11,7 +11,7 @@ import {
   ArrowLeft, Truck, MapPin, ShieldCheck, Calendar, Clock, DollarSign, Award, 
   FileText, Briefcase, CheckCircle2, AlertTriangle, AlertCircle, Wrench, 
   ExternalLink, Download, Plus, ChevronRight, Edit3, Fuel, Radio, Gauge,
-  Check, X, HardHat, UserCheck, Smartphone, Activity
+  Check, X, HardHat, UserCheck, Smartphone, Activity, Building, Building2
 } from 'lucide-react';
 import Link from 'next/link';
 

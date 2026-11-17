@@ -22,12 +22,37 @@ export default function VehicleList() {
   const [projects, setProjects] = useState<EnterpriseProjectRecord[]>([]);
   const [workers, setWorkers] = useState<EnterpriseWorkerRecord[]>([]);
   
-  // Filters & Controls
-  const [search, setSearch] = useState('');
-  const [classFilter, setClassFilter] = useState<'All' | 'Heavy Machinery' | 'Commercial Vehicle'>('All');
-  const [ownershipFilter, setOwnershipFilter] = useState('All');
-  const [statusFilter, setStatusFilter] = useState('All');
-  const [projectFilter, setProjectFilter] = useState('All');
+  // Mutual Exclusive Card Filter State
+  const [activeKpiCard, setActiveKpiCard] = useState<'All' | 'Heavy' | 'Vehicle' | 'Operating' | 'Maintenance' | 'Rented'>('All');
+
+  const handleKpiCardClick = (cardType: 'All' | 'Heavy' | 'Vehicle' | 'Operating' | 'Maintenance' | 'Rented') => {
+    setActiveKpiCard(cardType);
+    if (cardType === 'All') {
+      setClassFilter('All');
+      setStatusFilter('All');
+      setOwnershipFilter('All');
+    } else if (cardType === 'Heavy') {
+      setClassFilter('Heavy Machinery');
+      setStatusFilter('All');
+      setOwnershipFilter('All');
+    } else if (cardType === 'Vehicle') {
+      setClassFilter('Commercial Vehicle');
+      setStatusFilter('All');
+      setOwnershipFilter('All');
+    } else if (cardType === 'Operating') {
+      setClassFilter('All');
+      setStatusFilter('Operational (On Site)');
+      setOwnershipFilter('All');
+    } else if (cardType === 'Maintenance') {
+      setClassFilter('All');
+      setStatusFilter('Under Maintenance');
+      setOwnershipFilter('All');
+    } else if (cardType === 'Rented') {
+      setClassFilter('All');
+      setStatusFilter('All');
+      setOwnershipFilter('Rented / Hired');
+    }
+  };
   const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid');
   const [showAddModal, setShowAddModal] = useState(false);
 
@@ -181,8 +206,8 @@ export default function VehicleList() {
       {/* 12 Fleet KPI Metric Cards Grid */}
       <div className={styles.kpiGrid}>
         <div 
-          className={`${styles.kpiCard} ${classFilter === 'All' && statusFilter === 'All' ? styles.kpiActive : ''}`}
-          onClick={() => { setClassFilter('All'); setStatusFilter('All'); }}
+          className={`${styles.kpiCard} ${activeKpiCard === 'All' ? styles.kpiActive : ''}`}
+          onClick={() => handleKpiCardClick('All')}
         >
           <div className={styles.kpiHeader}>
             <span className={styles.kpiLabel}>Total Fleet Assets</span>
@@ -198,8 +223,8 @@ export default function VehicleList() {
         </div>
 
         <div 
-          className={`${styles.kpiCard} ${classFilter === 'Heavy Machinery' ? styles.kpiActive : ''}`}
-          onClick={() => setClassFilter(classFilter === 'Heavy Machinery' ? 'All' : 'Heavy Machinery')}
+          className={`${styles.kpiCard} ${activeKpiCard === 'Heavy' ? styles.kpiActive : ''}`}
+          onClick={() => handleKpiCardClick('Heavy')}
         >
           <div className={styles.kpiHeader}>
             <span className={styles.kpiLabel}>Heavy Machinery</span>
@@ -215,8 +240,8 @@ export default function VehicleList() {
         </div>
 
         <div 
-          className={`${styles.kpiCard} ${classFilter === 'Commercial Vehicle' ? styles.kpiActive : ''}`}
-          onClick={() => setClassFilter(classFilter === 'Commercial Vehicle' ? 'All' : 'Commercial Vehicle')}
+          className={`${styles.kpiCard} ${activeKpiCard === 'Vehicle' ? styles.kpiActive : ''}`}
+          onClick={() => handleKpiCardClick('Vehicle')}
         >
           <div className={styles.kpiHeader}>
             <span className={styles.kpiLabel}>Commercial Vehicles</span>
@@ -232,8 +257,8 @@ export default function VehicleList() {
         </div>
 
         <div 
-          className={`${styles.kpiCard} ${statusFilter === 'Operational (On Site)' ? styles.kpiActive : ''}`}
-          onClick={() => setStatusFilter(statusFilter === 'Operational (On Site)' ? 'All' : 'Operational (On Site)')}
+          className={`${styles.kpiCard} ${activeKpiCard === 'Operating' ? styles.kpiActive : ''}`}
+          onClick={() => handleKpiCardClick('Operating')}
         >
           <div className={styles.kpiHeader}>
             <span className={styles.kpiLabel}>Operating On Site</span>
@@ -249,8 +274,8 @@ export default function VehicleList() {
         </div>
 
         <div 
-          className={`${styles.kpiCard} ${statusFilter === 'Under Maintenance' ? styles.kpiActive : ''}`}
-          onClick={() => setStatusFilter(statusFilter === 'Under Maintenance' ? 'All' : 'Under Maintenance')}
+          className={`${styles.kpiCard} ${activeKpiCard === 'Maintenance' ? styles.kpiActive : ''}`}
+          onClick={() => handleKpiCardClick('Maintenance')}
         >
           <div className={styles.kpiHeader}>
             <span className={styles.kpiLabel}>Under Maintenance</span>
@@ -266,8 +291,8 @@ export default function VehicleList() {
         </div>
 
         <div 
-          className={`${styles.kpiCard} ${ownershipFilter === 'Rented / Hired' ? styles.kpiActive : ''}`}
-          onClick={() => setOwnershipFilter(ownershipFilter === 'Rented / Hired' ? 'All' : 'Rented / Hired')}
+          className={`${styles.kpiCard} ${activeKpiCard === 'Rented' ? styles.kpiActive : ''}`}
+          onClick={() => handleKpiCardClick('Rented')}
         >
           <div className={styles.kpiHeader}>
             <span className={styles.kpiLabel}>Hired / Rented Assets</span>
