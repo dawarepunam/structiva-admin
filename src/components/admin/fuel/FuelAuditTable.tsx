@@ -161,6 +161,7 @@ export default function FuelAuditTable() {
           <span style={{ fontSize: '0.8rem', color: '#64748b' }}>Click machine to inspect historical fuel logbook</span>
         </div>
 
+        {/* Desktop Responsive Table */}
         <div className={styles.tableResponsive}>
           <table className={styles.table}>
             <thead>
@@ -230,6 +231,68 @@ export default function FuelAuditTable() {
               ))}
             </tbody>
           </table>
+        </div>
+
+        {/* Android Mobile Native Fuel Asset Cards */}
+        <div className={styles.mobileCardList}>
+          {audits.map(f => (
+            <div 
+              key={f.id} 
+              className={`${styles.mobileFuelCard} ${f.status !== 'Optimal' ? styles.mobileFuelCardAlert : ''}`}
+              onClick={() => setSelectedMachine(f)}
+            >
+              <div className={styles.mobileCardTop}>
+                <SafeImage 
+                  src={f.vehicleImage} 
+                  alt={f.vehicle} 
+                  fallbackType="machine"
+                  className={styles.mobileVehicleThumb} 
+                />
+                <div className={styles.mobileVehicleInfo}>
+                  <strong className={styles.mobileVehicleName}>{f.vehicle}</strong>
+                  <span className={styles.mobileRegCode}>{f.regNumber}</span>
+                  <span style={{ fontSize: '0.72rem', color: '#64748b' }}>{f.site} • {f.driver}</span>
+                </div>
+              </div>
+
+              <div className={styles.mobileStatsGrid}>
+                <div className={styles.mobileStatItem}>
+                  <span className={styles.mobileStatLabel}>Fuel Disbursed</span>
+                  <span className={styles.mobileStatVal}>{f.litersFilled} Litres (₹ {f.totalCost.toLocaleString('en-IN')})</span>
+                </div>
+                <div className={styles.mobileStatItem}>
+                  <span className={styles.mobileStatLabel}>Engine Metrics</span>
+                  <span className={styles.mobileStatVal}>{f.engineHoursRun} {f.vehicle.includes('Tipper') ? 'KM' : 'Hours'}</span>
+                </div>
+                <div className={styles.mobileStatItem}>
+                  <span className={styles.mobileStatLabel}>Target Baseline</span>
+                  <span className={styles.mobileStatVal}>~{f.expectedLiters} Litres</span>
+                </div>
+                <div className={styles.mobileStatItem}>
+                  <span className={styles.mobileStatLabel}>Anti-Theft Status</span>
+                  <span style={{ color: f.status === 'Optimal' ? '#059669' : '#dc2626', fontWeight: 800 }}>
+                    {f.status === 'Optimal' ? '● Optimal' : '⚠️ Anomaly (+30L)'}
+                  </span>
+                </div>
+              </div>
+
+              <div className={styles.mobileCardFooter}>
+                <button 
+                  onClick={(e) => { e.stopPropagation(); setViewReceipt(f); }}
+                  style={{
+                    background: '#f8fafc', border: '1px solid #cbd5e1', padding: '5px 10px',
+                    borderRadius: 6, fontSize: '0.75rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 5, fontWeight: 700
+                  }}
+                >
+                  <Eye size={13} color="#f59e0b" /> Slips
+                </button>
+                <button className={styles.btnInspectMobile}>
+                  <span>Inspect Fuel History</span>
+                  <ArrowRight size={13} />
+                </button>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 

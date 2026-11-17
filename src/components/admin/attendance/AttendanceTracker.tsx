@@ -517,7 +517,7 @@ export default function AttendanceTracker() {
             💡 <strong>Tip:</strong> Click on any worker's row or photo to view their photo, GPS distance evidence, login/logout timestamps, and last 7-day & monthly audit record.
           </p>
 
-          {/* Muster Table */}
+          {/* Desktop Muster Table */}
           <div className={styles.tableCard}>
             <table className={styles.musterTable}>
               <thead>
@@ -612,6 +612,76 @@ export default function AttendanceTracker() {
                 })}
               </tbody>
             </table>
+          </div>
+
+          {/* Android Mobile Native Muster Cards View */}
+          <div className={styles.mobileMusterCardList}>
+            {filteredLogs.map(log => {
+              const workerRecord = workers.find(w => w.code === log.workerCode || w.name === log.workerName);
+              const avatarSrc = workerRecord?.avatar || '/images/worker1.jpg';
+
+              return (
+                <div 
+                  key={log.id} 
+                  className={`${styles.mobileMusterCard} ${!log.geofencePassed ? styles.mobileMusterCardAlert : ''}`}
+                  onClick={() => handleOpenWorkerInspection(log.workerName, log.workerCode)}
+                >
+                  <div className={styles.mobileWorkerHeader}>
+                    <div className={styles.mobileAvatarWrapper}>
+                      <SafeImage 
+                        src={avatarSrc} 
+                        alt={log.workerName} 
+                        fallbackType="worker" 
+                        className={styles.mobileAvatarImg} 
+                      />
+                      <span className={`${styles.statusPip} ${log.geofencePassed ? styles.pipGreen : styles.pipRed}`} />
+                    </div>
+                    <div className={styles.mobileWorkerInfo}>
+                      <strong className={styles.mobileWorkerName}>{log.workerName}</strong>
+                      <div className={styles.mobileWorkerMeta}>
+                        <span>{log.workerCode}</span>
+                        <span>•</span>
+                        <span>{log.site}</span>
+                      </div>
+                    </div>
+                    <span className={`${styles.statusBadge} ${styles[log.status.toLowerCase().replace(' ', '')]}`}>
+                      ● {log.status}
+                    </span>
+                  </div>
+
+                  <div className={styles.mobileStatsGrid}>
+                    <div className={styles.mobileStatItem}>
+                      <span className={styles.mobileStatLabel}>Punched In / Out</span>
+                      <span className={styles.mobileStatVal}>{log.checkInTime} — {log.checkOutTime || '06:00 PM'}</span>
+                    </div>
+                    <div className={styles.mobileStatItem}>
+                      <span className={styles.mobileStatLabel}>GPS Geofence</span>
+                      <span className={log.geofencePassed ? styles.distValid : styles.distInvalid}>
+                        {log.distanceFromSiteMetres}m {log.geofencePassed ? '✓ Within 100m' : '⚠️ (>100m)'}
+                      </span>
+                    </div>
+                    <div className={styles.mobileStatItem}>
+                      <span className={styles.mobileStatLabel}>Daily Wage Earned</span>
+                      <span className={styles.mobileStatVal} style={{ color: '#167C72', fontWeight: 800 }}>₹ {log.wageEarned}</span>
+                    </div>
+                    <div className={styles.mobileStatItem}>
+                      <span className={styles.mobileStatLabel}>Verification Type</span>
+                      <span className={styles.mobileStatVal}>{log.verificationMethod}</span>
+                    </div>
+                  </div>
+
+                  <div className={styles.mobileCardFooter}>
+                    <span style={{ fontSize: '0.72rem', color: '#64748b' }}>
+                      Hours logged: <strong>{log.hoursWorked} hrs</strong>
+                    </span>
+                    <button className={styles.btnViewLogsMini}>
+                      <span>View 7-Day & Audit</span>
+                      <ChevronRight size={13} />
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       )}

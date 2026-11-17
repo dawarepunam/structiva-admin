@@ -206,6 +206,130 @@
   background: #dc2626;
 }
 
+/* Mobile Card Transformation Styles */
+.mobileCardList {
+  display: none;
+}
+
+.mobileExpenseCard {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  cursor: pointer;
+}
+
+.mobileExpenseCardPending {
+  border-left: 4px solid #f59e0b;
+  background: #fffdfa;
+}
+
+.mobileCardTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.mobileVoucherCode {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #f59e0b;
+  font-family: monospace;
+}
+
+.mobileCardTitle {
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 2px 0 0 0;
+  line-height: 1.25;
+}
+
+.mobileAmount {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #0f172a;
+  white-space: nowrap;
+}
+
+.mobileCardMetaGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  background: #f8fafc;
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-size: 0.75rem;
+}
+
+.mobileMetaItem {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.mobileMetaLabel {
+  font-size: 0.65rem;
+  color: #64748b;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.mobileMetaVal {
+  color: #1e293b;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mobileCardFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 0.5rem;
+  border-top: 1px solid #f1f5f9;
+  gap: 8px;
+}
+
+.mobileActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.btnApproveMobile {
+  flex: 1;
+  background: #059669;
+  color: #ffffff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.8rem;
+  cursor: pointer;
+  text-align: center;
+}
+
+.btnRejectMobile {
+  flex: 1;
+  background: #ffffff;
+  border: 1px solid #dc2626;
+  color: #dc2626;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.8rem;
+  cursor: pointer;
+  text-align: center;
+}
+
 @media (max-width: 768px) {
   .kpiRow {
     grid-template-columns: repeat(2, 1fr) !important;
@@ -231,5 +355,17 @@
     padding: 1rem;
     flex-direction: column;
     align-items: stretch;
+    gap: 0.75rem;
+  }
+
+  .tableResponsive {
+    display: none;
+  }
+
+  .mobileCardList {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 0.75rem;
   }
 }

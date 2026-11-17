@@ -40,17 +40,31 @@
 }
 
 .submitBtn {
-  background-color: #0f172a;
+  background-color: var(--midnight-graphite, #172B32);
   color: #ffffff;
-  padding: 0.5rem 1.25rem;
-  border-radius: 6px;
+  padding: 0.65rem 1.5rem;
+  border-radius: 8px;
   border: none;
-  font-weight: 600;
+  font-weight: 700;
   font-size: 0.85rem;
   cursor: pointer;
   width: fit-content;
+  transition: all 0.2s ease;
 }
 
 .submitBtn:hover {
-  background-color: #1e293b;
+  background-color: var(--deep-forest-teal, #203A3B);
+}
+
+@media (max-width: 600px) {
+  .formGrid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .submitBtn {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+  }
 }

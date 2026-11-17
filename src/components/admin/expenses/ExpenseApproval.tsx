@@ -236,85 +236,154 @@ export default function ExpenseApproval({ onlyPending = false }: { onlyPending?:
             <p style={{ fontSize: '0.85rem' }}>There are currently zero pending expense approvals in the queue.</p>
           </div>
         ) : (
-          <div className={styles.tableResponsive}>
-            <table className={styles.table}>
-              <thead>
-                <tr>
-                  <th>Receipt Bill</th>
-                  <th>Voucher & Description</th>
-                  <th>Category</th>
-                  <th>Amount (₹)</th>
-                  <th>Site & Submitter</th>
-                  <th>Audit Status</th>
-                  <th>Executive Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {displayedExpenses.map(exp => (
-                  <tr 
-                    key={exp.id} 
-                    style={{ cursor: 'pointer', backgroundColor: exp.status === 'Pending' ? '#fffbeb' : 'transparent' }}
-                    onClick={() => setSelectedExpense(exp)}
-                  >
-                    <td>
-                      <SafeImage 
-                        src={exp.receiptImage} 
-                        alt="Receipt" 
-                        fallbackType="receipt"
-                        className={styles.billThumbnail} 
-                        onClick={(e) => { e.stopPropagation(); setViewInvoice(exp); }}
-                      />
-                    </td>
-                    <td>
-                      <div style={{ color: '#f59e0b', fontSize: '0.72rem', fontWeight: 800 }}>{exp.voucherNumber}</div>
-                      <div style={{ fontWeight: 800, color: '#0f172a' }}>{exp.title}</div>
-                      <div style={{ fontSize: '0.72rem', color: '#64748b' }}>Vendor: {exp.vendorName}</div>
-                    </td>
-                    <td>
-                      <span className={`${styles.badgeCategory} ${
-                        exp.category === 'Machinery Maintenance' ? styles.catMaintenance :
-                        exp.category === 'Materials' ? styles.catMaterials : styles.catPetty
-                      }`}>
-                        {exp.category}
-                      </span>
-                    </td>
-                    <td style={{ fontWeight: 800, color: '#0f172a', fontSize: '0.95rem' }}>
-                      ₹ {exp.amount.toLocaleString('en-IN')}
-                    </td>
-                    <td>
-                      <div style={{ fontWeight: 600 }}>{exp.site}</div>
-                      <div style={{ fontSize: '0.72rem', color: '#64748b' }}>{exp.submittedBy} • {exp.date}</div>
-                    </td>
-                    <td>
-                      <span style={{
-                        fontSize: '0.72rem', fontWeight: 800, padding: '3px 8px', borderRadius: 20,
-                        background: exp.status === 'Approved' ? '#d1fae5' : exp.status === 'Rejected' ? '#fee2e2' : '#fef3c7',
-                        color: exp.status === 'Approved' ? '#065f46' : exp.status === 'Rejected' ? '#991b1b' : '#92400e',
-                      }}>
-                        {exp.status}
-                      </span>
-                    </td>
-                    <td>
-                      {exp.status === 'Pending' ? (
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                          <button className={styles.btnApprove} onClick={(e) => handleAction(exp.id, 'Approved', e)}>
-                            Approve
-                          </button>
-                          <button className={styles.btnReject} onClick={(e) => handleAction(exp.id, 'Rejected', e)}>
-                            Reject
-                          </button>
-                        </div>
-                      ) : (
-                        <span style={{ fontSize: '0.75rem', color: '#059669', fontWeight: 700 }}>
-                          ✓ {exp.status}
-                        </span>
-                      )}
-                    </td>
+          <>
+            {/* Desktop Full Table View */}
+            <div className={styles.tableResponsive}>
+              <table className={styles.table}>
+                <thead>
+                  <tr>
+                    <th>Receipt Bill</th>
+                    <th>Voucher & Description</th>
+                    <th>Category</th>
+                    <th>Amount (₹)</th>
+                    <th>Site & Submitter</th>
+                    <th>Audit Status</th>
+                    <th>Executive Action</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {displayedExpenses.map(exp => (
+                    <tr 
+                      key={exp.id} 
+                      style={{ cursor: 'pointer', backgroundColor: exp.status === 'Pending' ? '#fffbeb' : 'transparent' }}
+                      onClick={() => setSelectedExpense(exp)}
+                    >
+                      <td>
+                        <SafeImage 
+                          src={exp.receiptImage} 
+                          alt="Receipt" 
+                          fallbackType="receipt"
+                          className={styles.billThumbnail} 
+                          onClick={(e) => { e.stopPropagation(); setViewInvoice(exp); }}
+                        />
+                      </td>
+                      <td>
+                        <div style={{ color: '#f59e0b', fontSize: '0.72rem', fontWeight: 800 }}>{exp.voucherNumber}</div>
+                        <div style={{ fontWeight: 800, color: '#0f172a' }}>{exp.title}</div>
+                        <div style={{ fontSize: '0.72rem', color: '#64748b' }}>Vendor: {exp.vendorName}</div>
+                      </td>
+                      <td>
+                        <span className={`${styles.badgeCategory} ${
+                          exp.category === 'Machinery Maintenance' ? styles.catMaintenance :
+                          exp.category === 'Materials' ? styles.catMaterials : styles.catPetty
+                        }`}>
+                          {exp.category}
+                        </span>
+                      </td>
+                      <td style={{ fontWeight: 800, color: '#0f172a', fontSize: '0.95rem' }}>
+                        ₹ {exp.amount.toLocaleString('en-IN')}
+                      </td>
+                      <td>
+                        <div style={{ fontWeight: 600 }}>{exp.site}</div>
+                        <div style={{ fontSize: '0.72rem', color: '#64748b' }}>{exp.submittedBy} • {exp.date}</div>
+                      </td>
+                      <td>
+                        <span style={{
+                          fontSize: '0.72rem', fontWeight: 800, padding: '3px 8px', borderRadius: 20,
+                          background: exp.status === 'Approved' ? '#d1fae5' : exp.status === 'Rejected' ? '#fee2e2' : '#fef3c7',
+                          color: exp.status === 'Approved' ? '#065f46' : exp.status === 'Rejected' ? '#991b1b' : '#92400e',
+                        }}>
+                          {exp.status}
+                        </span>
+                      </td>
+                      <td>
+                        {exp.status === 'Pending' ? (
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                            <button className={styles.btnApprove} onClick={(e) => handleAction(exp.id, 'Approved', e)}>
+                              Approve
+                            </button>
+                            <button className={styles.btnReject} onClick={(e) => handleAction(exp.id, 'Rejected', e)}>
+                              Reject
+                            </button>
+                          </div>
+                        ) : (
+                          <span style={{ fontSize: '0.75rem', color: '#059669', fontWeight: 700 }}>
+                            ✓ {exp.status}
+                          </span>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Mobile Native Card View (<768px Android Viewport) */}
+            <div className={styles.mobileCardList}>
+              {displayedExpenses.map(exp => (
+                <div 
+                  key={exp.id} 
+                  className={`${styles.mobileExpenseCard} ${exp.status === 'Pending' ? styles.mobileExpenseCardPending : ''}`}
+                  onClick={() => setSelectedExpense(exp)}
+                >
+                  <div className={styles.mobileCardTop}>
+                    <div>
+                      <span className={styles.mobileVoucherCode}>{exp.voucherNumber}</span>
+                      <h4 className={styles.mobileCardTitle}>{exp.title}</h4>
+                    </div>
+                    <div className={styles.mobileAmount}>₹ {exp.amount.toLocaleString('en-IN')}</div>
+                  </div>
+
+                  <div className={styles.mobileCardMetaGrid}>
+                    <div className={styles.mobileMetaItem}>
+                      <span className={styles.mobileMetaLabel}>Site Location</span>
+                      <span className={styles.mobileMetaVal}>{exp.site}</span>
+                    </div>
+                    <div className={styles.mobileMetaItem}>
+                      <span className={styles.mobileMetaLabel}>Category</span>
+                      <span className={styles.mobileMetaVal}>{exp.category}</span>
+                    </div>
+                    <div className={styles.mobileMetaItem}>
+                      <span className={styles.mobileMetaLabel}>Vendor</span>
+                      <span className={styles.mobileMetaVal}>{exp.vendorName}</span>
+                    </div>
+                    <div className={styles.mobileMetaItem}>
+                      <span className={styles.mobileMetaLabel}>Status</span>
+                      <span style={{
+                        color: exp.status === 'Approved' ? '#059669' : exp.status === 'Rejected' ? '#dc2626' : '#d97706',
+                        fontWeight: 800
+                      }}>
+                        ● {exp.status}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className={styles.mobileCardFooter}>
+                    {exp.status === 'Pending' ? (
+                      <div className={styles.mobileActions}>
+                        <button 
+                          className={styles.btnApproveMobile} 
+                          onClick={(e) => handleAction(exp.id, 'Approved', e)}
+                        >
+                          ✓ Authorize Payment
+                        </button>
+                        <button 
+                          className={styles.btnRejectMobile} 
+                          onClick={(e) => handleAction(exp.id, 'Rejected', e)}
+                        >
+                          ✕ Reject
+                        </button>
+                      </div>
+                    ) : (
+                      <div style={{ fontSize: '0.75rem', color: '#64748b' }}>
+                        Audited by: <strong>{exp.approvedBy || 'Super Admin'}</strong>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
         )}
       </div>
 
