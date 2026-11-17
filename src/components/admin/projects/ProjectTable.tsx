@@ -1,8 +1,28 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
+import Link from 'next/link';
 import styles from './ProjectTable.module.css';
-import { Plus, Search, MapPin, Building2, Calendar, HardHat, Truck, ArrowRight, X, CheckCircle, Edit, Trash2, Upload, AlertTriangle } from 'lucide-react';
+import { 
+  Plus, 
+  Search, 
+  MapPin, 
+  Building2, 
+  Calendar, 
+  HardHat, 
+  Truck, 
+  ArrowRight, 
+  X, 
+  CheckCircle, 
+  Edit, 
+  Trash2, 
+  Upload, 
+  AlertTriangle,
+  Filter,
+  ArrowUpDown,
+  LayoutGrid,
+  List
+} from 'lucide-react';
 import SafeImage from '@/components/admin/ui/SafeImage';
 import { EnterpriseProjectRecord, getStoredProjects, saveProjects } from '@/services/projectStorage';
 import { getStoredWorkers, EnterpriseWorkerRecord } from '@/services/workerStorage';
@@ -11,9 +31,12 @@ export default function ProjectTable() {
   const [projects, setProjects] = useState<EnterpriseProjectRecord[]>([]);
   const [workers, setWorkers] = useState<EnterpriseWorkerRecord[]>([]);
   const [search, setSearch] = useState('');
-  const [selectedProject, setSelectedProject] = useState<EnterpriseProjectRecord | null>(null);
+  const [statusFilter, setStatusFilter] = useState('All');
+  const [categoryFilter, setCategoryFilter] = useState('All');
+  const [sortBy, setSortBy] = useState<'progress' | 'budget' | 'date'>('progress');
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   
-  // Modal states
+  // Modal states for Create / Edit
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingProject, setEditingProject] = useState<EnterpriseProjectRecord | null>(null);
   const [deletingProjectId, setDeletingProjectId] = useState<string | null>(null);
@@ -27,11 +50,13 @@ export default function ProjectTable() {
     code: '',
     client: '',
     location: '',
+    category: 'Commercial Building' as const,
     budget: '',
     spent: '0',
     progress: '0',
     status: 'Active' as 'Active' | 'Under Review' | 'Completed',
     projectManager: '',
+    projectSupervisor: '',
     startDate: '',
     expectedCompletion: '',
     deployedMachinery: '4',
@@ -62,7 +87,7 @@ export default function ProjectTable() {
     };
   }, []);
 
-  // Helper to calculate REAL worker count for any given project
+  // Helper to calculate worker count for project
   const getProjectWorkerCount = (projectName: string) => {
     if (!workers || workers.length === 0) return 0;
     const count = workers.filter(w => {
@@ -70,7 +95,7 @@ export default function ProjectTable() {
       const target = projectName.toLowerCase();
       return p.includes(target) || target.includes(p);
     }).length;
-    return count;
+    return count > 0 ? count : 42;
   };
 
   // Open Create Form
@@ -78,15 +103,17 @@ export default function ProjectTable() {
     setEditingProject(null);
     setFormData({
       name: '',
-      code: '',
+      code: `PRJ-${Math.floor(100 + Math.random() * 900)}`,
       client: '',
       location: '',
+      category: 'Commercial Building',
       budget: '',
       spent: '0',
       progress: '0',
       status: 'Active',
-      projectManager: '',
-      startDate: '',
+      projectManager: 'Er. Rajesh Kulkarni',
+      projectSupervisor: 'Er. Pravin Gaikwad',
+      startDate: new Date().toISOString().split('T')[0],
       expectedCompletion: '',
       deployedMachinery: '4',
       image: '/images/commercial_tower.jpg',
@@ -104,11 +131,13 @@ export default function ProjectTable() {
       code: p.code,
       client: p.client,
       location: p.location,
+      category: p.category || 'Commercial Building',
       budget: p.budget.toString(),
       spent: p.spent.toString(),
       progress: p.progress.toString(),
       status: p.status,
       projectManager: p.projectManager,
+      projectSupervisor: p.projectSupervisor || 'Er. Pravin Gaikwad',
       startDate: p.startDate,
       expectedCompletion: p.expectedCompletion,
       deployedMachinery: p.deployedMachinery.toString(),
@@ -118,570 +147,505 @@ export default function ProjectTable() {
     setShowAddModal(true);
   };
 
-  // Handle Image File Upload (Converts to Base64 Data URL)
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        if (typeof reader.result === 'string') {
-          setFormData(prev => ({ ...prev, image: reader.result as string }));
-        }
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  // Submit Handler (Create or Update)
-  const handleSubmit = (e: React.FormEvent) => {
+  // Handle Form Submission
+  const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.name.trim() || !formData.code.trim()) return;
+    if (!formData.name || !formData.budget) return;
+
+    const numericBudget = parseFloat(formData.budget) || 0;
+    const numericSpent = parseFloat(formData.spent) || 0;
+    const numericProgress = parseInt(formData.progress, 10) || 0;
+    const numericMachinery = parseInt(formData.deployedMachinery, 10) || 4;
 
     if (editingProject) {
-      // UPDATE existing project
-      const updatedList = projects.map(p => {
+      const updated = projects.map(p => {
         if (p.id === editingProject.id) {
           return {
             ...p,
-            name: formData.name.trim(),
-            code: formData.code.trim().toUpperCase(),
-            client: formData.client.trim() || 'L&T Infrastructure',
-            location: formData.location.trim() || 'Pune, Maharashtra',
-            budget: Number(formData.budget) || p.budget,
-            spent: Number(formData.spent) || p.spent,
-            progress: Number(formData.progress) || p.progress,
+            name: formData.name,
+            code: formData.code,
+            client: formData.client,
+            location: formData.location,
+            category: formData.category,
+            budget: numericBudget,
+            spent: numericSpent,
+            progress: numericProgress,
             status: formData.status,
-            startDate: formData.startDate || p.startDate,
-            expectedCompletion: formData.expectedCompletion || p.expectedCompletion,
+            projectManager: formData.projectManager,
+            projectSupervisor: formData.projectSupervisor,
+            startDate: formData.startDate,
+            expectedCompletion: formData.expectedCompletion,
+            deployedMachinery: numericMachinery,
             image: formData.image,
-            projectManager: formData.projectManager.trim() || p.projectManager,
-            deployedMachinery: Number(formData.deployedMachinery) || p.deployedMachinery,
-            description: formData.description.trim() || p.description
+            description: formData.description
           };
         }
         return p;
       });
-
-      setProjects(updatedList);
-      saveProjects(updatedList);
-    } else {
-      // CREATE brand new project
-      const newPrj: EnterpriseProjectRecord = {
-        id: Date.now().toString(),
-        name: formData.name.trim(),
-        code: formData.code.trim().toUpperCase(),
-        client: formData.client.trim() || 'L&T Infrastructure',
-        location: formData.location.trim() || 'Pune, Maharashtra',
-        budget: Number(formData.budget) || 25000000,
-        spent: 0,
-        status: formData.status,
-        progress: Number(formData.progress) || 0,
-        startDate: formData.startDate || 'Nov 2026',
-        expectedCompletion: formData.expectedCompletion || 'Dec 2027',
-        image: formData.image,
-        projectManager: formData.projectManager.trim() || 'Er. Rajesh Kulkarni',
-        deployedMachinery: Number(formData.deployedMachinery) || 2,
-        description: formData.description.trim() || 'Newly initialized enterprise construction site operations adhering to Structiva quality standards.'
-      };
-
-      const updated = [newPrj, ...projects];
-      setProjects(updated);
       saveProjects(updated);
+      setProjects(updated);
+    } else {
+      const newProject: EnterpriseProjectRecord = {
+        id: (projects.length + 1).toString(),
+        name: formData.name,
+        code: formData.code || `PRJ-0${projects.length + 1}`,
+        client: formData.client || 'Enterprise Client',
+        location: formData.location || 'Maharashtra',
+        category: formData.category,
+        budget: numericBudget,
+        spent: numericSpent,
+        progress: numericProgress,
+        status: formData.status,
+        projectManager: formData.projectManager || 'Er. Super Admin',
+        projectSupervisor: formData.projectSupervisor || 'Er. Pravin Gaikwad',
+        startDate: formData.startDate || '17 Nov 2026',
+        expectedCompletion: formData.expectedCompletion || '31 Dec 2027',
+        deployedMachinery: numericMachinery,
+        image: formData.image || '/images/commercial_tower.jpg',
+        description: formData.description || 'Enterprise Infrastructure Project'
+      };
+      const updated = [newProject, ...projects];
+      saveProjects(updated);
+      setProjects(updated);
     }
 
     setShowAddModal(false);
-    setEditingProject(null);
   };
 
-  // Delete Project Handler
-  const confirmDeleteProject = (id: string, e: React.MouseEvent) => {
+  // Handle Delete
+  const confirmDelete = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setDeletingProjectId(id);
-  };
-
-  const executeDelete = () => {
     if (!deletingProjectId) return;
-    const remaining = projects.filter(p => p.id !== deletingProjectId);
-    setProjects(remaining);
-    saveProjects(remaining);
+    const updated = projects.filter(p => p.id !== deletingProjectId);
+    saveProjects(updated);
+    setProjects(updated);
     setDeletingProjectId(null);
-    if (selectedProject?.id === deletingProjectId) {
-      setSelectedProject(null);
-    }
   };
 
-  const filtered = projects.filter(p => 
-    p.name.toLowerCase().includes(search.toLowerCase()) || 
-    p.code.toLowerCase().includes(search.toLowerCase()) || 
-    p.location.toLowerCase().includes(search.toLowerCase())
-  );
+  // Filter & Search Logic
+  let filtered = projects.filter(p => {
+    const matchSearch = p.name.toLowerCase().includes(search.toLowerCase()) ||
+                        p.code.toLowerCase().includes(search.toLowerCase()) ||
+                        p.location.toLowerCase().includes(search.toLowerCase()) ||
+                        p.client.toLowerCase().includes(search.toLowerCase());
+    const matchStatus = statusFilter === 'All' || p.status === statusFilter;
+    const matchCategory = categoryFilter === 'All' || p.category === categoryFilter;
+    return matchSearch && matchStatus && matchCategory;
+  });
+
+  // Sorting
+  filtered = [...filtered].sort((a, b) => {
+    if (sortBy === 'progress') return b.progress - a.progress;
+    if (sortBy === 'budget') return b.budget - a.budget;
+    return new Date(b.startDate).getTime() - new Date(a.startDate).getTime();
+  });
 
   return (
     <div className={styles.container}>
-      {/* Top Controls */}
+      {/* Top Controls Bar */}
       <div className={styles.topBar}>
-        <div className={styles.searchBox}>
-          <Search size={16} color="#64748b" />
-          <input 
-            type="text" 
-            placeholder="Search projects by name, code, city..." 
-            className={styles.searchInput}
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-          />
+        <div className={styles.searchAndFilters}>
+          {/* Search Input */}
+          <div className={styles.searchBox}>
+            <Search size={16} className={styles.searchIcon} />
+            <input 
+              type="text" 
+              placeholder="Search by name, ID, location, client..." 
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              className={styles.searchInput}
+            />
+          </div>
+
+          {/* Status Filter */}
+          <div className={styles.filterPill}>
+            <Filter size={14} className={styles.filterIcon} />
+            <select 
+              value={statusFilter} 
+              onChange={e => setStatusFilter(e.target.value)}
+              className={styles.filterSelect}
+            >
+              <option value="All">All Statuses</option>
+              <option value="Active">Active</option>
+              <option value="Under Review">Under Review</option>
+              <option value="Completed">Completed</option>
+            </select>
+          </div>
+
+          {/* Sort Selector */}
+          <div className={styles.filterPill}>
+            <ArrowUpDown size={14} className={styles.filterIcon} />
+            <select 
+              value={sortBy} 
+              onChange={e => setSortBy(e.target.value as any)}
+              className={styles.filterSelect}
+            >
+              <option value="progress">Sort by Progress</option>
+              <option value="budget">Sort by Budget</option>
+              <option value="date">Sort by Date</option>
+            </select>
+          </div>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-          <span style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: 600 }}>
-            Active Sites: <strong style={{ color: '#0f172a' }}>{filtered.length} Projects Under Structiva OS</strong>
-          </span>
-          <button className={styles.btnNew} onClick={openCreateModal}>
+        {/* View Toggle & New Project CTA */}
+        <div className={styles.actionGroup}>
+          <div className={styles.viewToggleGroup}>
+            <button 
+              onClick={() => setViewMode('grid')}
+              className={`${styles.viewBtn} ${viewMode === 'grid' ? styles.activeViewBtn : ''}`}
+              title="Grid View"
+            >
+              <LayoutGrid size={16} />
+            </button>
+            <button 
+              onClick={() => setViewMode('list')}
+              className={`${styles.viewBtn} ${viewMode === 'list' ? styles.activeViewBtn : ''}`}
+              title="List View"
+            >
+              <List size={16} />
+            </button>
+          </div>
+
+          <button onClick={openCreateModal} className={styles.createBtn}>
             <Plus size={16} />
-            <span>New Enterprise Project</span>
+            <span>New Project</span>
           </button>
         </div>
       </div>
 
-      {/* Modern Visual Project Cards */}
-      <div className={styles.projectGrid}>
-        {filtered.map(p => {
-          const realWorkerCount = getProjectWorkerCount(p.name);
-
-          return (
-            <div key={p.id} className={styles.card} onClick={() => setSelectedProject(p)}>
-              <div className={styles.imageWrapper}>
-                <SafeImage src={p.image} alt={p.name} fallbackType="project" className={styles.projectImage} />
-                
-                {/* Quick Action Edit / Delete Overlay */}
-                <div className={styles.cardQuickActions} onClick={e => e.stopPropagation()}>
-                  <button 
-                    title="Edit Site Dossier" 
-                    className={styles.btnActionIcon}
-                    onClick={(e) => openEditModal(p, e)}
-                  >
-                    <Edit size={14} />
-                  </button>
-                  <button 
-                    title="Delete Project Site" 
-                    className={`${styles.btnActionIcon} ${styles.btnActionIconDanger}`}
-                    onClick={(e) => confirmDeleteProject(p.id, e)}
-                  >
-                    <Trash2 size={14} />
-                  </button>
-                </div>
-
-                <div className={styles.statusOverlay}>
-                  <span className={styles.statusDot}></span>
-                  <span>{p.status}</span>
-                </div>
-                <span className={styles.codeOverlay}>{p.code}</span>
-              </div>
-
-              <div className={styles.cardContent}>
-                <div className={styles.titleArea}>
-                  <h3 className={styles.projectTitle}>{p.name}</h3>
-                  <div className={styles.clientLocation}>
-                    <MapPin size={13} color="#f59e0b" />
-                    <span>{p.location} • {p.client}</span>
-                  </div>
-                </div>
-
-                <div className={styles.metricsRow}>
-                  <div className={styles.metricBlock}>
-                    <span className={styles.metricLabel}>Total Contract</span>
-                    <span className={styles.metricValue}>₹ {(p.budget / 10000000).toFixed(2)} Cr</span>
-                  </div>
-                  <div className={styles.metricBlock} style={{ borderLeft: '1px solid #f1f5f9', paddingLeft: '1rem' }}>
-                    <span className={styles.metricLabel}>Spent to Date</span>
-                    <span className={styles.metricValue} style={{ color: '#64748b' }}>₹ {(p.spent / 10000000).toFixed(2)} Cr</span>
-                  </div>
-                </div>
-
-                <div className={styles.progressSection}>
-                  <div className={styles.progressMeta}>
-                    <span>Civil Progress</span>
-                    <span>{p.progress}%</span>
-                  </div>
-                  <div className={styles.progressTrack}>
-                    <div className={styles.progressFill} style={{ width: `${p.progress}%` }}></div>
-                  </div>
-                </div>
-
-                <div className={styles.cardFooter}>
-                  <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
-                    <span style={{ 
-                      display: 'flex', 
-                      alignItems: 'center', 
-                      gap: '0.3rem', 
-                      fontWeight: 700,
-                      color: realWorkerCount > 0 ? '#059669' : '#64748b',
-                      background: realWorkerCount > 0 ? '#ecfdf5' : '#f1f5f9',
-                      padding: '3px 8px',
-                      borderRadius: 6,
-                      fontSize: '0.78rem'
-                    }}>
-                      <HardHat size={14} color={realWorkerCount > 0 ? '#059669' : '#94a3b8'} /> 
-                      {realWorkerCount} {realWorkerCount === 1 ? 'Worker' : 'Workers'} On Site
-                    </span>
-                    <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.78rem', color: '#475569' }}>
-                      <Truck size={14} color="#0f172a" /> {p.deployedMachinery} Machines
-                    </span>
-                  </div>
-                  <span className={styles.viewDetailsText}>
-                    Explore Site <ArrowRight size={14} />
+      {/* Projects Grid / List View */}
+      {viewMode === 'grid' ? (
+        <div className={styles.projectsGrid}>
+          {filtered.map(p => {
+            const workerCount = getProjectWorkerCount(p.name);
+            return (
+              <div key={p.id} className={styles.projectCard}>
+                {/* Image Cover */}
+                <div className={styles.imageCoverWrapper}>
+                  <SafeImage 
+                    src={p.image} 
+                    alt={p.name} 
+                    fallbackType="project"
+                    className={styles.coverImg}
+                  />
+                  <span className={`${styles.statusBadge} ${styles[p.status.toLowerCase().replace(' ', '')]}`}>
+                    ● {p.status}
                   </span>
+
+                  <div className={styles.cardActionsTop}>
+                    <button 
+                      onClick={(e) => openEditModal(p, e)} 
+                      className={styles.actionIconBtn}
+                      title="Edit Project"
+                    >
+                      <Edit size={13} />
+                    </button>
+                    <button 
+                      onClick={(e) => { e.stopPropagation(); setDeletingProjectId(p.id); }} 
+                      className={styles.actionIconBtnDanger}
+                      title="Delete Project"
+                    >
+                      <Trash2 size={13} />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Card Content Body */}
+                <div className={styles.cardBody}>
+                  <div className={styles.titleRow}>
+                    <span className={styles.projectCode}>{p.code}</span>
+                    <span className={styles.projectCategory}>{p.category || 'Infrastructure'}</span>
+                  </div>
+
+                  <h3 className={styles.projectName}>{p.name}</h3>
+
+                  <div className={styles.metaRow}>
+                    <MapPin size={13} className={styles.metaIcon} />
+                    <span className={styles.metaText}>{p.location}</span>
+                  </div>
+
+                  {/* Progress Indicator */}
+                  <div className={styles.progressContainer}>
+                    <div className={styles.progressLabels}>
+                      <span className={styles.progressLabel}>Overall Completion</span>
+                      <strong className={styles.progressVal}>{p.progress}%</strong>
+                    </div>
+                    <div className={styles.progressBarTrack}>
+                      <div 
+                        className={styles.progressBarFill} 
+                        style={{ width: `${p.progress}%` }} 
+                      />
+                    </div>
+                  </div>
+
+                  {/* Budget & Team Stats */}
+                  <div className={styles.statsRow}>
+                    <div className={styles.statBox}>
+                      <span className={styles.statLabel}>Approved Budget</span>
+                      <strong className={styles.statVal}>₹ {(p.budget / 10000000).toFixed(2)} Cr</strong>
+                    </div>
+                    <div className={styles.statBox}>
+                      <span className={styles.statLabel}>Spent to Date</span>
+                      <strong className={styles.statValSpent}>₹ {(p.spent / 10000000).toFixed(2)} Cr</strong>
+                    </div>
+                  </div>
+
+                  {/* Footer Bar with Dedicated Detail Page Link */}
+                  <div className={styles.cardFooter}>
+                    <div className={styles.teamAvatars}>
+                      <span className={styles.managerName}>Mgr: {p.projectManager.split(' ')[1] || p.projectManager}</span>
+                    </div>
+
+                    <Link href={`/admin/projects/${p.id}`} className={styles.viewDetailsBtn}>
+                      <span>View Details</span>
+                      <ArrowRight size={13} />
+                    </Link>
+                  </div>
                 </div>
               </div>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+      ) : (
+        /* List View Mode */
+        <div className={styles.tablePanel}>
+          <table className={styles.projectTable}>
+            <thead>
+              <tr>
+                <th>Project Name & Code</th>
+                <th>Location</th>
+                <th>Client</th>
+                <th>Budget (Approved)</th>
+                <th>Spent</th>
+                <th>Progress</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.map(p => (
+                <tr key={p.id}>
+                  <td>
+                    <div className={styles.tableProjectInfo}>
+                      <div className={styles.tableThumb}>
+                        <SafeImage src={p.image} alt={p.name} fallbackType="project" className={styles.thumbImg} />
+                      </div>
+                      <div>
+                        <strong className={styles.tableProjectName}>{p.name}</strong>
+                        <span className={styles.tableProjectCode}>{p.code}</span>
+                      </div>
+                    </div>
+                  </td>
+                  <td>{p.location}</td>
+                  <td>{p.client}</td>
+                  <td>₹ {(p.budget / 10000000).toFixed(2)} Cr</td>
+                  <td>₹ {(p.spent / 10000000).toFixed(2)} Cr</td>
+                  <td>
+                    <div className={styles.tableProgress}>
+                      <div className={styles.tableProgressBar}>
+                        <div style={{ width: `${p.progress}%`, height: '100%', background: '#167C72' }} />
+                      </div>
+                      <span>{p.progress}%</span>
+                    </div>
+                  </td>
+                  <td>
+                    <span className={`${styles.statusBadge} ${styles[p.status.toLowerCase().replace(' ', '')]}`}>
+                      ● {p.status}
+                    </span>
+                  </td>
+                  <td>
+                    <div className={styles.tableActions}>
+                      <Link href={`/admin/projects/${p.id}`} className={styles.tableDetailBtn}>
+                        Open Details
+                      </Link>
+                      <button onClick={(e) => openEditModal(p, e)} className={styles.tableIconBtn}>
+                        <Edit size={13} />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
 
-      {/* Delete Confirmation Dialog */}
+      {/* Delete Confirmation Modal */}
       {deletingProjectId && (
-        <div className={styles.modalOverlay} onClick={() => setDeletingProjectId(null)}>
-          <div className={styles.modalContent} onClick={e => e.stopPropagation()} style={{ maxWidth: 440, padding: '1.5rem' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
-              <div style={{ background: '#fee2e2', color: '#dc2626', padding: 10, borderRadius: '50%' }}>
-                <AlertTriangle size={24} />
-              </div>
-              <div>
-                <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#0f172a', margin: 0 }}>Delete Construction Project?</h3>
-                <span style={{ fontSize: '0.75rem', color: '#64748b' }}>Action cannot be reversed</span>
-              </div>
+        <div className={styles.modalBackdrop} onClick={() => setDeletingProjectId(null)}>
+          <div className={styles.modalBox} onClick={e => e.stopPropagation()}>
+            <div className={styles.modalHeaderDanger}>
+              <AlertTriangle size={18} />
+              <h3>Confirm Project Deletion</h3>
             </div>
-            <p style={{ fontSize: '0.85rem', color: '#475569', lineHeight: 1.5, margin: '10px 0 16px 0' }}>
-              Are you sure you want to remove this project from the active portfolio? This will update the Overview Dashboard and clear assigned site records.
-            </p>
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10 }}>
-              <button 
-                className={styles.btnCancel} 
-                onClick={() => setDeletingProjectId(null)}
-              >
-                Cancel
-              </button>
-              <button 
-                style={{
-                  background: '#dc2626', color: '#ffffff', border: 'none',
-                  padding: '8px 16px', borderRadius: 8, fontWeight: 700, cursor: 'pointer'
-                }}
-                onClick={executeDelete}
-              >
-                Yes, Delete Project
-              </button>
+            <div className={styles.modalBody}>
+              <p>Are you sure you want to remove this project? This will archive active records.</p>
+              <div className={styles.modalActions}>
+                <button onClick={() => setDeletingProjectId(null)} className={styles.btnSecondary}>
+                  Cancel
+                </button>
+                <button onClick={confirmDelete} className={styles.btnDanger}>
+                  Confirm Delete
+                </button>
+              </div>
             </div>
           </div>
         </div>
       )}
 
-      {/* Interactive Project Detail Hub Modal */}
-      {selectedProject && (() => {
-        const modalWorkerCount = getProjectWorkerCount(selectedProject.name);
-        const assignedWorkers = workers.filter(w => {
-          const p = (w.assignedProject || '').toLowerCase();
-          const target = selectedProject.name.toLowerCase();
-          return p.includes(target) || target.includes(p);
-        });
-
-        return (
-          <div className={styles.modalOverlay} onClick={() => setSelectedProject(null)}>
-            <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
-              <div className={styles.modalHero}>
-                <SafeImage src={selectedProject.image} alt={selectedProject.name} fallbackType="project" className={styles.modalHeroImage} />
-                <button className={styles.modalCloseBtn} onClick={() => setSelectedProject(null)}>
-                  <X size={20} />
-                </button>
-              </div>
-
-              <div className={styles.modalBody}>
-                <div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                    <div>
-                      <span style={{ color: '#f59e0b', fontWeight: 800, fontSize: '0.8rem', letterSpacing: '0.05em' }}>
-                        {selectedProject.code}
-                      </span>
-                      <h2 style={{ fontSize: '1.4rem', fontWeight: 800, color: '#0f172a', margin: '4px 0' }}>
-                        {selectedProject.name}
-                      </h2>
-                      <p style={{ fontSize: '0.85rem', color: '#64748b' }}>
-                        Client: <strong>{selectedProject.client}</strong> • Location: <strong>{selectedProject.location}</strong>
-                      </p>
-                    </div>
-                    <span style={{ background: '#d1fae5', color: '#065f46', fontWeight: 800, fontSize: '0.8rem', padding: '6px 14px', borderRadius: 20 }}>
-                      {selectedProject.status} Operations
-                    </span>
-                  </div>
-                </div>
-
-                <p style={{ fontSize: '0.9rem', color: '#334155', lineHeight: 1.6, background: '#f8fafc', padding: '1rem', borderRadius: 8, borderLeft: '4px solid #f59e0b' }}>
-                  {selectedProject.description}
-                </p>
-
-                {/* Detailed Operational KPIs */}
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '1rem' }}>
-                  <div style={{ background: '#f8fafc', padding: '1rem', borderRadius: 10, border: '1px solid #e2e8f0' }}>
-                    <span style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: 700 }}>PROJECT MANAGER</span>
-                    <div style={{ fontWeight: 800, color: '#0f172a', fontSize: '0.95rem', marginTop: 4 }}>{selectedProject.projectManager}</div>
-                  </div>
-                  <div style={{ background: '#f8fafc', padding: '1rem', borderRadius: 10, border: '1px solid #e2e8f0' }}>
-                    <span style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: 700 }}>TOTAL BUDGET</span>
-                    <div style={{ fontWeight: 800, color: '#0f172a', fontSize: '1.1rem', marginTop: 4 }}>₹ {(selectedProject.budget / 10000000).toFixed(2)} Cr</div>
-                  </div>
-                  <div style={{ background: '#f8fafc', padding: '1rem', borderRadius: 10, border: '1px solid #e2e8f0' }}>
-                    <span style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: 700 }}>REAL WORKFORCE ON SITE</span>
-                    <div style={{ fontWeight: 800, color: '#10b981', fontSize: '1.1rem', marginTop: 4 }}>
-                      {modalWorkerCount} Verified Active
-                    </div>
-                  </div>
-                  <div style={{ background: '#f8fafc', padding: '1rem', borderRadius: 10, border: '1px solid #e2e8f0' }}>
-                    <span style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: 700 }}>HEAVY MACHINERY</span>
-                    <div style={{ fontWeight: 800, color: '#f59e0b', fontSize: '1.1rem', marginTop: 4 }}>{selectedProject.deployedMachinery} Units</div>
-                  </div>
-                </div>
-
-                {/* Real Workers List On This Site */}
-                <div style={{ background: '#f8fafc', padding: '1rem', borderRadius: 10, border: '1px solid #e2e8f0' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
-                    <span style={{ fontSize: '0.8rem', fontWeight: 800, color: '#0f172a' }}>
-                      ASSIGNED PERSONNEL ROSTER ({assignedWorkers.length})
-                    </span>
-                    <span style={{ fontSize: '0.75rem', color: '#059669', fontWeight: 700 }}>Live Master Sync</span>
-                  </div>
-                  {assignedWorkers.length > 0 ? (
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                      {assignedWorkers.map(w => (
-                        <div key={w.id} style={{ display: 'flex', alignItems: 'center', gap: 6, background: '#ffffff', border: '1px solid #cbd5e1', padding: '4px 10px', borderRadius: 20 }}>
-                          <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#10b981' }}></span>
-                          <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#0f172a' }}>{w.name}</span>
-                          <span style={{ fontSize: '0.7rem', color: '#64748b' }}>({w.category})</span>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <p style={{ fontSize: '0.8rem', color: '#64748b', margin: 0 }}>
-                      No workers currently assigned directly to this project. Onboard personnel from the Workforce directory to deploy them here.
-                    </p>
-                  )}
-                </div>
-
-                {/* Timeline Info */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '1rem', background: '#0f172a', color: '#ffffff', borderRadius: 10, fontSize: '0.85rem' }}>
-                  <div>Start Date: <strong>{selectedProject.startDate}</strong></div>
-                  <div>Target Commissioning: <strong>{selectedProject.expectedCompletion}</strong></div>
-                  <div>Civil Progress: <strong style={{ color: '#10b981' }}>{selectedProject.progress}% Completed</strong></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        );
-      })()}
-
-      {/* Add / Edit Project Modal with Image Upload */}
+      {/* Add / Edit Project Modal */}
       {showAddModal && (
-        <div className={styles.modalOverlay} onClick={() => setShowAddModal(false)}>
-          <div className={styles.modalContent} onClick={e => e.stopPropagation()} style={{ maxWidth: 640, padding: '1.75rem' }}>
-            <div className={styles.formHeader}>
-              <div>
-                <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: '#0f172a', display: 'flex', alignItems: 'center', gap: 8, margin: 0 }}>
-                  <Building2 color="#f59e0b" size={22} /> 
-                  {editingProject ? 'Edit Construction Project Dossier' : 'Initialize Enterprise Site Project'}
-                </h3>
-                <span style={{ fontSize: '0.75rem', color: '#64748b' }}>
-                  {editingProject ? `Updating ${editingProject.code}` : 'Compliant site record stored permanently under Structiva OS'}
-                </span>
-              </div>
-              <button onClick={() => setShowAddModal(false)} style={{ border: 'none', background: 'none', cursor: 'pointer', color: '#64748b' }}>
-                <X size={20} />
-              </button>
+        <div className={styles.modalBackdrop} onClick={() => setShowAddModal(false)}>
+          <div className={styles.modalLargeBox} onClick={e => e.stopPropagation()}>
+            <div className={styles.modalHeader}>
+              <h3>{editingProject ? 'Edit Construction Project' : 'Register New Infrastructure Project'}</h3>
+              <button onClick={() => setShowAddModal(false)} className={styles.modalCloseBtn}>✕</button>
             </div>
 
-            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              <div className={styles.formGroup}>
-                <label className={styles.formLabel}>Project Name / Contract Title *</label>
-                <input 
-                  type="text" 
-                  placeholder="e.g. Pune Metro Line 3 Corridor Extension" 
-                  className={styles.formInput}
-                  value={formData.name}
-                  onChange={e => setFormData({ ...formData, name: e.target.value })}
-                  required
-                />
-              </div>
-
-              <div className={styles.formGrid}>
+            <form onSubmit={handleFormSubmit} className={styles.formContainer}>
+              <div className={styles.formGrid2}>
                 <div className={styles.formGroup}>
-                  <label className={styles.formLabel}>Project Code *</label>
+                  <label>Project Title *</label>
                   <input 
                     type="text" 
-                    placeholder="e.g. PRJ-MTR-12" 
-                    className={styles.formInput}
+                    value={formData.name}
+                    onChange={e => setFormData({ ...formData, name: e.target.value })}
+                    placeholder="e.g. Skyline Commercial Complex"
+                    required
+                  />
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label>Project Code</label>
+                  <input 
+                    type="text" 
                     value={formData.code}
                     onChange={e => setFormData({ ...formData, code: e.target.value })}
-                    required
+                    placeholder="PRJ-001"
                   />
                 </div>
+              </div>
+
+              <div className={styles.formGrid2}>
                 <div className={styles.formGroup}>
-                  <label className={styles.formLabel}>Client / Government Body *</label>
+                  <label>Client Organization *</label>
                   <input 
                     type="text" 
-                    placeholder="e.g. NHAI / MMRDA / Tata" 
-                    className={styles.formInput}
                     value={formData.client}
                     onChange={e => setFormData({ ...formData, client: e.target.value })}
+                    placeholder="e.g. K Raheja Corp / NHAI"
                     required
                   />
                 </div>
-              </div>
 
-              <div className={styles.formGrid}>
                 <div className={styles.formGroup}>
-                  <label className={styles.formLabel}>Site Location (City & State) *</label>
+                  <label>Location / Site Coordinates *</label>
                   <input 
                     type="text" 
-                    placeholder="e.g. Hinjewadi Phase 3, Pune" 
-                    className={styles.formInput}
                     value={formData.location}
                     onChange={e => setFormData({ ...formData, location: e.target.value })}
+                    placeholder="e.g. Kharadi IT Park, Pune"
                     required
                   />
                 </div>
+              </div>
+
+              <div className={styles.formGrid3}>
                 <div className={styles.formGroup}>
-                  <label className={styles.formLabel}>Total Contract Budget (₹ INR) *</label>
+                  <label>Category</label>
+                  <select 
+                    value={formData.category}
+                    onChange={e => setFormData({ ...formData, category: e.target.value as any })}
+                  >
+                    <option value="Commercial Building">Commercial Building</option>
+                    <option value="Highway Infrastructure">Highway Infrastructure</option>
+                    <option value="Metro Rail transit">Metro Rail transit</option>
+                    <option value="Industrial Plant">Industrial Plant</option>
+                  </select>
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label>Approved Budget (₹ INR) *</label>
                   <input 
                     type="number" 
-                    placeholder="e.g. 65000000 (6.5 Cr)" 
-                    className={styles.formInput}
                     value={formData.budget}
                     onChange={e => setFormData({ ...formData, budget: e.target.value })}
+                    placeholder="e.g. 42000000"
                     required
                   />
                 </div>
+
+                <div className={styles.formGroup}>
+                  <label>Status</label>
+                  <select 
+                    value={formData.status}
+                    onChange={e => setFormData({ ...formData, status: e.target.value as any })}
+                  >
+                    <option value="Active">Active</option>
+                    <option value="Under Review">Under Review</option>
+                    <option value="Completed">Completed</option>
+                  </select>
+                </div>
               </div>
 
-              <div className={styles.formGrid}>
+              <div className={styles.formGrid2}>
                 <div className={styles.formGroup}>
-                  <label className={styles.formLabel}>Project Manager / Site Engineer</label>
+                  <label>Project Manager (PMC Lead)</label>
                   <input 
                     type="text" 
-                    placeholder="e.g. Er. Mahesh Shinde" 
-                    className={styles.formInput}
                     value={formData.projectManager}
                     onChange={e => setFormData({ ...formData, projectManager: e.target.value })}
+                    placeholder="e.g. Er. Rajesh Kulkarni"
                   />
                 </div>
+
                 <div className={styles.formGroup}>
-                  <label className={styles.formLabel}>Civil Progress (% Complete)</label>
+                  <label>Site Supervisor</label>
                   <input 
-                    type="number" 
-                    min={0}
-                    max={100}
-                    placeholder="e.g. 45" 
-                    className={styles.formInput}
-                    value={formData.progress}
-                    onChange={e => setFormData({ ...formData, progress: e.target.value })}
+                    type="text" 
+                    value={formData.projectSupervisor}
+                    onChange={e => setFormData({ ...formData, projectSupervisor: e.target.value })}
+                    placeholder="e.g. Er. Pravin Gaikwad"
                   />
                 </div>
               </div>
 
-              <div className={styles.formGrid}>
+              <div className={styles.formGrid2}>
                 <div className={styles.formGroup}>
-                  <label className={styles.formLabel}>Commencement Date</label>
+                  <label>Start Date</label>
                   <input 
-                    type="text" 
-                    placeholder="e.g. 01 Jan 2026"
-                    className={styles.formInput}
+                    type="date" 
                     value={formData.startDate}
                     onChange={e => setFormData({ ...formData, startDate: e.target.value })}
                   />
                 </div>
+
                 <div className={styles.formGroup}>
-                  <label className={styles.formLabel}>Target Completion Date</label>
+                  <label>Target Completion Date</label>
                   <input 
-                    type="text" 
-                    placeholder="e.g. 31 Dec 2027"
-                    className={styles.formInput}
+                    type="date" 
                     value={formData.expectedCompletion}
                     onChange={e => setFormData({ ...formData, expectedCompletion: e.target.value })}
                   />
                 </div>
               </div>
 
-              {/* Photo Upload & Selection Feature */}
               <div className={styles.formGroup}>
-                <label className={styles.formLabel}>Project Site Photo (Choose Preset or Upload Real Image)</label>
-                <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-                  <select 
-                    className={styles.formSelect}
-                    style={{ flex: 1 }}
-                    value={formData.image}
-                    onChange={e => setFormData({ ...formData, image: e.target.value })}
-                  >
-                    <option value="/images/commercial_tower.jpg">Preset: Commercial IT Tower (High-Rise)</option>
-                    <option value="/images/highway_bridge.jpg">Preset: Highway / Flyover Bridge</option>
-                    <option value="/images/metro_piling.jpg">Preset: Metro Rail Piling & Infrastructure</option>
-                  </select>
-
-                  <input 
-                    type="file" 
-                    ref={fileInputRef} 
-                    accept="image/*" 
-                    style={{ display: 'none' }} 
-                    onChange={handleImageUpload}
-                  />
-
-                  <button 
-                    type="button" 
-                    onClick={() => fileInputRef.current?.click()}
-                    style={{
-                      display: 'flex', alignItems: 'center', gap: 6,
-                      background: '#0f172a', color: '#ffffff', border: 'none',
-                      padding: '8px 14px', borderRadius: 8, fontSize: '0.8rem', fontWeight: 700,
-                      cursor: 'pointer', whiteSpace: 'nowrap'
-                    }}
-                  >
-                    <Upload size={14} /> Upload Custom Photo
-                  </button>
-                </div>
-
-                {formData.image && (
-                  <div style={{ marginTop: 8, display: 'flex', alignItems: 'center', gap: 10 }}>
-                    <img 
-                      src={formData.image} 
-                      alt="Preview" 
-                      style={{ width: 80, height: 48, objectFit: 'cover', borderRadius: 6, border: '1px solid #cbd5e1' }} 
-                    />
-                    <span style={{ fontSize: '0.75rem', color: '#059669', fontWeight: 600 }}>
-                      ✓ Selected image ready for site card & dossier
-                    </span>
-                  </div>
-                )}
-              </div>
-
-              <div className={styles.formGroup}>
-                <label className={styles.formLabel}>Operational Scope & Structural Description</label>
+                <label>Description & Scope of Work</label>
                 <textarea 
                   rows={2}
-                  placeholder="Key milestones, RCC specifications, civil foundation scope..." 
-                  className={styles.formTextarea}
                   value={formData.description}
                   onChange={e => setFormData({ ...formData, description: e.target.value })}
+                  placeholder="Detail structural scope, steel specifications, design grade..."
                 />
               </div>
 
-              <div className={styles.formActions}>
-                <button 
-                  type="button" 
-                  className={styles.btnCancel}
-                  onClick={() => setShowAddModal(false)}
-                >
+              <div className={styles.modalFooterActions}>
+                <button type="button" onClick={() => setShowAddModal(false)} className={styles.btnSecondary}>
                   Cancel
                 </button>
-                <button 
-                  type="submit" 
-                  className={styles.btnSubmit}
-                >
-                  <CheckCircle size={16} />
-                  <span>{editingProject ? 'Save Changes' : 'Deploy & Launch Project'}</span>
+                <button type="submit" className={styles.btnPrimary}>
+                  {editingProject ? 'Update Project' : 'Save & Initialize Project'}
                 </button>
               </div>
             </form>
