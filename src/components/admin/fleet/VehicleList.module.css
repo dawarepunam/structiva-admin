@@ -1,3 +1,5 @@
+/* Fleet Management Styling - Structiva Enterprise OS */
+
 .container {
   display: flex;
   flex-direction: column;
@@ -5,18 +7,169 @@
   width: 100%;
 }
 
+/* 12 KPI Summary Grid */
+.kpiGrid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 1rem;
+  width: 100%;
+}
+
+@media (max-width: 1400px) {
+  .kpiGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .kpiGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .kpiGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.kpiCard {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 1rem 1.15rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.kpiCard:hover {
+  transform: translateY(-2px);
+  border-color: #167C72;
+  box-shadow: 0 4px 12px rgba(22, 124, 114, 0.12);
+}
+
+.kpiActive {
+  border-color: #167C72;
+  background: #f0fdf9;
+  box-shadow: 0 0 0 2px rgba(22, 124, 114, 0.2);
+}
+
+.kpiHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.kpiLabel {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.kpiIconBox {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.iconTeal { background: #e6f4f2; color: #167C72; }
+.iconEmerald { background: #ecfdf5; color: #059669; }
+.iconDanger { background: #fef2f2; color: #dc2626; }
+.iconBronze { background: #fef3c7; color: #b45309; }
+.iconMuted { background: #f1f5f9; color: #64748b; }
+
+.kpiValueRow {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.kpiValue {
+  font-size: 1.65rem;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.02em;
+}
+
+.kpiBadge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 12px;
+  background: #f1f5f9;
+  color: #475569;
+}
+
+.kpiBadgeEmerald {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 12px;
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.kpiBadgeDanger {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 12px;
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.kpiBadgeBronze {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 12px;
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.kpiBadgeMuted {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 12px;
+  background: #e2e8f0;
+  color: #334155;
+}
+
+.kpiSub {
+  font-size: 0.72rem;
+  color: #94a3b8;
+}
+
+/* Control & Search Toolbar */
 .topBar {
   display: flex;
   justify-content: space-between;
   align-items: center;
   background: #ffffff;
-  padding: 1rem 1.5rem;
+  padding: 0.85rem 1.25rem;
   border-radius: 12px;
   border: 1px solid #e2e8f0;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
   flex-wrap: wrap;
   gap: 12px;
-  width: 100%;
+}
+
+.searchAndFilters {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  flex-wrap: wrap;
 }
 
 .searchBox {
@@ -24,16 +177,126 @@
   align-items: center;
   gap: 8px;
   background: #f8fafc;
-  padding: 6px 14px;
+  padding: 8px 14px;
   border-radius: 8px;
   border: 1px solid #cbd5e1;
-  width: 340px;
-  max-width: 100%;
+  min-width: 320px;
+  max-width: 420px;
+  flex: 1;
 }
 
+.searchIcon {
+  color: #94a3b8;
+}
+
+.searchBox input {
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 0.85rem;
+  color: #1e293b;
+  width: 100%;
+}
+
+.clearSearchBtn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+}
+
+.filterGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.filterItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #f8fafc;
+  padding: 7px 12px;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+}
+
+.filterIcon {
+  color: #64748b;
+}
+
+.filterItem select {
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 0.82rem;
+  color: #334155;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.actionButtons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.viewToggleGroup {
+  display: flex;
+  background: #f1f5f9;
+  padding: 3px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+.viewBtn {
+  border: none;
+  background: transparent;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.viewBtnActive {
+  background: #ffffff;
+  color: #0f172a;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.btnAddAsset {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #167C72;
+  color: #ffffff;
+  border: none;
+  font-weight: 700;
+  font-size: 0.85rem;
+  padding: 9px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.btnAddAsset:hover {
+  background: #136961;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(22, 124, 114, 0.25);
+}
+
+/* Fleet Cards Grid */
 .fleetGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
   gap: 1.5rem;
   width: 100%;
 }
@@ -43,60 +306,68 @@
   border-radius: 14px;
   border: 1px solid #e2e8f0;
   overflow: hidden;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
-  cursor: pointer;
-  transition: all 0.25s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
   display: flex;
   flex-direction: column;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
 }
 
 .card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 24px -4px rgba(15, 23, 42, 0.12);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px -3px rgba(15, 23, 42, 0.08);
   border-color: #cbd5e1;
 }
 
 .imageWrapper {
   position: relative;
-  height: 200px;
   width: 100%;
-  background-color: #0f172a;
+  height: 190px;
+  background: #0f172a;
+  overflow: hidden;
 }
 
 .machineImage {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.4s ease;
+  transition: transform 0.3s ease;
 }
 
 .card:hover .machineImage {
-  transform: scale(1.05);
+  transform: scale(1.03);
 }
 
 .statusTag {
   position: absolute;
   top: 12px;
-  right: 12px;
-  background: rgba(15, 23, 42, 0.85);
-  backdrop-filter: blur(4px);
-  font-size: 0.72rem;
-  font-weight: 700;
+  left: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   padding: 4px 10px;
   border-radius: 20px;
-  display: flex;
-  align-items: center;
-  gap: 5px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  backdrop-filter: blur(8px);
 }
 
-.statusActive {
-  color: #10b981;
-  border: 1px solid rgba(16, 185, 129, 0.3);
+.statusOperational {
+  background: rgba(16, 185, 129, 0.9);
+  color: #ffffff;
 }
 
-.statusAlert {
-  color: #ef4444;
-  border: 1px solid rgba(239, 68, 68, 0.3);
+.statusMaint {
+  background: rgba(239, 68, 68, 0.9);
+  color: #ffffff;
+}
+
+.statusIndicatorDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ffffff;
 }
 
 .regOverlay {
@@ -104,12 +375,25 @@
   bottom: 12px;
   left: 12px;
   background: rgba(15, 23, 42, 0.85);
-  color: #f59e0b;
-  font-size: 0.75rem;
-  font-weight: 800;
-  padding: 4px 10px;
+  color: #ffffff;
+  padding: 3px 8px;
   border-radius: 6px;
-  letter-spacing: 0.05em;
+  font-family: monospace;
+  font-weight: 700;
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+}
+
+.classOverlay {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: rgba(15, 23, 42, 0.85);
+  color: #ffffff;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  font-weight: 700;
 }
 
 .cardContent {
@@ -117,214 +401,468 @@
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  flex: 1;
 }
-
 
 .titleArea {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 4px;
 }
 
-.machineName {
+.codeRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.assetCode {
+  font-size: 0.72rem;
+  font-family: monospace;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.ownershipBadge {
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 6px;
+}
+
+.badgeOwned {
+  background: #e6f4f2;
+  color: #167C72;
+}
+
+.badgeRented {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.title {
   font-size: 1.05rem;
   font-weight: 800;
   color: #0f172a;
-  line-height: 1.3;
   margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.siteLoc {
-  font-size: 0.78rem;
-  color: #64748b;
+.siteRow {
   display: flex;
   align-items: center;
-  gap: 0.35rem;
-  flex-wrap: wrap;
+  gap: 5px;
+  font-size: 0.8rem;
+  color: #64748b;
 }
 
-.logRow {
+.siteIcon {
+  color: #167C72;
+  flex-shrink: 0;
+}
+
+.siteName {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.metricsGrid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  padding: 0.75rem 0;
-  border-top: 1px dashed #e2e8f0;
-  border-bottom: 1px dashed #e2e8f0;
+  grid-template-columns: repeat(3, 1fr);
   gap: 8px;
+  background: #fafaf9;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid #f1f5f9;
 }
 
-.logBlock {
+.metricItem {
   display: flex;
   flex-direction: column;
+  gap: 2px;
 }
 
-
-.logLabel {
-  font-size: 0.7rem;
+.metricLabel {
+  font-size: 0.65rem;
   color: #64748b;
-  font-weight: 700;
   text-transform: uppercase;
+  font-weight: 600;
 }
 
-.logVal {
-  font-size: 0.95rem;
-  font-weight: 800;
+.metricValue {
+  font-size: 0.85rem;
   color: #0f172a;
-  margin-top: 2px;
+  font-weight: 800;
+}
+
+.metricValueSmall {
+  font-size: 0.78rem;
+  color: #334155;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.metricValueService {
+  font-size: 0.8rem;
+  color: #d97706;
+  font-weight: 800;
 }
 
 .cardFooter {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 0.8rem;
-  color: #64748b;
-  font-weight: 600;
-  margin-top: auto;
+  padding-top: 0.5rem;
   border-top: 1px solid #f1f5f9;
-  padding-top: 0.75rem;
-  flex-wrap: wrap;
-  gap: 8px;
 }
 
-/* Modal View */
-.modalOverlay {
+.telematicsStatusRow {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
+.iconGreen { color: #059669; }
+.iconMuted { color: #94a3b8; }
+
+.viewDossierLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #167C72;
+}
+
+.card:hover .viewDossierLink {
+  color: #136961;
+  transform: translateX(2px);
+}
+
+/* Table View Panel */
+.tablePanel {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  overflow-x: auto;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.dataTable {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.85rem;
+  min-width: 900px;
+}
+
+.dataTable th {
+  background: #f8fafc;
+  padding: 12px 16px;
+  font-weight: 600;
+  color: #475569;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.dataTable td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #f1f5f9;
+  color: #334155;
+}
+
+.tableRowClickable {
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.tableRowClickable:hover {
+  background: #f8fafc;
+}
+
+.tableAssetInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.tableThumb {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 1px solid #e2e8f0;
+}
+
+.tableAssetName {
+  display: block;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.tableAssetCode {
+  font-size: 0.72rem;
+  font-family: monospace;
+  color: #64748b;
+}
+
+.tableRegInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.tableSub {
+  font-size: 0.72rem;
+  color: #64748b;
+}
+
+.tableProjectTag {
+  display: inline-block;
+  background: #f1f5f9;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.78rem;
+  color: #1e293b;
+}
+
+.tableOperatorInfo {
+  display: flex;
+  flex-direction: column;
+  font-weight: 600;
+  font-size: 0.82rem;
+}
+
+.textServiceAlert {
+  color: #d97706;
+  font-weight: 700;
+}
+
+.textServiceOk {
+  color: #059669;
+  font-weight: 600;
+}
+
+.statusBadgeSmall {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 12px;
+}
+
+.tableActionLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: #167C72;
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-decoration: none;
+}
+
+/* Empty State */
+.emptyState {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px dashed #cbd5e1;
+  text-align: center;
+}
+
+.emptyIcon {
+  color: #94a3b8;
+  margin-bottom: 1rem;
+}
+
+.emptyState h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 0.35rem;
+}
+
+.emptyState p {
+  color: #64748b;
+  font-size: 0.85rem;
+  margin-bottom: 1.25rem;
+}
+
+.resetBtn {
+  background: #167C72;
+  color: #ffffff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Modal Styling */
+.modalBackdrop {
   position: fixed;
   inset: 0;
-  background: rgba(15, 23, 42, 0.75);
-  backdrop-filter: blur(5px);
-  z-index: 60;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1rem;
+  z-index: 1000;
+  padding: 1.5rem;
 }
 
-.modalContent {
+.modalBox {
   background: #ffffff;
   border-radius: 16px;
   width: 100%;
-  max-width: 720px;
+  max-width: 740px;
   max-height: 90vh;
-  overflow-y: auto;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
   display: flex;
   flex-direction: column;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
 }
 
-.modalHero {
-  height: 220px;
-  position: relative;
-  width: 100%;
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem 1.75rem;
+  border-bottom: 1px solid #e2e8f0;
+  background: #fafaf9;
 }
 
-.modalHeroImage {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+.modalHeaderTitle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
-.modalClose {
-  position: absolute;
-  top: 14px;
-  right: 14px;
-  background: rgba(15, 23, 42, 0.85);
+.modalHeaderIcon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: #167C72;
   color: #ffffff;
-  border: none;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s;
 }
 
-.modalClose:hover {
-  background: #ef4444;
+.modalHeaderTitle h3 {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0;
 }
 
-.modalBody {
-  padding: 1.5rem;
+.modalHeaderTitle p {
+  font-size: 0.78rem;
+  color: #64748b;
+  margin: 2px 0 0 0;
+}
+
+.closeBtn {
+  border: none;
+  background: transparent;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 6px;
+}
+
+.modalForm {
+  padding: 1.5rem 1.75rem;
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 1.15rem;
+  overflow-y: auto;
 }
 
-.modalGrid4 {
+.formRow2 {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.formRow3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+@media (max-width: 600px) {
+  .formRow2, .formRow3 {
+    grid-template-columns: 1fr;
+  }
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.formGroup label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #475569;
+}
+
+.formGroup input,
+.formGroup select {
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  color: #1e293b;
+  outline: none;
+}
+
+.formGroup input:focus,
+.formGroup select:focus {
+  border-color: #167C72;
+}
+
+.modalFooterActions {
+  display: flex;
+  justify-content: flex-end;
   gap: 10px;
+  margin-top: 0.5rem;
 }
 
-@media (max-width: 768px) {
-  .container {
-    gap: 1rem;
-  }
-
-  .topBar {
-    flex-direction: column;
-    align-items: stretch;
-    padding: 0.75rem 1rem;
-    gap: 8px;
-  }
-
-  .searchBox {
-    width: 100%;
-    padding: 0.4rem 0.75rem;
-  }
-
-  .fleetGrid {
-    grid-template-columns: 1fr;
-    gap: 0.85rem;
-  }
-
-  /* Compact Vehicle Card */
-  .card {
-    border-radius: 12px;
-  }
-
-  .imageWrapper {
-    height: 140px;
-  }
-
-  .cardContent {
-    padding: 0.85rem;
-    gap: 0.65rem;
-  }
-
-  .machineName {
-    font-size: 0.95rem;
-  }
-
-  .logRow {
-    padding: 0.5rem 0;
-  }
-
-  .logLabel {
-    font-size: 0.65rem;
-  }
-
-  .logVal {
-    font-size: 0.85rem;
-  }
-
-  .modalHero {
-    height: 160px;
-  }
-
-  .modalBody {
-    padding: 1rem;
-  }
-
-  .modalGrid4 {
-    grid-template-columns: 1fr 1fr;
-  }
+.btnSecondary {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #475569;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
 }
 
-@media (max-width: 480px) {
-  .modalGrid4 {
-    grid-template-columns: 1fr;
-  }
+.btnPrimary {
+  background: #167C72;
+  border: none;
+  color: #ffffff;
+  padding: 8px 20px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
 }
