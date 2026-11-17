@@ -613,40 +613,42 @@ export default function ProjectDetailsPage() {
               </div>
             </div>
 
-            <table className={styles.detailsTable}>
-              <thead>
-                <tr>
-                  <th>Voucher #</th>
-                  <th>Expense Category</th>
-                  <th>Description</th>
-                  <th>Amount</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>VCH-EXP-091</td>
-                  <td>Hydraulic Equipment</td>
-                  <td>Transit mixer diesel and pump hose replacement</td>
-                  <td>₹ 48,000</td>
-                  <td><span className={styles.statusBadgeSmall}>● Authorized</span></td>
-                </tr>
-                <tr>
-                  <td>VCH-EXP-088</td>
-                  <td>Civil Reinforcement</td>
-                  <td>Binding wire and 16mm TMT rebar consignment (35T)</td>
-                  <td>₹ 1,85,000</td>
-                  <td><span className={styles.statusBadgeSmall}>● Authorized</span></td>
-                </tr>
-                <tr>
-                  <td>VCH-EXP-084</td>
-                  <td>Workforce Payroll</td>
-                  <td>Fortnightly labor wage settlement via NEFT</td>
-                  <td>₹ 3,42,000</td>
-                  <td><span className={styles.statusBadgeSmall}>● Authorized</span></td>
-                </tr>
-              </tbody>
-            </table>
+            <div className={styles.tableResponsiveContainer}>
+              <table className={styles.detailsTable}>
+                <thead>
+                  <tr>
+                    <th>Voucher #</th>
+                    <th>Expense Category</th>
+                    <th>Description</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>VCH-EXP-091</td>
+                    <td>Hydraulic Equipment</td>
+                    <td>Transit mixer diesel and pump hose replacement</td>
+                    <td>₹ 48,000</td>
+                    <td><span className={styles.statusBadgeSmall}>● Authorized</span></td>
+                  </tr>
+                  <tr>
+                    <td>VCH-EXP-088</td>
+                    <td>Civil Reinforcement</td>
+                    <td>Binding wire and 16mm TMT rebar consignment (35T)</td>
+                    <td>₹ 1,85,000</td>
+                    <td><span className={styles.statusBadgeSmall}>● Authorized</span></td>
+                  </tr>
+                  <tr>
+                    <td>VCH-EXP-084</td>
+                    <td>Workforce Payroll</td>
+                    <td>Fortnightly labor wage settlement via NEFT</td>
+                    <td>₹ 3,42,000</td>
+                    <td><span className={styles.statusBadgeSmall}>● Authorized</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       )}
@@ -746,38 +748,40 @@ export default function ProjectDetailsPage() {
         <div className={styles.tabContentArea}>
           <div className={styles.cardPanel}>
             <h3 className={styles.tabHeaderTitle}>Project Engineering Documents & Clearances</h3>
-            <table className={styles.detailsTable}>
-              <thead>
-                <tr>
-                  <th>Document Title</th>
-                  <th>Category</th>
-                  <th>File Size</th>
-                  <th>Upload Date</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {(project.documents || []).map(doc => (
-                  <tr key={doc.id}>
-                    <td>
-                      <div className={styles.docTitleCell}>
-                        <FileText size={16} className={styles.docIcon} />
-                        <strong>{doc.name}</strong>
-                      </div>
-                    </td>
-                    <td>{doc.category}</td>
-                    <td>{doc.fileSize}</td>
-                    <td>{doc.uploadedAt}</td>
-                    <td>
-                      <button className={styles.downloadBtn}>
-                        <Download size={13} />
-                        <span>Download</span>
-                      </button>
-                    </td>
+            <div className={styles.tableResponsiveContainer}>
+              <table className={styles.detailsTable}>
+                <thead>
+                  <tr>
+                    <th>Document Title</th>
+                    <th>Category</th>
+                    <th>File Size</th>
+                    <th>Upload Date</th>
+                    <th>Action</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {(project.documents || []).map(doc => (
+                    <tr key={doc.id}>
+                      <td>
+                        <div className={styles.docTitleCell}>
+                          <FileText size={16} className={styles.docIcon} />
+                          <strong>{doc.name}</strong>
+                        </div>
+                      </td>
+                      <td>{doc.category}</td>
+                      <td>{doc.fileSize}</td>
+                      <td>{doc.uploadedAt}</td>
+                      <td>
+                        <button className={styles.downloadBtn}>
+                          <Download size={13} />
+                          <span>Download</span>
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       )}
@@ -799,34 +803,36 @@ export default function ProjectDetailsPage() {
           </div>
 
           <div className={styles.cardPanel}>
-            <table className={styles.detailsTable}>
-              <thead>
-                <tr>
-                  <th>DPR ID</th>
-                  <th>Date & Shift</th>
-                  <th>Work Summary</th>
-                  <th>Workforce</th>
-                  <th>Diesel (L)</th>
-                  <th>Submitted By</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {(project.dailyReports || []).map(r => (
-                  <tr key={r.id}>
-                    <td><strong className={styles.dprIdBadge}>{r.id}</strong></td>
-                    <td>{r.reportDate} ({r.shift})</td>
-                    <td>{r.workExecuted}</td>
-                    <td>{r.labourCount} Workers</td>
-                    <td>{r.dieselConsumedLitres} L</td>
-                    <td>{r.submittedBy}</td>
-                    <td>
-                      <span className={styles.statusBadgeSmall}>● {r.approvalStatus}</span>
-                    </td>
+            <div className={styles.tableResponsiveContainer}>
+              <table className={styles.detailsTable}>
+                <thead>
+                  <tr>
+                    <th>DPR ID</th>
+                    <th>Date & Shift</th>
+                    <th>Work Summary</th>
+                    <th>Workforce</th>
+                    <th>Diesel (L)</th>
+                    <th>Submitted By</th>
+                    <th>Status</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {(project.dailyReports || []).map(r => (
+                    <tr key={r.id}>
+                      <td><strong className={styles.dprIdBadge}>{r.id}</strong></td>
+                      <td>{r.reportDate} ({r.shift})</td>
+                      <td>{r.workExecuted}</td>
+                      <td>{r.labourCount} Workers</td>
+                      <td>{r.dieselConsumedLitres} L</td>
+                      <td>{r.submittedBy}</td>
+                      <td>
+                        <span className={styles.statusBadgeSmall}>● {r.approvalStatus}</span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       )}
