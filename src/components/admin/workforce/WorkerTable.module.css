@@ -369,16 +369,12 @@
   border: 2px solid #ffffff;
 }
 
-.statusDot.present {
+.statusDot.active {
   background: #10b981;
 }
 
-.statusDot.absent {
+.statusDot.inactive {
   background: #ef4444;
-}
-
-.statusDot.onleave {
-  background: #f59e0b;
 }
 
 .info {
@@ -431,11 +427,34 @@
   color: #475569;
 }
 
+.codeRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .workerCode {
   font-size: 0.72rem;
   font-family: monospace;
   color: #64748b;
   font-weight: 600;
+}
+
+.employmentBadge {
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+.employmentBadge.active {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.employmentBadge.inactive {
+  background: #fee2e2;
+  color: #991b1b;
 }
 
 .tradeSkill {
@@ -498,6 +517,15 @@
   font-size: 0.85rem;
   color: #0f172a;
   font-weight: 700;
+}
+
+.metricValueSmall {
+  font-size: 0.75rem;
+  color: #334155;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .cardFooter {
@@ -621,38 +649,16 @@
   color: #1e293b;
 }
 
-.attendancePill {
-  display: inline-block;
-  padding: 3px 8px;
-  border-radius: 12px;
-  font-size: 0.72rem;
-  font-weight: 700;
-}
-
-.attendancePill.present {
-  background: #d1fae5;
-  color: #065f46;
-}
-
-.attendancePill.absent {
-  background: #fee2e2;
-  color: #991b1b;
-}
-
-.attendancePill.onleave {
-  background: #fef3c7;
-  color: #92400e;
+.supervisorNameText {
+  font-size: 0.82rem;
+  color: #475569;
+  font-weight: 500;
 }
 
 .subTextMuted {
   font-size: 0.7rem;
   color: #94a3b8;
   margin-left: 3px;
-}
-
-.emergencyText {
-  font-size: 0.78rem;
-  color: #64748b;
 }
 
 .tableActionLink {

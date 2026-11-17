@@ -1,6 +1,8 @@
 // Shared storage keys and helpers for Structiva Enterprise OS
 export const WORKERS_STORAGE_KEY = 'structiva_enterprise_workers_v1';
 export const EXPENSES_STORAGE_KEY = 'structiva_enterprise_expenses_v2';
+export const ATTENDANCE_LOGS_STORAGE_KEY = 'structiva_enterprise_attendance_logs_v1';
+export const LEAVES_STORAGE_KEY = 'structiva_enterprise_leaves_v1';
 
 export interface WorkerDocument {
   id: string;
@@ -14,13 +16,18 @@ export interface WorkerDocument {
 
 export interface WorkerLeaveRecord {
   id: string;
+  workerId: string;
+  workerName: string;
+  workerCode: string;
   type: 'Paid Leave' | 'Sick Leave' | 'Emergency / Casual' | 'Unauthorized';
   startDate: string;
   endDate: string;
   days: number;
   reason: string;
   status: 'Approved' | 'Pending' | 'Rejected';
+  appliedOn: string;
   approvedBy?: string;
+  rejectionReason?: string;
 }
 
 export interface WorkerProjectAssignment {
@@ -52,8 +59,7 @@ export interface EnterpriseWorkerRecord {
   additionalSkills?: string[];
   dailyWage: number;
   overtimeHourlyRate: number;
-  status: 'Active' | 'Inactive' | 'On Leave';
-  todayStatus: 'Present' | 'Absent' | 'On Leave' | 'Half Day';
+  status: 'Active' | 'Inactive'; // Permanent employment status
   assignedProject: string;
   avatar: string;
   
@@ -95,6 +101,31 @@ export interface EnterpriseWorkerRecord {
   recentActivities: WorkerActivityEvent[];
 }
 
+export interface AttendanceCheckInRecord {
+  id: string;
+  workerId: string;
+  workerName: string;
+  workerCode: string;
+  site: string;
+  date: string;
+  checkInTime: string;
+  checkOutTime?: string;
+  status: 'Present' | 'Half Day' | 'Overtime' | 'Absent';
+  verificationMethod: 'GPS + Geofence' | 'QR Code' | 'Supervisor Manual Overrule';
+  latitude: number;
+  longitude: number;
+  distanceFromSiteMetres: number;
+  gpsAccuracyMetres: number;
+  geofencePassed: boolean;
+  qrVerified: boolean;
+  isException: boolean;
+  exceptionReason?: string;
+  approvalStatus: 'Auto-Verified' | 'Pending Exception Review' | 'Approved by Supervisor' | 'Rejected';
+  supervisorRemark?: string;
+  hoursWorked: number;
+  wageEarned: number;
+}
+
 export const defaultEnterpriseWorkers: EnterpriseWorkerRecord[] = [
   {
     id: '1',
@@ -107,7 +138,6 @@ export const defaultEnterpriseWorkers: EnterpriseWorkerRecord[] = [
     dailyWage: 950,
     overtimeHourlyRate: 140,
     status: 'Active',
-    todayStatus: 'Present',
     assignedProject: 'Skyline Commercial Complex',
     avatar: '/images/worker1.jpg',
     dob: '1988-06-15',
@@ -164,12 +194,16 @@ export const defaultEnterpriseWorkers: EnterpriseWorkerRecord[] = [
     leaves: [
       {
         id: 'lv-1',
+        workerId: '1',
+        workerName: 'Ramesh Patil',
+        workerCode: 'WRK-MUM-104',
         type: 'Paid Leave',
         startDate: '2026-10-18',
         endDate: '2026-10-21',
         days: 4,
         reason: 'Diwali Festival travel to hometown',
         status: 'Approved',
+        appliedOn: '10 Oct 2026',
         approvedBy: 'Er. Rajesh Kulkarni'
       }
     ],
@@ -208,14 +242,6 @@ export const defaultEnterpriseWorkers: EnterpriseWorkerRecord[] = [
         type: 'Overtime Logged',
         description: 'Approved 2 hours overtime for 14th-floor slab rebar inspection',
         site: 'Skyline Commercial Complex'
-      },
-      {
-        id: 'act-3',
-        date: '14 Nov 2026',
-        time: '09:15 AM',
-        type: 'Tool Checkout',
-        description: 'Issued hydraulic rebar bender unit #04',
-        site: 'Skyline Commercial Complex'
       }
     ]
   },
@@ -230,7 +256,6 @@ export const defaultEnterpriseWorkers: EnterpriseWorkerRecord[] = [
     dailyWage: 650,
     overtimeHourlyRate: 90,
     status: 'Active',
-    todayStatus: 'Present',
     assignedProject: 'Eastern Expressway Bridge',
     avatar: '/images/worker2.jpg',
     dob: '1994-02-10',
@@ -307,7 +332,6 @@ export const defaultEnterpriseWorkers: EnterpriseWorkerRecord[] = [
     dailyWage: 1200,
     overtimeHourlyRate: 180,
     status: 'Active',
-    todayStatus: 'On Leave',
     assignedProject: 'Metro Line Piling',
     avatar: '/images/worker3.jpg',
     dob: '1985-11-22',
@@ -342,25 +366,21 @@ export const defaultEnterpriseWorkers: EnterpriseWorkerRecord[] = [
         expiryDate: '12 Nov 2028',
         status: 'Verified',
         url: '#'
-      },
-      {
-        id: 'doc-32',
-        name: 'Safety & Heights Clearance Card',
-        category: 'Safety Induction Certificate',
-        uploadedAt: '12 Aug 2022',
-        status: 'Verified',
-        url: '#'
       }
     ],
     leaves: [
       {
         id: 'lv-31',
+        workerId: '3',
+        workerName: 'Ganesh More',
+        workerCode: 'WRK-PUN-302',
         type: 'Sick Leave',
         startDate: '2026-11-17',
         endDate: '2026-11-18',
         days: 2,
         reason: 'Viral fever rest advised by site clinic',
         status: 'Approved',
+        appliedOn: '16 Nov 2026',
         approvedBy: 'Er. Rajesh Kulkarni'
       }
     ],
@@ -374,16 +394,7 @@ export const defaultEnterpriseWorkers: EnterpriseWorkerRecord[] = [
         performanceRating: 4.9
       }
     ],
-    recentActivities: [
-      {
-        id: 'act-31',
-        date: 'Today',
-        time: '07:30 AM',
-        type: 'Safety Induction',
-        description: 'Medical leave certificate verified & approved in system',
-        site: 'Metro Line Piling'
-      }
-    ]
+    recentActivities: []
   },
   {
     id: '4',
@@ -396,7 +407,6 @@ export const defaultEnterpriseWorkers: EnterpriseWorkerRecord[] = [
     dailyWage: 500,
     overtimeHourlyRate: 75,
     status: 'Active',
-    todayStatus: 'Absent',
     assignedProject: 'Skyline Commercial Complex',
     avatar: '/images/worker4.jpg',
     dob: '1998-04-05',
@@ -421,16 +431,7 @@ export const defaultEnterpriseWorkers: EnterpriseWorkerRecord[] = [
     presentDaysThisMonth: 15,
     overtimeHoursThisMonth: 0,
     advanceTakenThisMonth: 500,
-    documents: [
-      {
-        id: 'doc-41',
-        name: 'Aadhaar Card Copy',
-        category: 'Aadhaar Card',
-        uploadedAt: '12 Sep 2024',
-        status: 'Pending',
-        url: '#'
-      }
-    ],
+    documents: [],
     leaves: [],
     projectHistory: [
       {
@@ -442,16 +443,7 @@ export const defaultEnterpriseWorkers: EnterpriseWorkerRecord[] = [
         performanceRating: 3.8
       }
     ],
-    recentActivities: [
-      {
-        id: 'act-41',
-        date: 'Yesterday',
-        time: '05:30 PM',
-        type: 'Advance Disbursed',
-        description: 'Received ₹500 weekly food advance voucher',
-        site: 'Skyline Commercial Complex'
-      }
-    ]
+    recentActivities: []
   },
   {
     id: '5',
@@ -464,7 +456,6 @@ export const defaultEnterpriseWorkers: EnterpriseWorkerRecord[] = [
     dailyWage: 1100,
     overtimeHourlyRate: 160,
     status: 'Active',
-    todayStatus: 'Present',
     assignedProject: 'Industrial Logistics Park',
     avatar: '/images/worker1.jpg',
     dob: '1990-08-19',
@@ -511,16 +502,7 @@ export const defaultEnterpriseWorkers: EnterpriseWorkerRecord[] = [
         performanceRating: 4.9
       }
     ],
-    recentActivities: [
-      {
-        id: 'act-51',
-        date: 'Today',
-        time: '08:10 AM',
-        type: 'Site Check-in',
-        description: 'Biometric fingerprint punched at Shed 3',
-        site: 'Industrial Logistics Park'
-      }
-    ]
+    recentActivities: []
   },
   {
     id: '6',
@@ -533,7 +515,6 @@ export const defaultEnterpriseWorkers: EnterpriseWorkerRecord[] = [
     dailyWage: 750,
     overtimeHourlyRate: 110,
     status: 'Inactive',
-    todayStatus: 'Absent',
     assignedProject: 'Unassigned',
     avatar: '/images/worker2.jpg',
     dob: '1995-12-03',
@@ -565,6 +546,75 @@ export const defaultEnterpriseWorkers: EnterpriseWorkerRecord[] = [
   }
 ];
 
+export const defaultAttendanceLogs: AttendanceCheckInRecord[] = [
+  {
+    id: 'att-101',
+    workerId: '1',
+    workerName: 'Ramesh Patil',
+    workerCode: 'WRK-MUM-104',
+    site: 'Skyline Commercial Complex',
+    date: '17 Nov 2026',
+    checkInTime: '07:58 AM',
+    checkOutTime: '06:00 PM',
+    status: 'Present',
+    verificationMethod: 'GPS + Geofence',
+    latitude: 18.55294,
+    longitude: 73.93481,
+    distanceFromSiteMetres: 24,
+    gpsAccuracyMetres: 6,
+    geofencePassed: true,
+    qrVerified: true,
+    isException: false,
+    approvalStatus: 'Auto-Verified',
+    hoursWorked: 8.0,
+    wageEarned: 950
+  },
+  {
+    id: 'att-102',
+    workerId: '2',
+    workerName: 'Suresh Kumar Yadav',
+    workerCode: 'WRK-DEL-209',
+    site: 'Eastern Expressway Bridge',
+    date: '17 Nov 2026',
+    checkInTime: '08:05 AM',
+    checkOutTime: '01:00 PM',
+    status: 'Half Day',
+    verificationMethod: 'GPS + Geofence',
+    latitude: 19.0330,
+    longitude: 73.0297,
+    distanceFromSiteMetres: 45,
+    gpsAccuracyMetres: 8,
+    geofencePassed: true,
+    qrVerified: true,
+    isException: false,
+    approvalStatus: 'Auto-Verified',
+    hoursWorked: 4.0,
+    wageEarned: 325
+  },
+  {
+    id: 'att-103',
+    workerId: '4',
+    workerName: 'Santosh Yadav',
+    workerCode: 'WRK-UP-418',
+    site: 'Skyline Commercial Complex',
+    date: '17 Nov 2026',
+    checkInTime: '08:45 AM',
+    status: 'Present',
+    verificationMethod: 'GPS + Geofence',
+    latitude: 18.55620,
+    longitude: 73.93910,
+    distanceFromSiteMetres: 480, // Outside 100m geofence!
+    gpsAccuracyMetres: 18,
+    geofencePassed: false,
+    qrVerified: false,
+    isException: true,
+    exceptionReason: 'Worker checked in 480m outside project boundary (Labour Camp gate instead of site turnstile)',
+    approvalStatus: 'Pending Exception Review',
+    hoursWorked: 8.0,
+    wageEarned: 500
+  }
+];
+
 export function getStoredWorkers(): EnterpriseWorkerRecord[] {
   if (typeof window === 'undefined') return defaultEnterpriseWorkers;
   try {
@@ -575,12 +625,12 @@ export function getStoredWorkers(): EnterpriseWorkerRecord[] {
     }
     const parsed = JSON.parse(raw);
     if (Array.isArray(parsed) && parsed.length > 0) {
-      // Merge with default schema structure to ensure newly added fields are present
       return parsed.map((item: any) => {
         const foundDefault = defaultEnterpriseWorkers.find(d => d.id === item.id);
         return {
           ...foundDefault,
           ...item,
+          status: item.status === 'Inactive' ? 'Inactive' : 'Active',
           documents: item.documents || foundDefault?.documents || [],
           leaves: item.leaves || foundDefault?.leaves || [],
           projectHistory: item.projectHistory || foundDefault?.projectHistory || [],
@@ -602,6 +652,32 @@ export function saveWorkers(workers: EnterpriseWorkerRecord[]): void {
     window.dispatchEvent(new CustomEvent('workersUpdated', { detail: workers }));
   } catch (e) {
     console.error('Failed to save workers to localStorage:', e);
+  }
+}
+
+export function getStoredAttendanceLogs(): AttendanceCheckInRecord[] {
+  if (typeof window === 'undefined') return defaultAttendanceLogs;
+  try {
+    const raw = localStorage.getItem(ATTENDANCE_LOGS_STORAGE_KEY);
+    if (!raw) {
+      localStorage.setItem(ATTENDANCE_LOGS_STORAGE_KEY, JSON.stringify(defaultAttendanceLogs));
+      return defaultAttendanceLogs;
+    }
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) && parsed.length > 0 ? parsed : defaultAttendanceLogs;
+  } catch {
+    return defaultAttendanceLogs;
+  }
+}
+
+export function saveAttendanceLogs(logs: AttendanceCheckInRecord[]): void {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.setItem(ATTENDANCE_LOGS_STORAGE_KEY, JSON.stringify(logs));
+    window.dispatchEvent(new Event('storage'));
+    window.dispatchEvent(new CustomEvent('attendanceUpdated', { detail: logs }));
+  } catch (e) {
+    console.error('Failed to save attendance logs:', e);
   }
 }
 

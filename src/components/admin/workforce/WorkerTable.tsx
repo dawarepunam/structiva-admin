@@ -5,7 +5,7 @@ import styles from './WorkerTable.module.css';
 import { 
   Search, Phone, ShieldCheck, MapPin, X, ArrowRight, Award, Plus, 
   CheckCircle, Users, UserCheck, UserX, Clock, AlertCircle, LayoutGrid, List,
-  Filter, Calendar, DollarSign, FileText, ChevronRight, Briefcase, Sparkles
+  Filter, Calendar, DollarSign, FileText, ChevronRight, Briefcase, Sparkles, UserMinus
 } from 'lucide-react';
 import SafeImage from '@/components/admin/ui/SafeImage';
 import { EnterpriseWorkerRecord, getStoredWorkers, saveWorkers } from '@/services/workerStorage';
@@ -21,13 +21,13 @@ export default function WorkerTable() {
   const [categoryFilter, setCategoryFilter] = useState('All');
   const [statusFilter, setStatusFilter] = useState('All');
   const [projectFilter, setProjectFilter] = useState('All');
-  const [attendanceFilter, setAttendanceFilter] = useState('All');
+  const [employmentFilter, setEmploymentFilter] = useState('All');
   const [sortBy, setSortBy] = useState('name');
   const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid');
   const [showAddModal, setShowAddModal] = useState(false);
   const [onboardingStep, setOnboardingStep] = useState(1);
 
-  // 5-Section Onboarding Form State
+  // 5-Section Master Onboarding Form State
   const [formData, setFormData] = useState({
     // Section 1: Personal
     name: '',
@@ -88,12 +88,12 @@ export default function WorkerTable() {
     };
   }, []);
 
-  // Compute 6 Top Workforce KPIs
+  // Compute Permanent Workforce KPIs (Master Information Only)
   const totalCount = workers.length;
   const activeCount = workers.filter(w => w.status === 'Active').length;
-  const presentTodayCount = workers.filter(w => w.todayStatus === 'Present').length;
-  const absentTodayCount = workers.filter(w => w.todayStatus === 'Absent').length;
-  const onLeaveCount = workers.filter(w => w.todayStatus === 'On Leave').length;
+  const inactiveCount = workers.filter(w => w.status === 'Inactive').length;
+  const skilledCount = workers.filter(w => w.category === 'Skilled').length;
+  const directPayrollCount = workers.filter(w => w.employmentType === 'Direct Payroll').length;
   const unassignedCount = workers.filter(w => !w.assignedProject || w.assignedProject === 'Unassigned').length;
 
   // Filter & Search Logic
@@ -103,19 +103,21 @@ export default function WorkerTable() {
       w.skill.toLowerCase().includes(search.toLowerCase()) ||
       w.code.toLowerCase().includes(search.toLowerCase()) ||
       w.phone.includes(search) ||
-      w.assignedProject.toLowerCase().includes(search.toLowerCase());
+      w.assignedProject.toLowerCase().includes(search.toLowerCase()) ||
+      (w.supervisorName && w.supervisorName.toLowerCase().includes(search.toLowerCase()));
 
     const matchCategory = categoryFilter === 'All' || w.category === categoryFilter;
     const matchStatus = statusFilter === 'All' || w.status === statusFilter;
     const matchProject = projectFilter === 'All' || w.assignedProject === projectFilter;
-    const matchAttendance = attendanceFilter === 'All' || w.todayStatus === attendanceFilter;
+    const matchEmployment = employmentFilter === 'All' || w.employmentType === employmentFilter;
 
-    return matchSearch && matchCategory && matchStatus && matchProject && matchAttendance;
+    return matchSearch && matchCategory && matchStatus && matchProject && matchEmployment;
   });
 
   // Sorting
   filtered = [...filtered].sort((a, b) => {
     if (sortBy === 'dailyWage') return b.dailyWage - a.dailyWage;
+    if (sortBy === 'experience') return b.experienceYears - a.experienceYears;
     if (sortBy === 'daysWorked') return b.totalDaysWorked - a.totalDaysWorked;
     return a.name.localeCompare(b.name);
   });
@@ -139,7 +141,6 @@ export default function WorkerTable() {
       dailyWage: Number(formData.dailyWage) || 800,
       overtimeHourlyRate: Number(formData.overtimeHourlyRate) || 120,
       status: 'Active',
-      todayStatus: 'Present',
       assignedProject: formData.assignedProject,
       avatar: '/images/worker1.jpg',
       
@@ -152,7 +153,7 @@ export default function WorkerTable() {
       emergencyContact: formData.emergencyContact || '+91 94220 00000',
       emergencyRelation: formData.emergencyRelation,
       
-      joiningDate: '2026-11-17',
+      joiningDate: '17 Nov 2026',
       experienceYears: Number(formData.experienceYears) || 4,
       employmentType: formData.employmentType,
       supervisorName: formData.supervisorName,
@@ -253,23 +254,23 @@ export default function WorkerTable() {
 
   return (
     <div className={styles.container}>
-      {/* Top 6 Workforce KPI Summary Cards */}
+      {/* Top 6 Master Information KPI Cards */}
       <div className={styles.kpiGrid}>
         <div 
-          className={`${styles.kpiCard} ${statusFilter === 'All' && attendanceFilter === 'All' ? styles.kpiActive : ''}`}
-          onClick={() => { setStatusFilter('All'); setAttendanceFilter('All'); }}
+          className={`${styles.kpiCard} ${statusFilter === 'All' ? styles.kpiActive : ''}`}
+          onClick={() => setStatusFilter('All')}
         >
           <div className={styles.kpiHeader}>
-            <span className={styles.kpiLabel}>Total Workers</span>
+            <span className={styles.kpiLabel}>Total Registered</span>
             <div className={`${styles.kpiIconBox} ${styles.iconTeal}`}>
               <Users size={18} />
             </div>
           </div>
           <div className={styles.kpiValueRow}>
             <span className={styles.kpiValue}>{totalCount}</span>
-            <span className={styles.kpiBadge}>Registered</span>
+            <span className={styles.kpiBadge}>Central Registry</span>
           </div>
-          <span className={styles.kpiSubtext}>All workforce in central registry</span>
+          <span className={styles.kpiSubtext}>Permanent worker master records</span>
         </div>
 
         <div 
@@ -277,67 +278,67 @@ export default function WorkerTable() {
           onClick={() => setStatusFilter(statusFilter === 'Active' ? 'All' : 'Active')}
         >
           <div className={styles.kpiHeader}>
-            <span className={styles.kpiLabel}>Active Workers</span>
+            <span className={styles.kpiLabel}>Active Service</span>
             <div className={`${styles.kpiIconBox} ${styles.iconEmerald}`}>
               <UserCheck size={18} />
             </div>
           </div>
           <div className={styles.kpiValueRow}>
             <span className={styles.kpiValue}>{activeCount}</span>
-            <span className={styles.kpiBadgeEmerald}>In Service</span>
+            <span className={styles.kpiBadgeEmerald}>Employment Active</span>
           </div>
-          <span className={styles.kpiSubtext}>Active employment status</span>
+          <span className={styles.kpiSubtext}>Available for site allocation</span>
         </div>
 
         <div 
-          className={`${styles.kpiCard} ${attendanceFilter === 'Present' ? styles.kpiActive : ''}`}
-          onClick={() => setAttendanceFilter(attendanceFilter === 'Present' ? 'All' : 'Present')}
+          className={`${styles.kpiCard} ${statusFilter === 'Inactive' ? styles.kpiActive : ''}`}
+          onClick={() => setStatusFilter(statusFilter === 'Inactive' ? 'All' : 'Inactive')}
         >
           <div className={styles.kpiHeader}>
-            <span className={styles.kpiLabel}>Present Today</span>
-            <div className={`${styles.kpiIconBox} ${styles.iconEmerald}`}>
-              <CheckCircle size={18} />
-            </div>
-          </div>
-          <div className={styles.kpiValueRow}>
-            <span className={styles.kpiValue}>{presentTodayCount}</span>
-            <span className={styles.kpiBadgeEmerald}>On Site</span>
-          </div>
-          <span className={styles.kpiSubtext}>Biometric & muster verified</span>
-        </div>
-
-        <div 
-          className={`${styles.kpiCard} ${attendanceFilter === 'Absent' ? styles.kpiActive : ''}`}
-          onClick={() => setAttendanceFilter(attendanceFilter === 'Absent' ? 'All' : 'Absent')}
-        >
-          <div className={styles.kpiHeader}>
-            <span className={styles.kpiLabel}>Absent Today</span>
+            <span className={styles.kpiLabel}>Inactive / Archived</span>
             <div className={`${styles.kpiIconBox} ${styles.iconDanger}`}>
-              <UserX size={18} />
+              <UserMinus size={18} />
             </div>
           </div>
           <div className={styles.kpiValueRow}>
-            <span className={styles.kpiValue}>{absentTodayCount}</span>
-            <span className={styles.kpiBadgeDanger}>Unreported</span>
+            <span className={styles.kpiValue}>{inactiveCount}</span>
+            <span className={styles.kpiBadgeDanger}>Off-Duty</span>
           </div>
-          <span className={styles.kpiSubtext}>Requires supervisor check</span>
+          <span className={styles.kpiSubtext}>Relieved or past workers</span>
         </div>
 
         <div 
-          className={`${styles.kpiCard} ${attendanceFilter === 'On Leave' ? styles.kpiActive : ''}`}
-          onClick={() => setAttendanceFilter(attendanceFilter === 'On Leave' ? 'All' : 'On Leave')}
+          className={`${styles.kpiCard} ${categoryFilter === 'Skilled' ? styles.kpiActive : ''}`}
+          onClick={() => setCategoryFilter(categoryFilter === 'Skilled' ? 'All' : 'Skilled')}
         >
           <div className={styles.kpiHeader}>
-            <span className={styles.kpiLabel}>On Leave</span>
+            <span className={styles.kpiLabel}>Skilled Artisans</span>
             <div className={`${styles.kpiIconBox} ${styles.iconBronze}`}>
-              <Clock size={18} />
+              <Award size={18} />
             </div>
           </div>
           <div className={styles.kpiValueRow}>
-            <span className={styles.kpiValue}>{onLeaveCount}</span>
-            <span className={styles.kpiBadgeBronze}>Sanctioned</span>
+            <span className={styles.kpiValue}>{skilledCount}</span>
+            <span className={styles.kpiBadgeBronze}>Specialists</span>
           </div>
-          <span className={styles.kpiSubtext}>Approved leave balance</span>
+          <span className={styles.kpiSubtext}>Certified trade masters</span>
+        </div>
+
+        <div 
+          className={`${styles.kpiCard} ${employmentFilter === 'Direct Payroll' ? styles.kpiActive : ''}`}
+          onClick={() => setEmploymentFilter(employmentFilter === 'Direct Payroll' ? 'All' : 'Direct Payroll')}
+        >
+          <div className={styles.kpiHeader}>
+            <span className={styles.kpiLabel}>Direct Company Payroll</span>
+            <div className={`${styles.kpiIconBox} ${styles.iconTeal}`}>
+              <Briefcase size={18} />
+            </div>
+          </div>
+          <div className={styles.kpiValueRow}>
+            <span className={styles.kpiValue}>{directPayrollCount}</span>
+            <span className={styles.kpiBadge}>Company Staff</span>
+          </div>
+          <span className={styles.kpiSubtext}>Direct statutory compliance</span>
         </div>
 
         <div 
@@ -345,7 +346,7 @@ export default function WorkerTable() {
           onClick={() => setProjectFilter(projectFilter === 'Unassigned' ? 'All' : 'Unassigned')}
         >
           <div className={styles.kpiHeader}>
-            <span className={styles.kpiLabel}>Unassigned Workers</span>
+            <span className={styles.kpiLabel}>Unassigned Pool</span>
             <div className={`${styles.kpiIconBox} ${styles.iconMuted}`}>
               <AlertCircle size={18} />
             </div>
@@ -354,7 +355,7 @@ export default function WorkerTable() {
             <span className={styles.kpiValue}>{unassignedCount}</span>
             <span className={styles.kpiBadgeMuted}>Reserve Pool</span>
           </div>
-          <span className={styles.kpiSubtext}>Ready for site allocation</span>
+          <span className={styles.kpiSubtext}>Ready for site deployment</span>
         </div>
       </div>
 
@@ -366,7 +367,7 @@ export default function WorkerTable() {
             <Search size={16} className={styles.searchIcon} />
             <input 
               type="text" 
-              placeholder="Search by worker name, code, trade, skill or mobile..." 
+              placeholder="Search by worker name, code, trade, mobile or supervisor..." 
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
@@ -391,7 +392,7 @@ export default function WorkerTable() {
 
             <div className={styles.filterItem}>
               <select value={projectFilter} onChange={(e) => setProjectFilter(e.target.value)}>
-                <option value="All">All Project Sites</option>
+                <option value="All">All Projects</option>
                 <option value="Unassigned">Unassigned (Pool)</option>
                 {availableProjects.map(p => (
                   <option key={p.id} value={p.name}>{p.name}</option>
@@ -400,10 +401,20 @@ export default function WorkerTable() {
             </div>
 
             <div className={styles.filterItem}>
+              <select value={employmentFilter} onChange={(e) => setEmploymentFilter(e.target.value)}>
+                <option value="All">All Employment Types</option>
+                <option value="Direct Payroll">Direct Payroll</option>
+                <option value="Subcontractor Crew">Subcontractor Crew</option>
+                <option value="Daily Muster">Daily Muster</option>
+              </select>
+            </div>
+
+            <div className={styles.filterItem}>
               <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
                 <option value="name">Sort by: Name (A-Z)</option>
                 <option value="dailyWage">Sort by: Daily Wage (High to Low)</option>
-                <option value="daysWorked">Sort by: Total Days Worked</option>
+                <option value="experience">Sort by: Site Experience</option>
+                <option value="daysWorked">Sort by: Total Days Logged</option>
               </select>
             </div>
           </div>
@@ -441,10 +452,10 @@ export default function WorkerTable() {
           {filtered.length === 0 ? (
             <div className={styles.emptyState}>
               <Users size={44} className={styles.emptyIcon} />
-              <h3>No workforce records found</h3>
+              <h3>No worker master records found</h3>
               <p>Try adjusting your search criteria or filter tags.</p>
               <button 
-                onClick={() => { setSearch(''); setCategoryFilter('All'); setStatusFilter('All'); setProjectFilter('All'); setAttendanceFilter('All'); }} 
+                onClick={() => { setSearch(''); setCategoryFilter('All'); setStatusFilter('All'); setProjectFilter('All'); setEmploymentFilter('All'); }} 
                 className={styles.resetBtn}
               >
                 Reset All Filters
@@ -459,7 +470,7 @@ export default function WorkerTable() {
                 role="button"
                 tabIndex={0}
               >
-                {/* Header with Avatar & Status */}
+                {/* Header with Avatar & Employment Status */}
                 <div className={styles.profileHeader}>
                   <div className={styles.avatarWrapper}>
                     <SafeImage 
@@ -468,7 +479,7 @@ export default function WorkerTable() {
                       fallbackType="worker" 
                       className={styles.avatar} 
                     />
-                    <span className={`${styles.statusDot} ${styles[w.todayStatus.toLowerCase().replace(' ', '')]}`} />
+                    <span className={`${styles.statusDot} ${styles[w.status.toLowerCase()]}`} />
                   </div>
 
                   <div className={styles.info}>
@@ -479,12 +490,17 @@ export default function WorkerTable() {
                       </span>
                     </div>
 
-                    <span className={styles.workerCode}>{w.code}</span>
+                    <div className={styles.codeRow}>
+                      <span className={styles.workerCode}>{w.code}</span>
+                      <span className={`${styles.employmentBadge} ${styles[w.status.toLowerCase()]}`}>
+                        ● {w.status}
+                      </span>
+                    </div>
                     <span className={styles.tradeSkill}>{w.skill}</span>
                   </div>
                 </div>
 
-                {/* Project Assignment */}
+                {/* Permanent Project Assignment & Supervisor */}
                 <div className={styles.siteAllocationRow}>
                   <MapPin size={13} className={styles.siteIcon} />
                   <span className={styles.siteName}>
@@ -492,19 +508,19 @@ export default function WorkerTable() {
                   </span>
                 </div>
 
-                {/* Key Metrics Grid */}
+                {/* Key Master Metrics Grid */}
                 <div className={styles.cardMetrics}>
                   <div className={styles.metricItem}>
-                    <span className={styles.metricLabel}>Daily Wage</span>
-                    <strong className={styles.metricValue}>₹ {w.dailyWage}</strong>
+                    <span className={styles.metricLabel}>Standard Wage</span>
+                    <strong className={styles.metricValue}>₹ {w.dailyWage}/d</strong>
                   </div>
                   <div className={styles.metricItem}>
-                    <span className={styles.metricLabel}>This Month</span>
-                    <strong className={styles.metricValue}>{w.presentDaysThisMonth} Days</strong>
+                    <span className={styles.metricLabel}>Experience</span>
+                    <strong className={styles.metricValue}>{w.experienceYears} Years</strong>
                   </div>
                   <div className={styles.metricItem}>
-                    <span className={styles.metricLabel}>Overtime</span>
-                    <strong className={styles.metricValue}>{w.overtimeHoursThisMonth} hrs</strong>
+                    <span className={styles.metricLabel}>Engagement</span>
+                    <strong className={styles.metricValueSmall}>{w.employmentType || 'Direct'}</strong>
                   </div>
                 </div>
 
@@ -532,11 +548,11 @@ export default function WorkerTable() {
               <tr>
                 <th>Worker & ID</th>
                 <th>Category & Trade</th>
-                <th>Project Site</th>
-                <th>Today's Muster</th>
-                <th>Daily Wage</th>
+                <th>Current Project Assignment</th>
+                <th>Supervisor</th>
+                <th>Standard Wage</th>
                 <th>Experience</th>
-                <th>Emergency Contact</th>
+                <th>Status</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -566,9 +582,7 @@ export default function WorkerTable() {
                     </span>
                   </td>
                   <td>
-                    <span className={`${styles.attendancePill} ${styles[w.todayStatus.toLowerCase().replace(' ', '')]}`}>
-                      ● {w.todayStatus}
-                    </span>
+                    <span className={styles.supervisorNameText}>{w.supervisorName || 'Er. Rajesh Kulkarni'}</span>
                   </td>
                   <td>
                     <strong>₹ {w.dailyWage}</strong>
@@ -576,7 +590,9 @@ export default function WorkerTable() {
                   </td>
                   <td>{w.experienceYears} Years</td>
                   <td>
-                    <span className={styles.emergencyText}>{w.emergencyContact}</span>
+                    <span className={`${styles.employmentBadge} ${styles[w.status.toLowerCase()]}`}>
+                      ● {w.status}
+                    </span>
                   </td>
                   <td>
                     <Link href={`/admin/workforce/${w.id}`} className={styles.tableActionLink} onClick={e => e.stopPropagation()}>
@@ -655,7 +671,7 @@ export default function WorkerTable() {
               </button>
             </div>
 
-            {/* Form Form Body */}
+            {/* Form Body */}
             <form onSubmit={handleCreateWorker} className={styles.onboardingForm}>
               {/* Step 1: Personal Details */}
               {onboardingStep === 1 && (
@@ -890,8 +906,8 @@ export default function WorkerTable() {
                   <div className={styles.infoCallout}>
                     <AlertCircle size={18} className={styles.infoIcon} />
                     <div>
-                      <strong>Automated Muster & Biometric Sync</strong>
-                      <p>Once assigned to a project, the worker is automatically enrolled in the site biometric terminal and daily morning muster rolls.</p>
+                      <strong>Automated Site Allocation</strong>
+                      <p>Once assigned to a project, the worker appears on the site supervisor's roster and biometric terminal for daily shift muster.</p>
                     </div>
                   </div>
                 </div>

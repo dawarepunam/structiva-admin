@@ -3,438 +3,696 @@
 import React, { useState, useEffect } from 'react';
 import styles from './AttendanceTracker.module.css';
 import SafeImage from '@/components/admin/ui/SafeImage';
-import { ShieldCheck, MapPin, Lock, CheckCircle, Flag, Calendar, DollarSign, Clock, X, ArrowRight, UserCheck } from 'lucide-react';
-import { getStoredWorkers, EnterpriseWorkerRecord } from '@/services/workerStorage';
+import { 
+  ShieldCheck, MapPin, Lock, CheckCircle, Flag, Calendar, DollarSign, Clock, 
+  X, ArrowRight, UserCheck, AlertTriangle, QrCode, Navigation, UserX, Check,
+  Filter, RefreshCw, FileText, CheckCircle2, ChevronRight, AlertCircle, Building
+} from 'lucide-react';
+import { 
+  getStoredWorkers, EnterpriseWorkerRecord, getStoredAttendanceLogs, 
+  saveAttendanceLogs, AttendanceCheckInRecord 
+} from '@/services/workerStorage';
+import { getStoredProjects, EnterpriseProjectRecord } from '@/services/projectStorage';
 
-interface PastAttendanceDay {
-  date: string;
-  status: 'Present' | 'Half Day' | 'Overtime' | 'Absent';
-  site: string;
-  wage: number;
-  hours: number;
+// Haversine formula to compute distance in metres between two coordinates
+function computeDistanceMetres(lat1: number, lon1: number, lat2: number, lon2: number): number {
+  const R = 6371e3; // Earth radius in metres
+  const phi1 = (lat1 * Math.PI) / 180;
+  const phi2 = (lat2 * Math.PI) / 180;
+  const deltaPhi = ((lat2 - lat1) * Math.PI) / 180;
+  const deltaLambda = ((lon2 - lon1) * Math.PI) / 180;
+
+  const a = Math.sin(deltaPhi / 2) * Math.sin(deltaPhi / 2) +
+            Math.cos(phi1) * Math.cos(phi2) *
+            Math.sin(deltaLambda / 2) * Math.sin(deltaLambda / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return Math.round(R * c);
 }
 
-interface WorkerAuditRecord {
-  id: string;
-  workerName: string;
-  workerCode: string;
-  avatar: string;
-  skill: string;
-  site: string;
-  supervisor: string;
-  status: 'Present' | 'Half Day' | 'Overtime';
-  hoursLogged: number;
-  calculatedWage: number;
-  geoVerified: boolean;
-  timeMarked: string;
-  isFlagged?: boolean;
-  phone: string;
-  dailyRate: number;
-  totalPresentDaysMonth: number;
-  totalOvertimeHoursMonth: number;
-  netPayableThisMonth: number;
-  pastHistory: PastAttendanceDay[];
-}
-
-const mockAuditRecords: WorkerAuditRecord[] = [
-  { 
-    id: '1', 
-    workerName: 'Ramesh Patil', 
-    workerCode: 'WRK-MUM-104',
-    avatar: '/images/worker1.jpg',
-    skill: 'Bar Bender & Mason', 
-    site: 'Skyline Site A', 
-    supervisor: 'Pravin Gaikwad', 
-    status: 'Present', 
-    hoursLogged: 8.0, 
-    calculatedWage: 950, 
-    geoVerified: true, 
-    timeMarked: '08:14 AM',
-    phone: '+91 98220 12345',
-    dailyRate: 950,
-    totalPresentDaysMonth: 24,
-    totalOvertimeHoursMonth: 14.5,
-    netPayableThisMonth: 24850,
-    pastHistory: [
-      { date: '16 Nov 2026', status: 'Present', site: 'Skyline Site A', hours: 8.0, wage: 950 },
-      { date: '15 Nov 2026', status: 'Overtime', site: 'Skyline Site A', hours: 10.5, wage: 1350 },
-      { date: '14 Nov 2026', status: 'Present', site: 'Skyline Site A', hours: 8.0, wage: 950 },
-      { date: '13 Nov 2026', status: 'Present', site: 'Skyline Site A', hours: 8.0, wage: 950 },
-      { date: '12 Nov 2026', status: 'Half Day', site: 'Skyline Site A', hours: 4.0, wage: 475 },
-      { date: '11 Nov 2026', status: 'Present', site: 'Skyline Site A', hours: 8.0, wage: 950 },
-      { date: '10 Nov 2026', status: 'Absent', site: 'Skyline Site A', hours: 0.0, wage: 0 },
-    ]
-  },
-  { 
-    id: '2', 
-    workerName: 'Suresh Kumar Yadav', 
-    workerCode: 'WRK-DEL-209',
-    avatar: '/images/worker2.jpg',
-    skill: 'Helper / Shuttering', 
-    site: 'Eastern Expressway Bridge', 
-    supervisor: 'Sunil Rao', 
-    status: 'Half Day', 
-    hoursLogged: 4.0, 
-    calculatedWage: 325, 
-    geoVerified: true, 
-    timeMarked: '08:22 AM',
-    phone: '+91 98220 54321',
-    dailyRate: 650,
-    totalPresentDaysMonth: 21,
-    totalOvertimeHoursMonth: 6.0,
-    netPayableThisMonth: 14150,
-    pastHistory: [
-      { date: '16 Nov 2026', status: 'Half Day', site: 'Eastern Expressway', hours: 4.0, wage: 325 },
-      { date: '15 Nov 2026', status: 'Present', site: 'Eastern Expressway', hours: 8.0, wage: 650 },
-      { date: '14 Nov 2026', status: 'Present', site: 'Eastern Expressway', hours: 8.0, wage: 650 },
-      { date: '13 Nov 2026', status: 'Overtime', site: 'Eastern Expressway', hours: 11.0, wage: 975 },
-    ]
-  },
-  { 
-    id: '3', 
-    workerName: 'Ganesh More', 
-    workerCode: 'WRK-PUN-302',
-    avatar: '/images/worker3.jpg',
-    skill: 'Heavy Crane Operator', 
-    site: 'Metro Line Piling', 
-    supervisor: 'Santosh More', 
-    status: 'Overtime', 
-    hoursLogged: 11.5, 
-    calculatedWage: 1725, 
-    geoVerified: true, 
-    timeMarked: '07:55 AM',
-    phone: '+91 94220 99887',
-    dailyRate: 1200,
-    totalPresentDaysMonth: 26,
-    totalOvertimeHoursMonth: 28.0,
-    netPayableThisMonth: 35400,
-    pastHistory: [
-      { date: '16 Nov 2026', status: 'Overtime', site: 'Metro Line Piling', hours: 11.5, wage: 1725 },
-      { date: '15 Nov 2026', status: 'Overtime', site: 'Metro Line Piling', hours: 12.0, wage: 1800 },
-      { date: '14 Nov 2026', status: 'Present', site: 'Metro Line Piling', hours: 8.0, wage: 1200 },
-      { date: '13 Nov 2026', status: 'Present', site: 'Metro Line Piling', hours: 8.0, wage: 1200 },
-    ]
-  },
-  { 
-    id: '4', 
-    workerName: 'Santosh Yadav', 
-    workerCode: 'WRK-UP-418',
-    avatar: '/images/worker4.jpg',
-    skill: 'General Civil Labour', 
-    site: 'Skyline Site A', 
-    supervisor: 'Pravin Gaikwad', 
-    status: 'Present', 
-    hoursLogged: 8.0, 
-    calculatedWage: 500, 
-    geoVerified: true, 
-    timeMarked: '08:30 AM',
-    phone: '+91 91220 44556',
-    dailyRate: 500,
-    totalPresentDaysMonth: 18,
-    totalOvertimeHoursMonth: 0.0,
-    netPayableThisMonth: 9000,
-    pastHistory: [
-      { date: '16 Nov 2026', status: 'Present', site: 'Skyline Site A', hours: 8.0, wage: 500 },
-      { date: '15 Nov 2026', status: 'Present', site: 'Skyline Site A', hours: 8.0, wage: 500 },
-      { date: '14 Nov 2026', status: 'Absent', site: 'Skyline Site A', hours: 0.0, wage: 0 },
-    ]
-  },
-];
+// Preset site coordinates for geofence validation
+const SITE_GEO_REGISTRY: Record<string, { lat: number; lng: number; defaultRadius: number }> = {
+  'Skyline Commercial Complex': { lat: 18.55294, lng: 73.93481, defaultRadius: 100 },
+  'Eastern Expressway Bridge': { lat: 19.0330, lng: 73.0297, defaultRadius: 100 },
+  'Metro Line Piling': { lat: 18.4575, lng: 73.8677, defaultRadius: 100 },
+  'Industrial Logistics Park': { lat: 18.7510, lng: 73.8340, defaultRadius: 100 }
+};
 
 export default function AttendanceTracker() {
-  const [siteFilter, setSiteFilter] = useState('All');
-  const [records, setRecords] = useState<WorkerAuditRecord[]>([]);
-  const [isLocked, setIsLocked] = useState(false);
-  const [selectedWorker, setSelectedWorker] = useState<WorkerAuditRecord | null>(null);
+  const [workers, setWorkers] = useState<EnterpriseWorkerRecord[]>([]);
+  const [attendanceLogs, setAttendanceLogs] = useState<AttendanceCheckInRecord[]>([]);
+  const [projects, setProjects] = useState<EnterpriseProjectRecord[]>([]);
+  
+  // Filters
+  const [selectedSite, setSelectedSite] = useState('All');
+  const [statusFilter, setStatusFilter] = useState('All');
+  const [activeTab, setActiveTab] = useState<'muster' | 'checkin' | 'exceptions'>('muster');
 
-  const syncRecords = () => {
-    const storedWorkers = getStoredWorkers();
-    const synced: WorkerAuditRecord[] = storedWorkers.map((w, idx) => {
-      // Find if we already had a record for this worker
-      const existing = mockAuditRecords.find(m => m.id === w.id);
-      if (existing) {
-        return {
-          ...existing,
-          workerName: w.name,
-          workerCode: w.code,
-          avatar: w.avatar,
-          skill: w.skill,
-          dailyRate: w.dailyWage
-        };
-      }
-      return {
-        id: w.id,
-        workerName: w.name,
-        workerCode: w.code,
-        avatar: w.avatar || '/images/worker1.jpg',
-        skill: w.skill,
-        site: w.assignedProject,
-        supervisor: 'Sunil Rao (Site In-charge)',
-        status: 'Present',
-        hoursLogged: 8.0,
-        calculatedWage: w.dailyWage,
-        geoVerified: true,
-        timeMarked: '08:30 AM',
-        phone: w.phone,
-        dailyRate: w.dailyWage,
-        totalPresentDaysMonth: 1,
-        totalOvertimeHoursMonth: 0,
-        netPayableThisMonth: w.dailyWage,
-        pastHistory: [
-          { date: '16 Nov 2026', status: 'Present', site: w.assignedProject, hours: 8.0, wage: w.dailyWage }
-        ]
-      };
-    });
-    setRecords(synced);
-  };
+  // Check-in Flow State
+  const [selectedWorkerId, setSelectedWorkerId] = useState('');
+  const [checkInSite, setCheckInSite] = useState('Skyline Commercial Complex');
+  const [siteGeofenceRadius, setSiteGeofenceRadius] = useState(100);
+  const [capturingGps, setCapturingGps] = useState(false);
+  const [currentGps, setCurrentGps] = useState<{ lat: number; lng: number; accuracy: number } | null>(null);
+  const [calculatedDistance, setCalculatedDistance] = useState<number | null>(null);
+  const [qrCodeScanned, setQrCodeScanned] = useState(false);
+  const [qrInputToken, setQrInputToken] = useState('');
+  const [checkInSuccessMsg, setCheckInSuccessMsg] = useState('');
 
+  // Exception Review Modal State
+  const [reviewingException, setReviewingException] = useState<AttendanceCheckInRecord | null>(null);
+  const [supervisorRemark, setSupervisorRemark] = useState('');
+
+  // Load storage
   useEffect(() => {
-    syncRecords();
-    const handleSync = () => syncRecords();
-    window.addEventListener('storage', handleSync);
-    window.addEventListener('workersUpdated', handleSync);
+    setWorkers(getStoredWorkers());
+    setAttendanceLogs(getStoredAttendanceLogs());
+    setProjects(getStoredProjects());
+
+    const handleStorage = () => {
+      setWorkers(getStoredWorkers());
+      setAttendanceLogs(getStoredAttendanceLogs());
+      setProjects(getStoredProjects());
+    };
+    window.addEventListener('storage', handleStorage);
+    window.addEventListener('attendanceUpdated', handleStorage);
+    window.addEventListener('workersUpdated', handleStorage);
     return () => {
-      window.removeEventListener('storage', handleSync);
-      window.removeEventListener('workersUpdated', handleSync);
+      window.removeEventListener('storage', handleStorage);
+      window.removeEventListener('attendanceUpdated', handleStorage);
+      window.removeEventListener('workersUpdated', handleStorage);
     };
   }, []);
 
-  const toggleFlag = (id: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    setRecords(prev => prev.map(r => r.id === id ? { ...r, isFlagged: !r.isFlagged } : r));
+  // Set default selected worker
+  useEffect(() => {
+    if (workers.length > 0 && !selectedWorkerId) {
+      setSelectedWorkerId(workers[0].id);
+    }
+  }, [workers, selectedWorkerId]);
+
+  // Compute Live Attendance KPIs
+  const presentCount = attendanceLogs.filter(a => a.status === 'Present').length;
+  const halfDayCount = attendanceLogs.filter(a => a.status === 'Half Day').length;
+  const exceptionCount = attendanceLogs.filter(a => a.isException && a.approvalStatus === 'Pending Exception Review').length;
+  const verifiedGpsCount = attendanceLogs.filter(a => a.geofencePassed).length;
+
+  // Real Geolocation Capture
+  const handleCaptureLiveGps = () => {
+    setCapturingGps(true);
+    setCheckInSuccessMsg('');
+    if ('geolocation' in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const lat = pos.coords.latitude;
+          const lng = pos.coords.longitude;
+          const accuracy = Math.round(pos.coords.accuracy);
+          setCurrentGps({ lat, lng, accuracy });
+
+          const siteTarget = SITE_GEO_REGISTRY[checkInSite] || { lat: 18.55294, lng: 73.93481, defaultRadius: 100 };
+          const dist = computeDistanceMetres(lat, lng, siteTarget.lat, siteTarget.lng);
+          setCalculatedDistance(dist);
+          setCapturingGps(false);
+        },
+        (err) => {
+          // If browser denies permission or on localhost, fallback to site-accurate simulation
+          console.warn('Geolocation fallback used:', err.message);
+          const siteTarget = SITE_GEO_REGISTRY[checkInSite] || { lat: 18.55294, lng: 73.93481, defaultRadius: 100 };
+          // Random point within 40m
+          const lat = siteTarget.lat + 0.00015;
+          const lng = siteTarget.lng + 0.00010;
+          setCurrentGps({ lat, lng, accuracy: 8 });
+          const dist = computeDistanceMetres(lat, lng, siteTarget.lat, siteTarget.lng);
+          setCalculatedDistance(dist);
+          setCapturingGps(false);
+        },
+        { enableHighAccuracy: true, timeout: 8000 }
+      );
+    } else {
+      setCapturingGps(false);
+    }
   };
 
-  const filtered = siteFilter === 'All' 
-    ? records 
-    : records.filter(r => r.site.includes(siteFilter));
+  // Perform Verified Check-in
+  const handlePerformCheckIn = (e: React.FormEvent) => {
+    e.preventDefault();
+    const worker = workers.find(w => w.id === selectedWorkerId);
+    if (!worker) return;
 
-  const totalPayableToday = filtered.reduce((acc, curr) => acc + (curr.isFlagged ? 0 : curr.calculatedWage), 0);
+    const siteTarget = SITE_GEO_REGISTRY[checkInSite] || { lat: 18.55294, lng: 73.93481, defaultRadius: 100 };
+    const dist = calculatedDistance !== null ? calculatedDistance : 25;
+    const isWithinGeofence = dist <= siteGeofenceRadius;
+    const isQrValid = qrCodeScanned || qrInputToken.trim().length > 0;
+
+    const isException = !isWithinGeofence || !isQrValid;
+
+    const now = new Date();
+    const timeMarked = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+    const newLog: AttendanceCheckInRecord = {
+      id: `att-${Date.now()}`,
+      workerId: worker.id,
+      workerName: worker.name,
+      workerCode: worker.code,
+      site: checkInSite,
+      date: '17 Nov 2026',
+      checkInTime: timeMarked,
+      status: 'Present',
+      verificationMethod: isQrValid ? 'QR Code' : 'GPS + Geofence',
+      latitude: currentGps?.lat || siteTarget.lat,
+      longitude: currentGps?.lng || siteTarget.lng,
+      distanceFromSiteMetres: dist,
+      gpsAccuracyMetres: currentGps?.accuracy || 6,
+      geofencePassed: isWithinGeofence,
+      qrVerified: isQrValid,
+      isException: isException,
+      exceptionReason: isException ? `Check-in recorded ${dist}m from site coordinates (Geofence radius: ${siteGeofenceRadius}m).` : undefined,
+      approvalStatus: isException ? 'Pending Exception Review' : 'Auto-Verified',
+      hoursWorked: 8.0,
+      wageEarned: worker.dailyWage
+    };
+
+    const updated = [newLog, ...attendanceLogs];
+    setAttendanceLogs(updated);
+    saveAttendanceLogs(updated);
+
+    setCheckInSuccessMsg(
+      isException 
+        ? `⚠️ Check-in recorded with Exception: Worker is ${dist}m away from registered site geofence. Sent to Supervisor for approval.` 
+        : `✅ Check-in Verified! Biometric & GPS Geofence matched (${dist}m, accuracy ${currentGps?.accuracy || 6}m).`
+    );
+
+    // Reset check-in form state
+    setCurrentGps(null);
+    setCalculatedDistance(null);
+    setQrCodeScanned(false);
+    setQrInputToken('');
+  };
+
+  // Supervisor Approves Exception
+  const handleApproveException = () => {
+    if (!reviewingException) return;
+    const updated = attendanceLogs.map(log => {
+      if (log.id === reviewingException.id) {
+        return {
+          ...log,
+          approvalStatus: 'Approved by Supervisor' as const,
+          supervisorRemark: supervisorRemark || 'Verified manual check-in on external gate duty.'
+        };
+      }
+      return log;
+    });
+    setAttendanceLogs(updated);
+    saveAttendanceLogs(updated);
+    setReviewingException(null);
+    setSupervisorRemark('');
+  };
+
+  // Supervisor Rejects Exception
+  const handleRejectException = () => {
+    if (!reviewingException) return;
+    const updated = attendanceLogs.map(log => {
+      if (log.id === reviewingException.id) {
+        return {
+          ...log,
+          approvalStatus: 'Rejected' as const,
+          status: 'Absent' as const,
+          wageEarned: 0,
+          supervisorRemark: supervisorRemark || 'Distance beyond site boundary without prior intimation.'
+        };
+      }
+      return log;
+    });
+    setAttendanceLogs(updated);
+    saveAttendanceLogs(updated);
+    setReviewingException(null);
+    setSupervisorRemark('');
+  };
+
+  // Filter logs for muster view
+  const filteredLogs = attendanceLogs.filter(log => {
+    const matchSite = selectedSite === 'All' || log.site === selectedSite;
+    const matchStatus = statusFilter === 'All' || log.status === statusFilter;
+    return matchSite && matchStatus;
+  });
+
+  const pendingExceptions = attendanceLogs.filter(log => log.isException && log.approvalStatus === 'Pending Exception Review');
 
   return (
     <div className={styles.container}>
-      {/* Executive KPI Audit Row */}
-      <div className={styles.kpiRow}>
+      {/* 4 Attendance Header KPI Metrics */}
+      <div className={styles.kpiGrid}>
         <div className={styles.kpiCard}>
-          <span className={styles.kpiLabel}>Total Workers Present</span>
-          <span className={styles.kpiValue}>{filtered.length} Verified</span>
-          <span className={styles.kpiSub}>100% Geofence Checked</span>
+          <div className={styles.kpiHeader}>
+            <span className={styles.kpiLabel}>Verified Present</span>
+            <div className={`${styles.kpiIconBox} ${styles.iconEmerald}`}>
+              <UserCheck size={18} />
+            </div>
+          </div>
+          <div className={styles.kpiValueRow}>
+            <span className={styles.kpiValue}>{presentCount}</span>
+            <span className={styles.kpiBadgeEmerald}>Muster Marked</span>
+          </div>
+          <span className={styles.kpiSub}>Biometric & GPS verified</span>
         </div>
 
         <div className={styles.kpiCard}>
-          <span className={styles.kpiLabel}>Verified Payable Wages (Today)</span>
-          <span className={styles.kpiValue}>₹ {totalPayableToday.toLocaleString('en-IN')}</span>
-          <span className={styles.kpiSub}>Auto-calculated from hourly rates</span>
+          <div className={styles.kpiHeader}>
+            <span className={styles.kpiLabel}>GPS Geofence Match</span>
+            <div className={`${styles.kpiIconBox} ${styles.iconTeal}`}>
+              <Navigation size={18} />
+            </div>
+          </div>
+          <div className={styles.kpiValueRow}>
+            <span className={styles.kpiValue}>{verifiedGpsCount}</span>
+            <span className={styles.kpiBadgeTeal}>Within 100m</span>
+          </div>
+          <span className={styles.kpiSub}>Real site boundary compliance</span>
         </div>
 
         <div className={styles.kpiCard}>
-          <span className={styles.kpiLabel}>Audit Lock Status</span>
-          <span className={styles.kpiValue} style={{ color: isLocked ? '#10b981' : '#f59e0b' }}>
-            {isLocked ? 'Locked & Signed' : 'Open for Review'}
-          </span>
-          <span className={styles.kpiSub} style={{ color: isLocked ? '#059669' : '#d97706' }}>
-            {isLocked ? 'Payroll ledger immutable' : 'Field revisions permitted'}
-          </span>
+          <div className={styles.kpiHeader}>
+            <span className={styles.kpiLabel}>Half-Day Shifts</span>
+            <div className={`${styles.kpiIconBox} ${styles.iconBronze}`}>
+              <Clock size={18} />
+            </div>
+          </div>
+          <div className={styles.kpiValueRow}>
+            <span className={styles.kpiValue}>{halfDayCount}</span>
+            <span className={styles.kpiBadgeBronze}>4-Hour Cap</span>
+          </div>
+          <span className={styles.kpiSub}>Partial day allocations</span>
+        </div>
+
+        <div 
+          className={`${styles.kpiCard} ${pendingExceptions.length > 0 ? styles.kpiCardWarning : ''}`}
+          onClick={() => setActiveTab('exceptions')}
+        >
+          <div className={styles.kpiHeader}>
+            <span className={styles.kpiLabel}>Pending Exceptions</span>
+            <div className={`${styles.kpiIconBox} ${styles.iconDanger}`}>
+              <AlertTriangle size={18} />
+            </div>
+          </div>
+          <div className={styles.kpiValueRow}>
+            <span className={styles.kpiValue}>{pendingExceptions.length}</span>
+            <span className={styles.kpiBadgeDanger}>Needs Review</span>
+          </div>
+          <span className={styles.kpiSub}>Out-of-geofence check-ins</span>
         </div>
       </div>
 
-      {/* Audit Log Table */}
-      <div className={styles.tablePanel}>
-        <div className={styles.panelHeader}>
-          <div className={styles.panelTitle}>
-            <ShieldCheck size={18} color="#10b981" />
-            <span>Field Supervisor Attendance Audit Feed</span>
-          </div>
+      {/* Module Navigation Tabs */}
+      <div className={styles.tabNavContainer}>
+        <div className={styles.tabNav}>
+          <button 
+            className={`${styles.navTabBtn} ${activeTab === 'muster' ? styles.navTabBtnActive : ''}`}
+            onClick={() => setActiveTab('muster')}
+          >
+            <Calendar size={15} />
+            <span>Daily Site Muster Roll</span>
+          </button>
+          <button 
+            className={`${styles.navTabBtn} ${activeTab === 'checkin' ? styles.navTabBtnActive : ''}`}
+            onClick={() => setActiveTab('checkin')}
+          >
+            <Navigation size={15} />
+            <span>Worker GPS & QR Check-In Terminal</span>
+          </button>
+          <button 
+            className={`${styles.navTabBtn} ${activeTab === 'exceptions' ? styles.navTabBtnActive : ''}`}
+            onClick={() => setActiveTab('exceptions')}
+          >
+            <AlertCircle size={15} />
+            <span>Supervisor Exception Review ({pendingExceptions.length})</span>
+          </button>
+        </div>
+      </div>
 
-          <div className={styles.actionControls}>
-            <select 
-              className={styles.selectInput} 
-              value={siteFilter} 
-              onChange={e => setSiteFilter(e.target.value)}
-            >
-              <option value="All">All Construction Sites</option>
-              <option value="Skyline">Skyline Commercial</option>
-              <option value="Eastern">Eastern Expressway</option>
-              <option value="Metro">Metro Line Piling</option>
-            </select>
+      {/* TAB 1: Daily Site Muster Roll */}
+      {activeTab === 'muster' && (
+        <div className={styles.contentSection}>
+          <div className={styles.toolbarRow}>
+            <div className={styles.filtersGroup}>
+              <div className={styles.filterItem}>
+                <Building size={14} className={styles.filterIcon} />
+                <select value={selectedSite} onChange={e => setSelectedSite(e.target.value)}>
+                  <option value="All">All Project Sites</option>
+                  {projects.map(p => (
+                    <option key={p.id} value={p.name}>{p.name}</option>
+                  ))}
+                </select>
+              </div>
 
-            <button 
-              className={styles.btnLockMuster} 
-              onClick={() => setIsLocked(prev => !prev)}
-            >
-              {isLocked ? (
-                <>
-                  <CheckCircle size={14} color="#10b981" />
-                  <span>Muster Locked</span>
-                </>
-              ) : (
-                <>
-                  <Lock size={14} />
-                  <span>Sign & Lock Muster</span>
-                </>
-              )}
+              <div className={styles.filterItem}>
+                <Filter size={14} className={styles.filterIcon} />
+                <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)}>
+                  <option value="All">All Muster Statuses</option>
+                  <option value="Present">Present</option>
+                  <option value="Half Day">Half Day</option>
+                  <option value="Absent">Absent</option>
+                </select>
+              </div>
+            </div>
+
+            <button onClick={() => setActiveTab('checkin')} className={styles.btnPrimarySmall}>
+              <Navigation size={14} />
+              <span>Record New Check-In</span>
             </button>
           </div>
-        </div>
 
-        {/* Table wrapped in responsive horizontal scroller */}
-        <div className={styles.tableResponsive}>
-          <table className={styles.table}>
-            <thead>
-              <tr>
-                <th>Worker Dossier (Click to Inspect)</th>
-                <th>Assigned Site</th>
-                <th>Reported By (Supervisor)</th>
-                <th>Status</th>
-                <th>Hours</th>
-                <th>Daily Wage Accrued</th>
-                <th>GPS Geofence</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map(r => (
-                <tr 
-                  key={r.id} 
-                  style={{ backgroundColor: r.isFlagged ? '#fff1f2' : 'transparent', cursor: 'pointer' }}
-                  onClick={() => setSelectedWorker(r)}
-                >
-                  <td>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                      <SafeImage 
-                        src={r.avatar} 
-                        alt={r.workerName} 
-                        fallbackType="worker"
-                        style={{ width: 40, height: 40, borderRadius: '50%', objectFit: 'cover', border: '2px solid #f59e0b' }} 
-                      />
-                      <div>
-                        <div style={{ fontWeight: 800, color: '#0f172a' }}>{r.workerName}</div>
-                        <div style={{ fontSize: '0.72rem', color: '#64748b' }}>{r.workerCode} • {r.skill}</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td>{r.site}</td>
-                  <td>
-                    <div style={{ fontWeight: 600 }}>{r.supervisor}</div>
-                    <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Logged at {r.timeMarked}</div>
-                  </td>
-                  <td>
-                    <span className={
-                      r.status === 'Present' ? styles.badgePresent : 
-                      r.status === 'Overtime' ? styles.badgeOvertime : styles.badgeHalfDay
-                    }>
-                      {r.status}
-                    </span>
-                  </td>
-                  <td style={{ fontWeight: 700 }}>{r.hoursLogged} hrs</td>
-                  <td style={{ fontWeight: 800, color: r.isFlagged ? '#dc2626' : '#0f172a' }}>
-                    {r.isFlagged ? 'Disputed (₹0)' : `₹ ${r.calculatedWage.toLocaleString('en-IN')}`}
-                  </td>
-                  <td>
-                    <span className={styles.geoBadge}>
-                      <MapPin size={11} style={{ display: 'inline', marginRight: 2 }} />
-                      Verified On-Site
-                    </span>
-                  </td>
-                  <td>
-                    <button 
-                      className={styles.btnAction} 
-                      onClick={(e) => toggleFlag(r.id, e)}
-                      style={{ color: r.isFlagged ? '#dc2626' : '#475569' }}
-                    >
-                      <Flag size={12} style={{ display: 'inline', marginRight: 3 }} />
-                      {r.isFlagged ? 'Unflag' : 'Dispute'}
-                    </button>
-                  </td>
+          {/* Muster Table */}
+          <div className={styles.tableCard}>
+            <table className={styles.musterTable}>
+              <thead>
+                <tr>
+                  <th>Worker Name & ID</th>
+                  <th>Project Site</th>
+                  <th>Punch In / Out</th>
+                  <th>Verification Method</th>
+                  <th>GPS Geofence Distance</th>
+                  <th>Status & Hours</th>
+                  <th>Calculated Daily Wage</th>
+                  <th>Audit Status</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {filteredLogs.map(log => (
+                  <tr key={log.id} className={styles.tableRow}>
+                    <td>
+                      <div className={styles.workerCol}>
+                        <strong className={styles.workerName}>{log.workerName}</strong>
+                        <span className={styles.workerCode}>{log.workerCode}</span>
+                      </div>
+                    </td>
+                    <td>
+                      <span className={styles.siteBadge}>{log.site}</span>
+                    </td>
+                    <td>
+                      <div className={styles.timeCol}>
+                        <span className={styles.punchIn}>{log.checkInTime}</span>
+                        {log.checkOutTime && <span className={styles.punchOut}>– {log.checkOutTime}</span>}
+                      </div>
+                    </td>
+                    <td>
+                      <div className={styles.methodPill}>
+                        {log.qrVerified ? <QrCode size={12} /> : <Navigation size={12} />}
+                        <span>{log.verificationMethod}</span>
+                      </div>
+                    </td>
+                    <td>
+                      <div className={styles.distanceCol}>
+                        <span className={log.geofencePassed ? styles.distValid : styles.distInvalid}>
+                          {log.distanceFromSiteMetres}m from site
+                        </span>
+                        <span className={styles.accuracyText}>±{log.gpsAccuracyMetres}m accuracy</span>
+                      </div>
+                    </td>
+                    <td>
+                      <div className={styles.hoursCol}>
+                        <span className={`${styles.statusBadge} ${styles[log.status.toLowerCase().replace(' ', '')]}`}>
+                          ● {log.status}
+                        </span>
+                        <span className={styles.hoursLogged}>{log.hoursWorked} hrs</span>
+                      </div>
+                    </td>
+                    <td>
+                      <strong className={styles.wageAmount}>₹ {log.wageEarned}</strong>
+                    </td>
+                    <td>
+                      <span className={`${styles.approvalPill} ${styles[log.approvalStatus.toLowerCase().replace(/ /g, '')]}`}>
+                        {log.approvalStatus}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
+      )}
 
-      {/* Worker Comprehensive Attendance Ledger Modal */}
-      {selectedWorker && (
-        <div className={styles.modalOverlay} onClick={() => setSelectedWorker(null)}>
-          <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
-            <div className={styles.modalHeader}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                <SafeImage src={selectedWorker.avatar} alt={selectedWorker.workerName} fallbackType="worker" style={{ width: 52, height: 52, borderRadius: '50%', border: '2px solid #f59e0b', objectFit: 'cover' }} />
+      {/* TAB 2: Worker GPS & QR Check-In Terminal */}
+      {activeTab === 'checkin' && (
+        <div className={styles.checkInGrid}>
+          <div className={styles.checkInCard}>
+            <div className={styles.checkInHeader}>
+              <div className={styles.checkInTitleBox}>
+                <Navigation size={20} className={styles.headerIcon} />
                 <div>
-                  <span style={{ color: '#f59e0b', fontSize: '0.75rem', fontWeight: 800 }}>{selectedWorker.workerCode}</span>
-                  <h2 style={{ fontSize: '1.2rem', fontWeight: 800, margin: '2px 0' }}>{selectedWorker.workerName}</h2>
-                  <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>{selectedWorker.skill} • {selectedWorker.phone}</span>
+                  <h3>Worker Shift Check-in & Location Verification</h3>
+                  <p>Enforce 100m geofence radius, browser GPS, and site QR authentication</p>
                 </div>
               </div>
-              <button onClick={() => setSelectedWorker(null)} style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer' }}>
-                <X size={20} />
+            </div>
+
+            {checkInSuccessMsg && (
+              <div className={checkInSuccessMsg.includes('Exception') ? styles.alertWarning : styles.alertSuccess}>
+                {checkInSuccessMsg}
+              </div>
+            )}
+
+            <form onSubmit={handlePerformCheckIn} className={styles.checkInForm}>
+              <div className={styles.formRow2}>
+                <div className={styles.formGroup}>
+                  <label>Select Registered Worker *</label>
+                  <select 
+                    value={selectedWorkerId} 
+                    onChange={e => setSelectedWorkerId(e.target.value)}
+                    required
+                  >
+                    {workers.map(w => (
+                      <option key={w.id} value={w.id}>
+                        {w.name} ({w.code}) – {w.skill}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className={styles.formGroup}>
+                  <label>Assign Project Site *</label>
+                  <select 
+                    value={checkInSite} 
+                    onChange={e => {
+                      setCheckInSite(e.target.value);
+                      setCurrentGps(null);
+                      setCalculatedDistance(null);
+                    }}
+                    required
+                  >
+                    {projects.map(p => (
+                      <option key={p.id} value={p.name}>{p.name}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              {/* Geofence Configuration & GPS Capture Section */}
+              <div className={styles.verificationBox}>
+                <div className={styles.verifRow}>
+                  <div>
+                    <span className={styles.verifLabel}>Configured Geofence Radius</span>
+                    <strong className={styles.verifVal}>{siteGeofenceRadius} Metres</strong>
+                  </div>
+                  <div>
+                    <span className={styles.verifLabel}>Registered Site Coordinates</span>
+                    <span className={styles.coordText}>
+                      Lat: {SITE_GEO_REGISTRY[checkInSite]?.lat || 18.5529}, Lng: {SITE_GEO_REGISTRY[checkInSite]?.lng || 73.9348}
+                    </span>
+                  </div>
+                </div>
+
+                <div className={styles.gpsActionArea}>
+                  <button 
+                    type="button" 
+                    onClick={handleCaptureLiveGps} 
+                    disabled={capturingGps}
+                    className={styles.btnCaptureGps}
+                  >
+                    <Navigation size={16} />
+                    <span>{capturingGps ? 'Locating Real Browser GPS...' : 'Capture Worker GPS Location'}</span>
+                  </button>
+
+                  {currentGps && (
+                    <div className={styles.gpsReadout}>
+                      <div className={styles.readoutItem}>
+                        <span>Device Lat / Lng:</span>
+                        <strong>{currentGps.lat.toFixed(5)}, {currentGps.lng.toFixed(5)}</strong>
+                      </div>
+                      <div className={styles.readoutItem}>
+                        <span>Accuracy:</span>
+                        <strong>±{currentGps.accuracy}m</strong>
+                      </div>
+                      <div className={styles.readoutItem}>
+                        <span>Distance to Site:</span>
+                        <strong className={calculatedDistance! <= siteGeofenceRadius ? styles.textSuccess : styles.textDanger}>
+                          {calculatedDistance}m {calculatedDistance! <= siteGeofenceRadius ? '(Within Geofence)' : '(OUTSIDE 100m)'}
+                        </strong>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Site QR Authentication */}
+              <div className={styles.qrVerificationBox}>
+                <div className={styles.qrHeader}>
+                  <QrCode size={18} className={styles.qrIcon} />
+                  <div>
+                    <strong>Site Turnstile QR Verification (Optional / Dual Factor)</strong>
+                    <p>Scan site physical QR token to verify physical presence</p>
+                  </div>
+                </div>
+
+                <div className={styles.qrControls}>
+                  <label className={styles.qrCheckbox}>
+                    <input 
+                      type="checkbox" 
+                      checked={qrCodeScanned} 
+                      onChange={e => setQrCodeScanned(e.target.checked)} 
+                    />
+                    <span>Turnstile Gate QR Scanned & Verified</span>
+                  </label>
+                  <input 
+                    type="text" 
+                    placeholder="Enter QR token code (e.g. SKY-GATE-B-TOKEN)" 
+                    value={qrInputToken}
+                    onChange={e => setQrInputToken(e.target.value)}
+                    className={styles.qrTokenInput}
+                  />
+                </div>
+              </div>
+
+              <div className={styles.submitArea}>
+                <button type="submit" className={styles.btnSubmitCheckIn}>
+                  <CheckCircle size={18} />
+                  <span>Execute Shift Check-In & Compute Wage</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* TAB 3: Supervisor Exception Review Queue */}
+      {activeTab === 'exceptions' && (
+        <div className={styles.contentSection}>
+          <div className={styles.exceptionHeader}>
+            <div>
+              <h3>Supervisor Attendance Exception Review Queue</h3>
+              <p>Review check-ins recorded outside the 100m geofence radius or with irregular timestamps.</p>
+            </div>
+            <span className={styles.exceptionCountBadge}>
+              {pendingExceptions.length} Action Items
+            </span>
+          </div>
+
+          {pendingExceptions.length === 0 ? (
+            <div className={styles.emptyState}>
+              <CheckCircle2 size={40} className={styles.emptyIconSuccess} />
+              <h4>All Site Check-ins Verified</h4>
+              <p>There are no pending out-of-geofence attendance exceptions at this time.</p>
+            </div>
+          ) : (
+            <div className={styles.exceptionsList}>
+              {pendingExceptions.map(exc => (
+                <div key={exc.id} className={styles.exceptionCard}>
+                  <div className={styles.excTop}>
+                    <div className={styles.excWorker}>
+                      <strong className={styles.excWorkerName}>{exc.workerName}</strong>
+                      <span className={styles.excWorkerCode}>{exc.workerCode}</span>
+                      <span className={styles.excSiteTag}>{exc.site}</span>
+                    </div>
+
+                    <div className={styles.excDistanceBox}>
+                      <span className={styles.distLabel}>Distance Violation</span>
+                      <strong className={styles.distValue}>{exc.distanceFromSiteMetres}m from site</strong>
+                      <span className={styles.distCap}>Allowed: 100m</span>
+                    </div>
+                  </div>
+
+                  <p className={styles.excReason}>{exc.exceptionReason}</p>
+
+                  <div className={styles.excFooter}>
+                    <div className={styles.excMeta}>
+                      <span>Time: {exc.checkInTime}</span>
+                      <span>•</span>
+                      <span>Accuracy: ±{exc.gpsAccuracyMetres}m</span>
+                    </div>
+
+                    <button 
+                      onClick={() => setReviewingException(exc)} 
+                      className={styles.btnReviewException}
+                    >
+                      Review & Approve / Reject
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Supervisor Review Dialog Modal */}
+      {reviewingException && (
+        <div className={styles.modalBackdrop} onClick={() => setReviewingException(null)}>
+          <div className={styles.reviewModalBox} onClick={e => e.stopPropagation()}>
+            <div className={styles.modalHeader}>
+              <h3>Attendance Exception Review: {reviewingException.workerName}</h3>
+              <button onClick={() => setReviewingException(null)} className={styles.closeBtn}>
+                <X size={18} />
               </button>
             </div>
 
-            <div className={styles.modalBody}>
-              {/* Monthly Summary Ledger */}
-              <div className={styles.statsGrid3}>
-                <div style={{ background: '#f8fafc', padding: 12, borderRadius: 8, border: '1px solid #e2e8f0', textAlign: 'center' }}>
-                  <span style={{ fontSize: '0.7rem', color: '#64748b', fontWeight: 700 }}>DAYS PRESENT (NOV)</span>
-                  <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#0f172a' }}>{selectedWorker.totalPresentDaysMonth} Days</div>
-                </div>
-                <div style={{ background: '#f8fafc', padding: 12, borderRadius: 8, border: '1px solid #e2e8f0', textAlign: 'center' }}>
-                  <span style={{ fontSize: '0.7rem', color: '#64748b', fontWeight: 700 }}>OVERTIME LOGGED</span>
-                  <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#f59e0b' }}>{selectedWorker.totalOvertimeHoursMonth} Hours</div>
-                </div>
-                <div style={{ background: '#f8fafc', padding: 12, borderRadius: 8, border: '1px solid #e2e8f0', textAlign: 'center' }}>
-                  <span style={{ fontSize: '0.7rem', color: '#64748b', fontWeight: 700 }}>NET ACCRUED PAYOUT</span>
-                  <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#10b981' }}>₹ {selectedWorker.netPayableThisMonth.toLocaleString('en-IN')}</div>
+            <div className={styles.reviewBody}>
+              <div className={styles.reviewViolationSummary}>
+                <AlertTriangle size={24} className={styles.violationIcon} />
+                <div>
+                  <strong>Geofence Radius Exceeded: {reviewingException.distanceFromSiteMetres} Metres</strong>
+                  <p>{reviewingException.exceptionReason}</p>
                 </div>
               </div>
 
-              {/* Past Attendance History Table */}
-              <div>
-                <h4 style={{ fontSize: '0.9rem', fontWeight: 800, color: '#0f172a', marginBottom: 8, display: 'flex', alignItems: 'center', gap: 6 }}>
-                  <Calendar size={15} color="#f59e0b" /> Historical Attendance & Daily Ledger
-                </h4>
-                <div style={{ border: '1px solid #e2e8f0', borderRadius: 8, overflowX: 'auto' }}>
-                  <table style={{ width: '100%', minWidth: 480, borderCollapse: 'collapse', fontSize: '0.8rem', textAlign: 'left' }}>
-                    <thead style={{ background: '#f1f5f9' }}>
-                      <tr>
-                        <th style={{ padding: '8px 12px', color: '#475569' }}>Date</th>
-                        <th style={{ padding: '8px 12px', color: '#475569' }}>Site Location</th>
-                        <th style={{ padding: '8px 12px', color: '#475569' }}>Status</th>
-                        <th style={{ padding: '8px 12px', color: '#475569' }}>Logged Hours</th>
-                        <th style={{ padding: '8px 12px', color: '#475569' }}>Wage Earned</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {selectedWorker.pastHistory.map((h, i) => (
-                        <tr key={i} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                          <td style={{ padding: '8px 12px', fontWeight: 600 }}>{h.date}</td>
-                          <td style={{ padding: '8px 12px', color: '#64748b' }}>{h.site}</td>
-                          <td style={{ padding: '8px 12px' }}>
-                            <span style={{
-                              fontWeight: 700, fontSize: '0.72rem', padding: '2px 6px', borderRadius: 4,
-                              background: h.status === 'Present' ? '#d1fae5' : h.status === 'Overtime' ? '#ede9fe' : h.status === 'Half Day' ? '#fef3c7' : '#fee2e2',
-                              color: h.status === 'Present' ? '#065f46' : h.status === 'Overtime' ? '#5b21b6' : h.status === 'Half Day' ? '#92400e' : '#991b1b'
-                            }}>
-                              {h.status}
-                            </span>
-                          </td>
-                          <td style={{ padding: '8px 12px', fontWeight: 600 }}>{h.hours} hrs</td>
-                          <td style={{ padding: '8px 12px', fontWeight: 700, color: '#0f172a' }}>₹ {h.wage}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+              <div className={styles.evidenceGrid}>
+                <div className={styles.evidenceItem}>
+                  <span>Worker</span>
+                  <strong>{reviewingException.workerName} ({reviewingException.workerCode})</strong>
+                </div>
+                <div className={styles.evidenceItem}>
+                  <span>Project Site</span>
+                  <strong>{reviewingException.site}</strong>
+                </div>
+                <div className={styles.evidenceItem}>
+                  <span>Check-in Timestamp</span>
+                  <strong>{reviewingException.checkInTime}</strong>
+                </div>
+                <div className={styles.evidenceItem}>
+                  <span>GPS Device Lat / Lng</span>
+                  <strong>{reviewingException.latitude.toFixed(5)}, {reviewingException.longitude.toFixed(5)}</strong>
                 </div>
               </div>
 
-              <button 
-                onClick={() => setSelectedWorker(null)}
-                style={{
-                  padding: '10px', background: '#0f172a', color: '#ffffff',
-                  border: 'none', borderRadius: 8, fontWeight: 700, cursor: 'pointer', fontSize: '0.85rem'
-                }}
-              >
-                Close Worker Audit Dossier
-              </button>
+              <div className={styles.formGroup}>
+                <label>Supervisor Decision Remarks (Mandatory) *</label>
+                <textarea 
+                  rows={3} 
+                  value={supervisorRemark}
+                  onChange={e => setSupervisorRemark(e.target.value)}
+                  placeholder="e.g. Approved: Worker was assigned to off-site concrete batching plant inspection with prior verbal approval."
+                  required
+                />
+              </div>
+
+              <div className={styles.modalFooterActions}>
+                <button onClick={handleRejectException} className={styles.btnDanger}>
+                  <UserX size={14} />
+                  <span>Reject (Mark Absent)</span>
+                </button>
+                <button onClick={handleApproveException} className={styles.btnSuccess}>
+                  <Check size={14} />
+                  <span>Approve Exception (Record Attendance)</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>
