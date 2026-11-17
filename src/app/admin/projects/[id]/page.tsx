@@ -504,40 +504,67 @@ export default function ProjectDetailsPage() {
           </div>
 
           <div className={styles.cardPanel}>
-            <div className={styles.milestonesTableWrapper}>
-              <table className={styles.detailsTable}>
-                <thead>
-                  <tr>
-                    <th>Milestone Name</th>
-                    <th>Category</th>
-                    <th>Target Date</th>
-                    <th>Status</th>
-                    <th>Completion %</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {(project.milestones || []).map(m => (
-                    <tr key={m.id}>
-                      <td><strong>{m.name}</strong></td>
-                      <td>{m.category}</td>
-                      <td>{m.targetDate}</td>
-                      <td>
-                        <span className={`${styles.statusBadgeSmall} ${styles[m.status.toLowerCase().replace(' ', '')]}`}>
-                          ● {m.status}
-                        </span>
-                      </td>
-                      <td>
-                        <div className={styles.tableProgressInline}>
-                          <div className={styles.progressTrackSmall}>
-                            <div className={styles.progressFillSmall} style={{ width: `${m.completionPercent}%` }} />
-                          </div>
-                          <span>{m.completionPercent}%</span>
-                        </div>
-                      </td>
+            {/* Desktop Table View */}
+            <div className={styles.desktopTableView}>
+              <div className={styles.milestonesTableWrapper}>
+                <table className={styles.detailsTable}>
+                  <thead>
+                    <tr>
+                      <th>Milestone Name</th>
+                      <th>Category</th>
+                      <th>Target Date</th>
+                      <th>Status</th>
+                      <th>Completion %</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {(project.milestones || []).map(m => (
+                      <tr key={m.id}>
+                        <td><strong>{m.name}</strong></td>
+                        <td>{m.category}</td>
+                        <td>{m.targetDate}</td>
+                        <td>
+                          <span className={`${styles.statusBadgeSmall} ${styles[m.status.toLowerCase().replace(' ', '')]}`}>
+                            ● {m.status}
+                          </span>
+                        </td>
+                        <td>
+                          <div className={styles.tableProgressInline}>
+                            <div className={styles.progressTrackSmall}>
+                              <div className={styles.progressFillSmall} style={{ width: `${m.completionPercent}%` }} />
+                            </div>
+                            <span>{m.completionPercent}%</span>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* Android Mobile Card View */}
+            <div className={styles.mobileCardList}>
+              {(project.milestones || []).map(m => (
+                <div key={m.id} className={styles.mobileDataCard}>
+                  <div className={styles.mobileCardHeaderRow}>
+                    <strong className={styles.mobileCardTitle}>{m.name}</strong>
+                    <span className={`${styles.statusBadgeSmall} ${styles[m.status.toLowerCase().replace(' ', '')]}`}>
+                      ● {m.status}
+                    </span>
+                  </div>
+                  <div className={styles.mobileCardMetaRow}>
+                    <span>Category: <strong>{m.category}</strong></span>
+                    <span>Target: <strong>{m.targetDate}</strong></span>
+                  </div>
+                  <div className={styles.tableProgressInline} style={{ marginTop: '4px' }}>
+                    <div className={styles.progressTrackSmall} style={{ flex: 1, width: 'auto' }}>
+                      <div className={styles.progressFillSmall} style={{ width: `${m.completionPercent}%` }} />
+                    </div>
+                    <span>{m.completionPercent}%</span>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -613,41 +640,65 @@ export default function ProjectDetailsPage() {
               </div>
             </div>
 
-            <div className={styles.tableResponsiveContainer}>
-              <table className={styles.detailsTable}>
-                <thead>
-                  <tr>
-                    <th>Voucher #</th>
-                    <th>Expense Category</th>
-                    <th>Description</th>
-                    <th>Amount</th>
-                    <th>Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>VCH-EXP-091</td>
-                    <td>Hydraulic Equipment</td>
-                    <td>Transit mixer diesel and pump hose replacement</td>
-                    <td>₹ 48,000</td>
-                    <td><span className={styles.statusBadgeSmall}>● Authorized</span></td>
-                  </tr>
-                  <tr>
-                    <td>VCH-EXP-088</td>
-                    <td>Civil Reinforcement</td>
-                    <td>Binding wire and 16mm TMT rebar consignment (35T)</td>
-                    <td>₹ 1,85,000</td>
-                    <td><span className={styles.statusBadgeSmall}>● Authorized</span></td>
-                  </tr>
-                  <tr>
-                    <td>VCH-EXP-084</td>
-                    <td>Workforce Payroll</td>
-                    <td>Fortnightly labor wage settlement via NEFT</td>
-                    <td>₹ 3,42,000</td>
-                    <td><span className={styles.statusBadgeSmall}>● Authorized</span></td>
-                  </tr>
-                </tbody>
-              </table>
+            {/* Desktop Table View */}
+            <div className={styles.desktopTableView}>
+              <div className={styles.tableResponsiveContainer}>
+                <table className={styles.detailsTable}>
+                  <thead>
+                    <tr>
+                      <th>Voucher #</th>
+                      <th>Expense Category</th>
+                      <th>Description</th>
+                      <th>Amount</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>VCH-EXP-091</td>
+                      <td>Hydraulic Equipment</td>
+                      <td>Transit mixer diesel and pump hose replacement</td>
+                      <td>₹ 48,000</td>
+                      <td><span className={styles.statusBadgeSmall}>● Authorized</span></td>
+                    </tr>
+                    <tr>
+                      <td>VCH-EXP-088</td>
+                      <td>Civil Reinforcement</td>
+                      <td>Binding wire and 16mm TMT rebar consignment (35T)</td>
+                      <td>₹ 1,85,000</td>
+                      <td><span className={styles.statusBadgeSmall}>● Authorized</span></td>
+                    </tr>
+                    <tr>
+                      <td>VCH-EXP-084</td>
+                      <td>Workforce Payroll</td>
+                      <td>Fortnightly labor wage settlement via NEFT</td>
+                      <td>₹ 3,42,000</td>
+                      <td><span className={styles.statusBadgeSmall}>● Authorized</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* Android Mobile Card View */}
+            <div className={styles.mobileCardList}>
+              {[
+                { vch: 'VCH-EXP-091', cat: 'Hydraulic Equipment', desc: 'Transit mixer diesel and pump hose replacement', amt: '₹ 48,000', status: 'Authorized' },
+                { vch: 'VCH-EXP-088', cat: 'Civil Reinforcement', desc: 'Binding wire and 16mm TMT rebar consignment (35T)', amt: '₹ 1,85,000', status: 'Authorized' },
+                { vch: 'VCH-EXP-084', cat: 'Workforce Payroll', desc: 'Fortnightly labor wage settlement via NEFT', amt: '₹ 3,42,000', status: 'Authorized' }
+              ].map((v, i) => (
+                <div key={i} className={styles.mobileDataCard}>
+                  <div className={styles.mobileCardHeaderRow}>
+                    <strong className={styles.mobileCardTitle}>{v.vch}</strong>
+                    <span className={styles.statusBadgeSmall}>● {v.status}</span>
+                  </div>
+                  <div className={styles.mobileCardMetaRow}>
+                    <span>Category: <strong>{v.cat}</strong></span>
+                    <span style={{ color: '#167C72', fontWeight: 800 }}>{v.amt}</span>
+                  </div>
+                  <p style={{ margin: '4px 0 0', fontSize: '0.72rem', color: 'var(--text-secondary)' }}>{v.desc}</p>
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -748,39 +799,68 @@ export default function ProjectDetailsPage() {
         <div className={styles.tabContentArea}>
           <div className={styles.cardPanel}>
             <h3 className={styles.tabHeaderTitle}>Project Engineering Documents & Clearances</h3>
-            <div className={styles.tableResponsiveContainer}>
-              <table className={styles.detailsTable}>
-                <thead>
-                  <tr>
-                    <th>Document Title</th>
-                    <th>Category</th>
-                    <th>File Size</th>
-                    <th>Upload Date</th>
-                    <th>Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {(project.documents || []).map(doc => (
-                    <tr key={doc.id}>
-                      <td>
-                        <div className={styles.docTitleCell}>
-                          <FileText size={16} className={styles.docIcon} />
-                          <strong>{doc.name}</strong>
-                        </div>
-                      </td>
-                      <td>{doc.category}</td>
-                      <td>{doc.fileSize}</td>
-                      <td>{doc.uploadedAt}</td>
-                      <td>
-                        <button className={styles.downloadBtn}>
-                          <Download size={13} />
-                          <span>Download</span>
-                        </button>
-                      </td>
+            
+            {/* Desktop Table View */}
+            <div className={styles.desktopTableView}>
+              <div className={styles.tableResponsiveContainer}>
+                <table className={styles.detailsTable}>
+                  <thead>
+                    <tr>
+                      <th>Document Title</th>
+                      <th>Category</th>
+                      <th>File Size</th>
+                      <th>Upload Date</th>
+                      <th>Action</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {(project.documents || []).map(doc => (
+                      <tr key={doc.id}>
+                        <td>
+                          <div className={styles.docTitleCell}>
+                            <FileText size={16} className={styles.docIcon} />
+                            <strong>{doc.name}</strong>
+                          </div>
+                        </td>
+                        <td>{doc.category}</td>
+                        <td>{doc.fileSize}</td>
+                        <td>{doc.uploadedAt}</td>
+                        <td>
+                          <button className={styles.downloadBtn}>
+                            <Download size={13} />
+                            <span>Download</span>
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* Android Mobile Card View */}
+            <div className={styles.mobileCardList}>
+              {(project.documents || []).map(doc => (
+                <div key={doc.id} className={styles.mobileDataCard}>
+                  <div className={styles.mobileCardHeaderRow}>
+                    <div className={styles.docTitleCell}>
+                      <FileText size={16} className={styles.docIcon} />
+                      <strong className={styles.mobileCardTitle}>{doc.name}</strong>
+                    </div>
+                  </div>
+                  <div className={styles.mobileCardMetaRow}>
+                    <span>Type: <strong>{doc.category}</strong></span>
+                    <span>Size: <strong>{doc.fileSize}</strong></span>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '6px' }}>
+                    <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>Uploaded: {doc.uploadedAt}</span>
+                    <button className={styles.downloadBtn}>
+                      <Download size={12} />
+                      <span>Download</span>
+                    </button>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -803,35 +883,61 @@ export default function ProjectDetailsPage() {
           </div>
 
           <div className={styles.cardPanel}>
-            <div className={styles.tableResponsiveContainer}>
-              <table className={styles.detailsTable}>
-                <thead>
-                  <tr>
-                    <th>DPR ID</th>
-                    <th>Date & Shift</th>
-                    <th>Work Summary</th>
-                    <th>Workforce</th>
-                    <th>Diesel (L)</th>
-                    <th>Submitted By</th>
-                    <th>Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {(project.dailyReports || []).map(r => (
-                    <tr key={r.id}>
-                      <td><strong className={styles.dprIdBadge}>{r.id}</strong></td>
-                      <td>{r.reportDate} ({r.shift})</td>
-                      <td>{r.workExecuted}</td>
-                      <td>{r.labourCount} Workers</td>
-                      <td>{r.dieselConsumedLitres} L</td>
-                      <td>{r.submittedBy}</td>
-                      <td>
-                        <span className={styles.statusBadgeSmall}>● {r.approvalStatus}</span>
-                      </td>
+            {/* Desktop Table View */}
+            <div className={styles.desktopTableView}>
+              <div className={styles.tableResponsiveContainer}>
+                <table className={styles.detailsTable}>
+                  <thead>
+                    <tr>
+                      <th>DPR ID</th>
+                      <th>Date & Shift</th>
+                      <th>Work Summary</th>
+                      <th>Workforce</th>
+                      <th>Diesel (L)</th>
+                      <th>Submitted By</th>
+                      <th>Status</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {(project.dailyReports || []).map(r => (
+                      <tr key={r.id}>
+                        <td><strong className={styles.dprIdBadge}>{r.id}</strong></td>
+                        <td>{r.reportDate} ({r.shift})</td>
+                        <td>{r.workExecuted}</td>
+                        <td>{r.labourCount} Workers</td>
+                        <td>{r.dieselConsumedLitres} L</td>
+                        <td>{r.submittedBy}</td>
+                        <td>
+                          <span className={styles.statusBadgeSmall}>● {r.approvalStatus}</span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* Android Mobile Card View */}
+            <div className={styles.mobileCardList}>
+              {(project.dailyReports || []).map(r => (
+                <div key={r.id} className={styles.mobileDataCard}>
+                  <div className={styles.mobileCardHeaderRow}>
+                    <strong className={styles.dprIdBadge}>{r.id}</strong>
+                    <span className={styles.statusBadgeSmall}>● {r.approvalStatus}</span>
+                  </div>
+                  <div className={styles.mobileCardMetaRow}>
+                    <span>Date: <strong>{r.reportDate}</strong> ({r.shift})</span>
+                    <span>Staff: <strong>{r.labourCount} Workers</strong></span>
+                  </div>
+                  <p style={{ margin: '4px 0', fontSize: '0.74rem', color: 'var(--text-primary)', lineHeight: 1.35 }}>
+                    {r.workExecuted}
+                  </p>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '4px', fontSize: '0.68rem', color: 'var(--text-secondary)' }}>
+                    <span>Fuel: <strong>{r.dieselConsumedLitres} L</strong></span>
+                    <span>By: {r.submittedBy}</span>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>

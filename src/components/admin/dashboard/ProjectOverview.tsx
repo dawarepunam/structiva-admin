@@ -22,6 +22,10 @@ import {
   Activity,
   Layers
 } from 'lucide-react';
+import { 
+  getStoredProjects, 
+  EnterpriseProjectRecord 
+} from '@/services/projectStorage';
 
 // Real Construction Projects matching the Mockup
 const portfolioProjects = [
@@ -98,6 +102,24 @@ const recentActivities = [
 
 export default function ProjectOverview() {
   const [activeTab, setActiveTab] = useState<'all' | 'active' | 'planning'>('all');
+  const [projectsList, setProjectsList] = React.useState<EnterpriseProjectRecord[]>([]);
+
+  React.useEffect(() => {
+    const list = getStoredProjects();
+    setProjectsList(list);
+
+    const handleUpdate = () => {
+      setProjectsList(getStoredProjects());
+    };
+    window.addEventListener('storage', handleUpdate);
+    window.addEventListener('projectsUpdated', handleUpdate);
+    return () => {
+      window.removeEventListener('storage', handleUpdate);
+      window.removeEventListener('projectsUpdated', handleUpdate);
+    };
+  }, []);
+
+  const displayedPortfolio = projectsList.length > 0 ? projectsList.slice(0, 3) : [];
 
   return (
     <div className={styles.container}>
@@ -335,53 +357,61 @@ export default function ProjectOverview() {
           </div>
 
           <div className={styles.projectsCardsGrid}>
-            {portfolioProjects.map((p) => (
-              <div key={p.id} className={styles.projectCard}>
-                <div className={styles.projectImageWrapper}>
-                  <SafeImage 
-                    src={p.image} 
-                    alt={p.name} 
-                    fallbackType="project"
-                    className={styles.projectImg}
-                  />
-                  <span className={`${styles.statusBadge} ${styles[p.statusType]}`}>
-                    ● {p.status}
-                  </span>
-                </div>
+            {(displayedPortfolio.length > 0 ? displayedPortfolio : portfolioProjects).map((p: any) => {
+              const projectLink = p.code ? `/admin/projects/${p.id}` : '/admin/projects';
+              const budgetFormatted = typeof p.budget === 'number' ? `₹ ${(p.budget / 10000000).toFixed(1)} Cr` : p.budget;
+              const statusClass = p.status?.toLowerCase().replace(' ', '') || 'ontrack';
 
-                <div className={styles.projectContent}>
-                  <h4 className={styles.projectName}>{p.name}</h4>
-                  <div className={styles.projectLocation}>
-                    <MapPin size={12} />
-                    <span>{p.location}</span>
-                  </div>
+              return (
+                <div key={p.id} className={styles.projectCard}>
+                  <Link href={projectLink} className={styles.projectImageWrapper}>
+                    <SafeImage 
+                      src={p.image} 
+                      alt={p.name} 
+                      fallbackType="project"
+                      className={styles.projectImg}
+                    />
+                    <span className={`${styles.statusBadge} ${styles[statusClass] || styles.success}`}>
+                      ● {p.status}
+                    </span>
+                  </Link>
 
-                  {/* Progress Line */}
-                  <div className={styles.progressRow}>
-                    <div className={styles.progressBarTrack}>
-                      <div 
-                        className={styles.progressBarFill} 
-                        style={{ width: `${p.progress}%` }} 
-                      />
-                    </div>
-                    <span className={styles.progressPercent}>{p.progress}%</span>
-                  </div>
-
-                  {/* Budget & Date */}
-                  <div className={styles.metaRow}>
-                    <div className={styles.budgetGroup}>
-                      <span className={styles.metaLabel}>Budget</span>
-                      <strong className={styles.metaVal}>{p.budget}</strong>
-                    </div>
-
-                    <Link href="/admin/projects" className={styles.viewProjectBtn}>
-                      <span>View</span>
-                      <ArrowRight size={11} />
+                  <div className={styles.projectContent}>
+                    <Link href={projectLink} style={{ textDecoration: 'none' }}>
+                      <h4 className={styles.projectName}>{p.name}</h4>
                     </Link>
+                    <div className={styles.projectLocation}>
+                      <MapPin size={12} />
+                      <span>{p.location}</span>
+                    </div>
+
+                    {/* Progress Line */}
+                    <div className={styles.progressRow}>
+                      <div className={styles.progressBarTrack}>
+                        <div 
+                          className={styles.progressBarFill} 
+                          style={{ width: `${p.progress}%` }} 
+                        />
+                      </div>
+                      <span className={styles.progressPercent}>{p.progress}%</span>
+                    </div>
+
+                    {/* Budget & Date */}
+                    <div className={styles.metaRow}>
+                      <div className={styles.budgetGroup}>
+                        <span className={styles.metaLabel}>Budget</span>
+                        <strong className={styles.metaVal}>{budgetFormatted}</strong>
+                      </div>
+
+                      <Link href={projectLink} className={styles.viewProjectBtn}>
+                        <span>Details</span>
+                        <ArrowRight size={11} />
+                      </Link>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
 

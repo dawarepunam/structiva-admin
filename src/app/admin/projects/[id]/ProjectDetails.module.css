@@ -1196,6 +1196,50 @@
   margin-top: 0.5rem;
 }
 
+/* Desktop vs Mobile Toggle Components */
+.desktopTableView {
+  display: block;
+  width: 100%;
+}
+
+.mobileCardList {
+  display: none;
+  flex-direction: column;
+  gap: 0.65rem;
+  width: 100%;
+}
+
+.mobileDataCard {
+  background: var(--warm-ivory);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.mobileCardHeaderRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.mobileCardTitle {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.mobileCardMetaRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+}
+
 /* Mobile Breakpoints */
 @media (max-width: 900px) {
   .overviewKpiGrid {
@@ -1216,6 +1260,14 @@
 }
 
 @media (max-width: 600px) {
+  .desktopTableView {
+    display: none !important;
+  }
+
+  .mobileCardList {
+    display: flex !important;
+  }
+
   .detailsWrapper {
     gap: 0.85rem;
     padding-bottom: 25px;
