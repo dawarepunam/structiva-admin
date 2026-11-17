@@ -202,7 +202,7 @@
 }
 
 /* ========================================================
-   9 TABS NAVIGATION BAR
+   9 TABS NAVIGATION BAR (SMOOTH HORIZONTAL SCROLL ON MOBILE)
    ======================================================== */
 .tabsBar {
   display: flex;
@@ -213,7 +213,13 @@
   border-radius: var(--radius-lg);
   border: 1px solid var(--border-subtle);
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; /* Hide scrollbar for clean app feel */
   box-shadow: 0 1px 3px rgba(23, 43, 50, 0.03);
+}
+
+.tabsBar::-webkit-scrollbar {
+  display: none;
 }
 
 .tabBtn {
@@ -736,8 +742,16 @@
 /* ========================================================
    TABLES & DETAILS IN TABS
    ======================================================== */
+.milestonesTableWrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Details Table Base */
 .detailsTable {
   width: 100%;
+  min-width: 620px;
   border-collapse: collapse;
   text-align: left;
   font-size: 0.8rem;
@@ -1195,17 +1209,75 @@
 }
 
 @media (max-width: 600px) {
-  .overviewKpiGrid {
-    grid-template-columns: 1fr;
+  .detailsWrapper {
+    gap: 1rem;
+    padding-bottom: 20px;
   }
+
+  .projectHero {
+    border-radius: var(--radius-lg);
+  }
+
+  .heroContent {
+    padding: 1rem;
+    gap: 0.65rem;
+  }
+
+  .projectTitle {
+    font-size: 1.2rem;
+  }
+
+  .heroMetaRow {
+    gap: 0.5rem;
+    font-size: 0.72rem;
+  }
+
+  .overviewKpiGrid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.65rem;
+  }
+
+  .kpiCard {
+    padding: 0.85rem;
+    gap: 0.2rem;
+  }
+
+  .kpiValue {
+    font-size: 1.15rem;
+  }
+
+  .kpiLabel {
+    font-size: 0.65rem;
+  }
+
   .quickActionBtnsGrid {
     grid-template-columns: 1fr;
   }
+
   .formRow2 {
     grid-template-columns: 1fr;
   }
+
   .heroLeadershipRow {
     flex-direction: column;
     align-items: flex-start;
+    gap: 0.65rem;
+  }
+
+  .heroProgressPill {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .galleryGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .lightboxContent {
+    padding: 0;
+  }
+
+  .lightboxImgBox {
+    height: 320px;
   }
 }
