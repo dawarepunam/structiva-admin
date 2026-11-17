@@ -126,10 +126,12 @@
   border: 3px solid #ffffff;
 }
 
+.statusDot.active,
 .statusDot.present {
   background: #10b981;
 }
 
+.statusDot.inactive,
 .statusDot.absent {
   background: #ef4444;
 }
@@ -199,11 +201,13 @@
   border-radius: 12px;
 }
 
+.musterBadge.active,
 .musterBadge.present {
   background: #d1fae5;
   color: #065f46;
 }
 
+.musterBadge.inactive,
 .musterBadge.absent {
   background: #fee2e2;
   color: #991b1b;

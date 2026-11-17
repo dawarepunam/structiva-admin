@@ -79,8 +79,7 @@ export default function WorkerProfilePage() {
 
     const updatedLeaves = [newLeave, ...(worker.leaves || [])];
     const updated = updateWorker(worker.id, {
-      leaves: updatedLeaves,
-      todayStatus: 'On Leave'
+      leaves: updatedLeaves
     });
     setWorker(updated.find(w => w.id === worker.id) || null);
     setShowLeaveModal(false);
@@ -92,6 +91,8 @@ export default function WorkerProfilePage() {
       reason: ''
     });
   };
+
+  const currentStatus = worker.status || 'Active';
 
   return (
     <div className={styles.container}>
@@ -115,18 +116,18 @@ export default function WorkerProfilePage() {
               fallbackType="worker" 
               className={styles.avatarImg} 
             />
-            <span className={`${styles.statusDot} ${styles[worker.todayStatus.toLowerCase().replace(' ', '')]}`} />
+            <span className={`${styles.statusDot} ${styles[currentStatus.toLowerCase()]}`} />
           </div>
 
           <div className={styles.heroDetails}>
             <div className={styles.heroTitleRow}>
               <h1 className={styles.workerTitle}>{worker.name}</h1>
               <span className={styles.workerCodeBadge}>{worker.code}</span>
-              <span className={`${styles.categoryBadge} ${styles[worker.category.toLowerCase().replace('-', '')]}`}>
-                {worker.category}
+              <span className={`${styles.categoryBadge} ${styles[(worker.category || 'Skilled').toLowerCase().replace('-', '')]}`}>
+                {worker.category || 'Skilled'}
               </span>
-              <span className={`${styles.musterBadge} ${styles[worker.todayStatus.toLowerCase().replace(' ', '')]}`}>
-                ● {worker.todayStatus} Today
+              <span className={`${styles.musterBadge} ${styles[currentStatus.toLowerCase()]}`}>
+                ● {currentStatus}
               </span>
             </div>
 
@@ -549,9 +550,9 @@ export default function WorkerProfilePage() {
                   let dayStatus = 'present';
                   if (dayNum === 8 || dayNum === 15) dayStatus = 'holiday'; // Sundays
                   else if (dayNum === 5) dayStatus = 'leave';
-                  else if (dayNum === 12 && worker.todayStatus === 'Absent') dayStatus = 'absent';
+                  else if (dayNum === 12) dayStatus = 'absent';
                   if (isToday) {
-                    dayStatus = worker.todayStatus.toLowerCase().replace(' ', '');
+                    dayStatus = currentStatus === 'Inactive' ? 'absent' : 'present';
                   }
 
                   return (
