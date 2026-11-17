@@ -1,25 +1,32 @@
+/* ========================================================
+   STRUCTIVA ENTERPRISE OS – MNC DEEP FOREST TEAL SIDEBAR
+   ======================================================== */
+
 .sidebar {
-  width: 260px;
-  min-height: 100vh;
-  background-color: #0f172a;
-  color: #f8fafc;
+  width: 250px;
+  background: linear-gradient(180deg, #172B32 0%, #0F1E24 100%);
+  color: #ECEBE5;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
   display: flex;
   flex-direction: column;
-  border-right: 1px solid #1e293b;
-  position: fixed;
-  left: 0;
-  top: 0;
-  bottom: 0;
   z-index: 50;
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 4px 0 24px rgba(15, 30, 36, 0.25);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-sizing: border-box;
 }
 
+/* Brand Header */
 .brand {
-  padding: 1.25rem 1.25rem;
+  height: 68px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid #1e293b;
+  padding: 0 1.25rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .brandLeft {
@@ -28,32 +35,21 @@
   gap: 0.75rem;
 }
 
-.closeMobileBtn {
-  display: none;
-  background: transparent;
-  border: none;
-  color: #94a3b8;
-  cursor: pointer;
-  padding: 4px;
-  border-radius: 6px;
-}
-
-.closeMobileBtn:hover {
-  color: #ffffff;
-}
-
-.logoIcon {
-  width: 38px;
-  height: 38px;
-  background: linear-gradient(135deg, #f59e0b, #ff6b00);
+.logoBadge {
+  width: 36px;
+  height: 36px;
   border-radius: 8px;
+  background: linear-gradient(135deg, #167C72 0%, #0D5049 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 800;
-  font-size: 1.2rem;
-  color: #0f172a;
-  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+  color: #FFFFFF;
+  box-shadow: 0 2px 8px rgba(22, 124, 114, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.logoSvg {
+  color: #B58B59;
 }
 
 .brandInfo {
@@ -62,27 +58,47 @@
 }
 
 .brandName {
-  font-size: 1.15rem;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  color: #ffffff;
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #FFFFFF;
+  line-height: 1.1;
 }
 
 .brandBadge {
   font-size: 0.65rem;
-  color: #f59e0b;
   font-weight: 600;
+  color: #B58B59;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  margin-top: 2px;
 }
 
+.closeMobileBtn {
+  display: none;
+  background: transparent;
+  border: none;
+  color: #98A09D;
+  cursor: pointer;
+  padding: 4px;
+}
+
+/* Nav Area */
 .navContainer {
-  padding: 1.25rem 0.75rem;
   flex: 1;
   overflow-y: auto;
+  padding: 1rem 0.75rem;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.15rem;
+}
+
+.navContainer::-webkit-scrollbar {
+  width: 4px;
+}
+.navContainer::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
 }
 
 .navGroup {
@@ -91,96 +107,229 @@
   gap: 0.25rem;
 }
 
+.groupHeader {
+  padding: 0 0.65rem 0.35rem 0.65rem;
+}
+
 .groupLabel {
-  font-size: 0.65rem;
+  font-size: 0.68rem;
   font-weight: 700;
-  color: #64748b;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  padding: 0 0.75rem 0.5rem 0.75rem;
+  color: #6C7979;
+}
+
+.groupItems {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
 .navLink {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 0.625rem 0.75rem;
+  padding: 0.55rem 0.75rem;
   border-radius: 8px;
-  color: #94a3b8;
+  color: #A8B9AA;
   text-decoration: none;
-  font-size: 0.875rem;
+  font-size: 0.82rem;
   font-weight: 500;
-  transition: all 0.15s ease-in-out;
+  transition: all 0.18s ease;
+  position: relative;
 }
 
 .navLink:hover {
-  background-color: #1e293b;
-  color: #f8fafc;
+  background: rgba(255, 255, 255, 0.05);
+  color: #FFFFFF;
 }
 
 .activeNavLink {
-  background-color: rgba(245, 158, 11, 0.15);
-  color: #f59e0b;
+  background: rgba(22, 124, 114, 0.22) !important;
+  color: #FFFFFF !important;
   font-weight: 600;
+  border: 1px solid rgba(22, 124, 114, 0.4);
 }
 
-.activeNavLink svg {
-  color: #f59e0b;
+.navIcon {
+  color: #A8B9AA;
+  transition: color 0.18s ease;
+  flex-shrink: 0;
 }
 
-.footerProfile {
-  padding: 1rem 1.25rem;
-  border-top: 1px solid #1e293b;
-  background-color: #0b1120;
+.activeNavLink .navIcon {
+  color: #B58B59;
+}
+
+.navText {
+  flex: 1;
+}
+
+.activeGlowPill {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #B58B59;
+  box-shadow: 0 0 8px #B58B59;
+}
+
+/* Circular Overall Progress Widget (Mockup Match) */
+.progressGaugeBox {
+  margin: 0.5rem 0.75rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  padding: 0.75rem 0.85rem;
+}
+
+.gaugeHeader {
+  margin-bottom: 0.5rem;
+}
+
+.gaugeTitle {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #A8B9AA;
+  letter-spacing: 0.03em;
+}
+
+.gaugeContent {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 0.75rem;
 }
 
+.circularProgress {
+  position: relative;
+  width: 44px;
+  height: 44px;
+}
+
+.circularChart {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.circleBg {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.1);
+  stroke-width: 3.8;
+}
+
+.circleFill {
+  fill: none;
+  stroke: #167C72;
+  stroke-width: 3.8;
+  stroke-linecap: round;
+  transition: stroke-dasharray 0.3s ease;
+}
+
+.gaugePercent {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #FFFFFF;
+}
+
+.sparkMiniTrend {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-end;
+}
+
+.trendBars {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 22px;
+}
+
+.trendBars span {
+  width: 4px;
+  background: linear-gradient(180deg, #B58B59 0%, #167C72 100%);
+  border-radius: 2px;
+}
+
+.trendLabel {
+  font-size: 0.62rem;
+  color: #A8B9AA;
+  font-weight: 500;
+}
+
+/* User Profile Footer */
+.footerProfile {
+  padding: 0.85rem 1.15rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: rgba(15, 30, 36, 0.4);
+}
+
 .avatar {
-  width: 36px;
-  height: 36px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
-  background-color: #334155;
+  background: linear-gradient(135deg, #203A3B 0%, #172B32 100%);
+  border: 1px solid #B58B59;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 600;
-  font-size: 0.85rem;
-  color: #f8fafc;
-  border: 1px solid #475569;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #FFFFFF;
+  position: relative;
+}
+
+.onlineDot {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 8px;
+  height: 8px;
+  background-color: #23845D;
+  border: 1.5px solid #172B32;
+  border-radius: 50%;
 }
 
 .profileDetails {
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .userName {
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   font-weight: 600;
-  color: #ffffff;
+  color: #FFFFFF;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .userRole {
-  font-size: 0.7rem;
-  color: #94a3b8;
+  font-size: 0.65rem;
+  color: #A8B9AA;
+  white-space: nowrap;
 }
 
-/* Responsive Drawer for Tablet & Mobile */
+/* Responsive Rules */
 @media (max-width: 1024px) {
   .sidebar {
     transform: translateX(-100%);
-    box-shadow: 10px 0 25px -5px rgba(0, 0, 0, 0.5);
   }
 
   .sidebarOpen {
-    transform: translateX(0) !important;
+    transform: translateX(0);
   }
 
   .closeMobileBtn {
     display: flex;
-    align-items: center;
-    justify-content: center;
   }
 }

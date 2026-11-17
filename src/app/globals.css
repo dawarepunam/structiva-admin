@@ -1,19 +1,58 @@
 @import "tailwindcss";
 
 :root {
-  --primary-navy: #0f172a;
-  --secondary-navy: #1e293b;
-  --industrial-amber: #f59e0b;
-  --accent-orange: #ff6b00;
-  --bg-slate: #f8fafc;
-  --surface: #ffffff;
-  --border-subtle: #e2e8f0;
-  --text-primary: #0f172a;
-  --text-secondary: #64748b;
-  --text-muted: #94a3b8;
-  --success: #10b981;
-  --warning: #f59e0b;
-  --danger: #ef4444;
+  /* ========================================================
+     STRUCTIVA ENTERPRISE OS – MNC EXECUTIVE DESIGN TOKENS
+     ======================================================== */
+  
+  /* Primary Brand Palette */
+  --midnight-graphite: #172B32;
+  --deep-forest-teal: #203A3B;
+  --premium-emerald: #167C72;
+  --emerald-hover: #12635b;
+  --emerald-subtle: rgba(22, 124, 114, 0.08);
+
+  /* Background Canvas */
+  --warm-ivory: #F4F2EC;
+  --soft-stone: #ECEBE5;
+  --porcelain-white: #FFFFFF;
+
+  /* Accents */
+  --champagne-bronze: #B58B59;
+  --champagne-light: #F7F1E9;
+  --muted-sage: #A8B9AA;
+
+  /* Typography / Text Tokens */
+  --text-primary: #1D292C;
+  --text-secondary: #6C7979;
+  --text-muted: #98A09D;
+  --text-light: #FFFFFF;
+
+  /* Borders & Dividers */
+  --border-subtle: #E5E5DF;
+  --border-card: #E8E7DF;
+
+  /* Executive Status Palette */
+  --status-success: #23845D;
+  --status-success-bg: #E8F5EE;
+  --status-warning: #D69B42;
+  --status-warning-bg: #FEF7EC;
+  --status-danger: #C65C54;
+  --status-danger-bg: #FDF1F0;
+  --status-info: #527FA5;
+  --status-info-bg: #EEF4F8;
+
+  /* Elevation Shadows */
+  --shadow-sm: 0 1px 3px rgba(23, 43, 50, 0.04);
+  --shadow-md: 0 4px 14px rgba(23, 43, 50, 0.06);
+  --shadow-lg: 0 10px 25px -4px rgba(23, 43, 50, 0.08);
+  --shadow-elevated: 0 16px 32px -8px rgba(23, 43, 50, 0.12);
+
+  /* Radius Tokens */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
 }
 
 *, *::before, *::after {
@@ -26,8 +65,25 @@ html, body {
   width: 100%;
   max-width: 100vw;
   overflow-x: hidden;
-  background-color: var(--bg-slate);
+  background-color: var(--warm-ivory);
   color: var(--text-primary);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Plus Jakarta Sans", "Inter", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom Scrollbar for Enterprise Look */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--soft-stone);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--muted-sage);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--champagne-bronze);
 }

@@ -1,73 +1,158 @@
-.pageHeader {
+/* ========================================================
+   STRUCTIVA ENTERPRISE OS – EXECUTIVE DASHBOARD PAGE
+   ======================================================== */
+
+.dashboardContainer {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  margin-bottom: 1.5rem;
-  flex-wrap: wrap;
-  gap: 12px;
+  flex-direction: column;
+  gap: 1.5rem;
   width: 100%;
 }
 
-.titleArea {
+/* ========================================================
+   HERO BANNER (MATCHES MNC REFERENCE MOCKUP)
+   ======================================================== */
+.heroBanner {
+  background: linear-gradient(135deg, #172B32 0%, #203A3B 55%, #167C72 100%);
+  border-radius: var(--radius-xl);
+  padding: 1.75rem 2.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 10px 25px -4px rgba(23, 43, 50, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.heroContent {
+  position: relative;
+  z-index: 2;
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
-  max-width: 100%;
+  gap: 0.35rem;
+  max-width: 65%;
 }
 
-.pageTitle {
-  font-size: 1.5rem;
-  font-weight: 800;
-  color: #0f172a;
-  letter-spacing: -0.02em;
-  line-height: 1.25;
-}
-
-.pageSubtitle {
-  font-size: 0.85rem;
-  color: #64748b;
-  line-height: 1.4;
-}
-
-.btnPrimary {
-  background-color: #f59e0b;
-  color: #0f172a;
-  font-weight: 600;
-  font-size: 0.85rem;
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-  display: inline-flex;
+.titleRow {
+  display: flex;
   align-items: center;
   gap: 0.5rem;
-  transition: all 0.2s;
-  box-shadow: 0 2px 4px rgba(245, 158, 11, 0.25);
-  white-space: nowrap;
 }
 
-.btnPrimary:hover {
-  background-color: #d97706;
+.heroTitle {
+  font-size: 1.65rem;
+  font-weight: 800;
+  color: #FFFFFF;
+  margin: 0;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
 }
 
-@media (max-width: 768px) {
-  .pageHeader {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-    margin-bottom: 1.25rem;
-  }
+.heroSubtitle {
+  font-size: 0.95rem;
+  color: #ECEBE5;
+  margin: 0 0 0.5rem 0;
+  font-weight: 500;
+  opacity: 0.92;
+}
 
-  .pageTitle {
-    font-size: 1.25rem;
-  }
+.metaPillsRow {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
 
-  .pageSubtitle {
-    font-size: 0.8rem;
-  }
+.datePill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(181, 139, 89, 0.25);
+  border: 1px solid rgba(181, 139, 89, 0.4);
+  color: #F7F1E9;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 20px;
+}
 
-  .btnPrimary {
-    width: 100%;
-    justify-content: center;
+.weatherPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #ECEBE5;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 20px;
+}
+
+.pillIcon {
+  color: var(--champagne-bronze);
+}
+
+/* Right Construction Team Visual Overlay */
+.heroImageWrapper {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 42%;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.heroImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  opacity: 0.45;
+  filter: contrast(1.1);
+}
+
+.heroImgOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, #203A3B 0%, rgba(32, 58, 59, 0.4) 40%, rgba(22, 124, 114, 0.1) 100%);
+}
+
+/* Tablet & Mobile Breakpoints */
+@media (max-width: 900px) {
+  .heroBanner {
+    padding: 1.5rem;
+  }
+  .heroContent {
+    max-width: 100%;
+  }
+  .heroImageWrapper {
+    opacity: 0.2;
+    width: 60%;
+  }
+  .heroTitle {
+    font-size: 1.35rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .heroBanner {
+    padding: 1.25rem 1rem;
+    border-radius: var(--radius-lg);
+  }
+  .heroTitle {
+    font-size: 1.2rem;
+  }
+  .heroSubtitle {
+    font-size: 0.82rem;
+  }
+  .metaPillsRow {
+    gap: 0.5rem;
+  }
+  .datePill, .weatherPill {
+    font-size: 0.68rem;
+    padding: 3px 8px;
   }
 }
