@@ -486,82 +486,118 @@ export default function VehicleList() {
           )}
         </div>
       ) : (
-        /* Table View Mode */
-        <div className={styles.tablePanel}>
-          <table className={styles.dataTable}>
-            <thead>
-              <tr>
-                <th>Asset Name & Code</th>
-                <th>Reg # & Class</th>
-                <th>Project Deployment</th>
-                <th>Pilot / Operator</th>
-                <th>Operating Hours / KM</th>
-                <th>Service Due In</th>
-                <th>Ownership</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map(asset => (
-                <tr 
-                  key={asset.id} 
-                  onClick={() => router.push(`/admin/fleet/${asset.id}`)}
-                  className={styles.tableRowClickable}
-                >
-                  <td>
-                    <div className={styles.tableAssetInfo}>
-                      <SafeImage src={asset.image} alt={asset.name} fallbackType="machine" className={styles.tableThumb} />
-                      <div>
-                        <strong className={styles.tableAssetName}>{asset.name}</strong>
-                        <span className={styles.tableAssetCode}>{asset.code} • {asset.manufacturer}</span>
-                      </div>
-                    </div>
-                  </td>
-                  <td>
-                    <div className={styles.tableRegInfo}>
-                      <strong>{asset.registrationNumber}</strong>
-                      <span className={styles.tableSub}>{asset.category}</span>
-                    </div>
-                  </td>
-                  <td>
-                    <span className={styles.tableProjectTag}>{asset.currentProject}</span>
-                  </td>
-                  <td>
-                    <div className={styles.tableOperatorInfo}>
-                      <span>{asset.assignedOperator}</span>
-                      <span className={styles.tableSub}>{asset.operatorLicence}</span>
-                    </div>
-                  </td>
-                  <td>
-                    <strong>{asset.operatingHoursOrKm} {asset.meterUnit}</strong>
-                  </td>
-                  <td>
-                    <span className={(asset.serviceDueAtHoursOrKm - asset.operatingHoursOrKm) <= 100 ? styles.textServiceAlert : styles.textServiceOk}>
-                      {asset.serviceDueAtHoursOrKm - asset.operatingHoursOrKm} {asset.meterUnit}
-                    </span>
-                  </td>
-                  <td>
-                    <span className={`${styles.ownershipBadge} ${asset.ownershipType.includes('Company') ? styles.badgeOwned : styles.badgeRented}`}>
-                      {asset.ownershipType}
-                    </span>
-                  </td>
-                  <td>
-                    <span className={`${styles.statusBadgeSmall} ${asset.currentStatus.includes('Operational') ? styles.statusOperational : styles.statusMaint}`}>
-                      ● {asset.currentStatus.split(' ')[0]}
-                    </span>
-                  </td>
-                  <td>
-                    <Link href={`/admin/fleet/${asset.id}`} className={styles.tableActionLink} onClick={e => e.stopPropagation()}>
-                      Dossier
-                      <ChevronRight size={14} />
-                    </Link>
-                  </td>
+        /* Table View Mode with Desktop Full Table & Android Responsive Card Fallback */
+        <>
+          <div className={`${styles.tablePanel} ${styles.desktopOnlyTable}`}>
+            <table className={styles.dataTable}>
+              <thead>
+                <tr>
+                  <th>Asset Name & Code</th>
+                  <th>Reg # & Class</th>
+                  <th>Project Deployment</th>
+                  <th>Pilot / Operator</th>
+                  <th>Operating Hours / KM</th>
+                  <th>Service Due In</th>
+                  <th>Ownership</th>
+                  <th>Status</th>
+                  <th>Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {filtered.map(asset => (
+                  <tr 
+                    key={asset.id} 
+                    onClick={() => router.push(`/admin/fleet/${asset.id}`)}
+                    className={styles.tableRowClickable}
+                  >
+                    <td>
+                      <div className={styles.tableAssetInfo}>
+                        <SafeImage src={asset.image} alt={asset.name} fallbackType="machine" className={styles.tableThumb} />
+                        <div>
+                          <strong className={styles.tableAssetName}>{asset.name}</strong>
+                          <span className={styles.tableAssetCode}>{asset.code} • {asset.manufacturer}</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <div className={styles.tableRegInfo}>
+                        <strong>{asset.registrationNumber}</strong>
+                        <span className={styles.tableSub}>{asset.category}</span>
+                      </div>
+                    </td>
+                    <td>
+                      <span className={styles.tableProjectTag}>{asset.currentProject}</span>
+                    </td>
+                    <td>
+                      <div className={styles.tableOperatorInfo}>
+                        <span>{asset.assignedOperator}</span>
+                        <span className={styles.tableSub}>{asset.operatorLicence}</span>
+                      </div>
+                    </td>
+                    <td>
+                      <strong>{asset.operatingHoursOrKm} {asset.meterUnit}</strong>
+                    </td>
+                    <td>
+                      <span className={(asset.serviceDueAtHoursOrKm - asset.operatingHoursOrKm) <= 100 ? styles.textServiceAlert : styles.textServiceOk}>
+                        {asset.serviceDueAtHoursOrKm - asset.operatingHoursOrKm} {asset.meterUnit}
+                      </span>
+                    </td>
+                    <td>
+                      <span className={`${styles.ownershipBadge} ${asset.ownershipType.includes('Company') ? styles.badgeOwned : styles.badgeRented}`}>
+                        {asset.ownershipType}
+                      </span>
+                    </td>
+                    <td>
+                      <span className={`${styles.statusBadgeSmall} ${asset.currentStatus.includes('Operational') ? styles.statusOperational : styles.statusMaint}`}>
+                        ● {asset.currentStatus.split(' ')[0]}
+                      </span>
+                    </td>
+                    <td>
+                      <Link href={`/admin/fleet/${asset.id}`} className={styles.tableActionLink} onClick={e => e.stopPropagation()}>
+                        Dossier
+                        <ChevronRight size={14} />
+                      </Link>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Android Mobile Table Mode -> Compact List Cards */}
+          <div className={styles.mobileFleetList}>
+            {filtered.map(asset => (
+              <div 
+                key={asset.id}
+                className={styles.mobileFleetCard}
+                onClick={() => router.push(`/admin/fleet/${asset.id}`)}
+              >
+                <div className={styles.mobileFleetHeader}>
+                  <div className={styles.mobileFleetIdentity}>
+                    <SafeImage src={asset.image} alt={asset.name} fallbackType="machine" className={styles.mobileFleetThumb} />
+                    <div>
+                      <strong className={styles.mobileFleetName}>{asset.name}</strong>
+                      <span className={styles.mobileFleetReg}>{asset.registrationNumber} • {asset.code}</span>
+                    </div>
+                  </div>
+                  <span className={`${styles.statusBadgeSmall} ${asset.currentStatus.includes('Operational') ? styles.statusOperational : styles.statusMaint}`}>
+                    ● {asset.currentStatus.split(' ')[0]}
+                  </span>
+                </div>
+                <div className={styles.mobileFleetMeta}>
+                  <span>Site: <strong>{asset.currentProject}</strong></span>
+                  <span>Pilot: <strong>{asset.assignedOperator}</strong></span>
+                </div>
+                <div className={styles.mobileFleetFooter}>
+                  <span>Meter: <strong>{asset.operatingHoursOrKm} {asset.meterUnit}</strong></span>
+                  <Link href={`/admin/fleet/${asset.id}`} className={styles.tableActionLink} onClick={e => e.stopPropagation()}>
+                    Dossier <ChevronRight size={13} />
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
       )}
 
       {/* Asset Registration Modal */}

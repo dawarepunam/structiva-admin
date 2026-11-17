@@ -541,70 +541,106 @@ export default function WorkerTable() {
           )}
         </div>
       ) : (
-        /* Table View Mode */
-        <div className={styles.tablePanel}>
-          <table className={styles.dataTable}>
-            <thead>
-              <tr>
-                <th>Worker & ID</th>
-                <th>Category & Trade</th>
-                <th>Current Project Assignment</th>
-                <th>Supervisor</th>
-                <th>Standard Wage</th>
-                <th>Experience</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map(w => (
-                <tr key={w.id} onClick={() => router.push(`/admin/workforce/${w.id}`)} className={styles.tableRowClickable}>
-                  <td>
-                    <div className={styles.tableWorkerInfo}>
-                      <SafeImage src={w.avatar} alt={w.name} fallbackType="worker" className={styles.tableAvatar} />
-                      <div>
-                        <strong className={styles.tableWorkerName}>{w.name}</strong>
-                        <span className={styles.tableWorkerCode}>{w.code}</span>
-                      </div>
-                    </div>
-                  </td>
-                  <td>
-                    <div className={styles.tableTradeInfo}>
-                      <span className={`${styles.categoryBadge} ${styles[w.category.toLowerCase().replace('-', '')]}`}>
-                        {w.category}
-                      </span>
-                      <span className={styles.tableSkillName}>{w.skill}</span>
-                    </div>
-                  </td>
-                  <td>
-                    <span className={styles.tableProjectTag}>
-                      {w.assignedProject || 'Unassigned'}
-                    </span>
-                  </td>
-                  <td>
-                    <span className={styles.supervisorNameText}>{w.supervisorName || 'Er. Rajesh Kulkarni'}</span>
-                  </td>
-                  <td>
-                    <strong>₹ {w.dailyWage}</strong>
-                    <span className={styles.subTextMuted}>/ day</span>
-                  </td>
-                  <td>{w.experienceYears} Years</td>
-                  <td>
-                    <span className={`${styles.employmentBadge} ${styles[w.status.toLowerCase()]}`}>
-                      ● {w.status}
-                    </span>
-                  </td>
-                  <td>
-                    <Link href={`/admin/workforce/${w.id}`} className={styles.tableActionLink} onClick={e => e.stopPropagation()}>
-                      View Profile
-                      <ChevronRight size={14} />
-                    </Link>
-                  </td>
+        /* Table View Mode with Desktop Full Table & Android Responsive Card Fallback */
+        <>
+          <div className={`${styles.tablePanel} ${styles.desktopOnlyTable}`}>
+            <table className={styles.dataTable}>
+              <thead>
+                <tr>
+                  <th>Worker & ID</th>
+                  <th>Category & Trade</th>
+                  <th>Current Project Assignment</th>
+                  <th>Supervisor</th>
+                  <th>Standard Wage</th>
+                  <th>Experience</th>
+                  <th>Status</th>
+                  <th>Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {filtered.map(w => (
+                  <tr key={w.id} onClick={() => router.push(`/admin/workforce/${w.id}`)} className={styles.tableRowClickable}>
+                    <td>
+                      <div className={styles.tableWorkerInfo}>
+                        <SafeImage src={w.avatar} alt={w.name} fallbackType="worker" className={styles.tableAvatar} />
+                        <div>
+                          <strong className={styles.tableWorkerName}>{w.name}</strong>
+                          <span className={styles.tableWorkerCode}>{w.code}</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <div className={styles.tableTradeInfo}>
+                        <span className={`${styles.categoryBadge} ${styles[w.category.toLowerCase().replace('-', '')]}`}>
+                          {w.category}
+                        </span>
+                        <span className={styles.tableSkillName}>{w.skill}</span>
+                      </div>
+                    </td>
+                    <td>
+                      <span className={styles.tableProjectTag}>
+                        {w.assignedProject || 'Unassigned'}
+                      </span>
+                    </td>
+                    <td>
+                      <span className={styles.supervisorNameText}>{w.supervisorName || 'Er. Rajesh Kulkarni'}</span>
+                    </td>
+                    <td>
+                      <strong>₹ {w.dailyWage}</strong>
+                      <span className={styles.subTextMuted}>/ day</span>
+                    </td>
+                    <td>{w.experienceYears} Years</td>
+                    <td>
+                      <span className={`${styles.employmentBadge} ${styles[w.status.toLowerCase()]}`}>
+                        ● {w.status}
+                      </span>
+                    </td>
+                    <td>
+                      <Link href={`/admin/workforce/${w.id}`} className={styles.tableActionLink} onClick={e => e.stopPropagation()}>
+                        View Profile
+                        <ChevronRight size={14} />
+                      </Link>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Android Mobile Table Mode -> Compact List Cards */}
+          <div className={styles.mobileWorkerList}>
+            {filtered.map(w => (
+              <div 
+                key={w.id}
+                className={styles.mobileWorkerCard}
+                onClick={() => router.push(`/admin/workforce/${w.id}`)}
+              >
+                <div className={styles.mobileWorkerHeader}>
+                  <div className={styles.mobileWorkerIdentity}>
+                    <SafeImage src={w.avatar} alt={w.name} fallbackType="worker" className={styles.mobileWorkerThumb} />
+                    <div>
+                      <strong className={styles.mobileWorkerName}>{w.name}</strong>
+                      <span className={styles.mobileWorkerCode}>{w.code} • {w.skill}</span>
+                    </div>
+                  </div>
+                  <span className={`${styles.employmentBadge} ${styles[w.status.toLowerCase()]}`}>
+                    ● {w.status}
+                  </span>
+                </div>
+                <div className={styles.mobileWorkerMeta}>
+                  <span>Site: <strong>{w.assignedProject || 'Reserve'}</strong></span>
+                  <span>Wage: <strong>₹ {w.dailyWage}/d</strong></span>
+                </div>
+                <div className={styles.mobileWorkerFooter}>
+                  <span>Supervisor: {w.supervisorName || 'Er. Rajesh K.'}</span>
+                  <Link href={`/admin/workforce/${w.id}`} className={styles.tableActionLink} onClick={e => e.stopPropagation()}>
+                    Profile <ChevronRight size={13} />
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
       )}
 
       {/* 5-Section Enterprise Onboarding Modal */}
