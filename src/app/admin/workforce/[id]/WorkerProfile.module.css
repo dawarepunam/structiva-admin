@@ -1,0 +1,1373 @@
+/* Worker Profile Styling - Structiva Enterprise OS */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.loadingBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 5rem 2rem;
+  background: #ffffff;
+  border-radius: 14px;
+  border: 1px solid #e2e8f0;
+  text-align: center;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #e2e8f0;
+  border-top-color: #167C72;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.backLink {
+  margin-top: 1.5rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #167C72;
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-decoration: none;
+}
+
+/* Top Navigation / Breadcrumbs */
+.topNav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+}
+
+.backBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  padding: 6px 12px;
+  border-radius: 8px;
+  color: #334155;
+  font-weight: 600;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.backBtn:hover {
+  background: #f1f5f9;
+  border-color: #94a3b8;
+}
+
+.breadcrumbSep {
+  color: #94a3b8;
+}
+
+.breadcrumbCurrent {
+  color: #64748b;
+  font-weight: 600;
+}
+
+/* Hero Header Card */
+.heroCard {
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+  padding: 1.75rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  flex-wrap: wrap;
+}
+
+.heroLeft {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  flex: 1;
+  min-width: 320px;
+}
+
+.avatarWrapper {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.avatarImg {
+  width: 90px;
+  height: 90px;
+  border-radius: 16px;
+  object-fit: cover;
+  border: 3px solid #e2e8f0;
+}
+
+.statusDot {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 3px solid #ffffff;
+}
+
+.statusDot.present {
+  background: #10b981;
+}
+
+.statusDot.absent {
+  background: #ef4444;
+}
+
+.statusDot.onleave {
+  background: #f59e0b;
+}
+
+.heroDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.heroTitleRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.workerTitle {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.workerCodeBadge {
+  font-family: monospace;
+  font-size: 0.78rem;
+  font-weight: 700;
+  background: #f1f5f9;
+  color: #334155;
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+
+.categoryBadge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+  text-transform: uppercase;
+}
+
+.categoryBadge.skilled {
+  background: #e6f4f2;
+  color: #167C72;
+}
+
+.categoryBadge.semiskilled {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.categoryBadge.unskilled {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+.musterBadge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 12px;
+}
+
+.musterBadge.present {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.musterBadge.absent {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.musterBadge.onleave {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.heroTradeSkill {
+  font-size: 0.95rem;
+  color: #475569;
+  font-weight: 600;
+  margin: 0;
+}
+
+.heroMetaList {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+.metaPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  color: #334155;
+}
+
+.metaPillSafe {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  color: #065f46;
+  font-weight: 600;
+}
+
+.metaIcon {
+  color: #64748b;
+}
+
+.heroRight {
+  flex-shrink: 0;
+}
+
+.wageHighlightCard {
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  padding: 1rem 1.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 200px;
+}
+
+.wageLabel {
+  font-size: 0.72rem;
+  color: #64748b;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.wageValueRow {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.currencySymbol {
+  font-size: 1.1rem;
+  color: #167C72;
+  font-weight: 700;
+}
+
+.wageAmount {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.wageUnit {
+  font-size: 0.8rem;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.overtimeSub {
+  font-size: 0.75rem;
+  color: #167C72;
+  font-weight: 600;
+}
+
+/* 9 Profile Tabs */
+.tabsContainer {
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  padding: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.tabsScroller {
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.tabBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: #64748b;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.tabBtn:hover {
+  background: #f8fafc;
+  color: #1e293b;
+}
+
+.tabBtnActive {
+  background: #167C72;
+  color: #ffffff !important;
+}
+
+.tabBtnActive:hover {
+  background: #136961;
+}
+
+/* Tab Content Area */
+.tabContentArea {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.overviewGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.overviewStatsRow {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+
+@media (max-width: 992px) {
+  .overviewStatsRow {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .overviewStatsRow {
+    grid-template-columns: 1fr;
+  }
+}
+
+.statBox {
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  padding: 1.15rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.statBoxLabel {
+  font-size: 0.75rem;
+  color: #64748b;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.statBoxVal {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.statBoxSub {
+  font-size: 0.72rem;
+  color: #94a3b8;
+}
+
+.contentCard {
+  background: #ffffff;
+  border-radius: 14px;
+  border: 1px solid #e2e8f0;
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #f1f5f9;
+  padding-bottom: 1rem;
+}
+
+.cardHeaderTitle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.headerIcon {
+  color: #167C72;
+}
+
+.cardHeaderTitle h3 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+}
+
+.badgeActive {
+  background: #d1fae5;
+  color: #065f46;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 12px;
+}
+
+.badgeVerified {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: #eff6ff;
+  color: #1d4ed8;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 12px;
+}
+
+.assignmentDetails {
+  background: #f8fafc;
+  border-radius: 10px;
+  padding: 1.25rem;
+  border: 1px solid #e2e8f0;
+}
+
+.assignRow {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+
+@media (max-width: 768px) {
+  .assignRow {
+    grid-template-columns: 1fr;
+  }
+}
+
+.labelMuted {
+  display: block;
+  font-size: 0.72rem;
+  color: #64748b;
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-bottom: 3px;
+}
+
+.valEmphasized {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+}
+
+.valNormal {
+  font-size: 0.9rem;
+  color: #334155;
+}
+
+.pillMuted {
+  display: inline-block;
+  background: #e2e8f0;
+  color: #334155;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+/* Activity List */
+.activityList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.activityItem {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.activityTimeCol {
+  width: 90px;
+  display: flex;
+  flex-direction: column;
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
+.activityTimeCol strong {
+  color: #0f172a;
+}
+
+.activityDotCol {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 4px;
+}
+
+.timelineDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #167C72;
+  box-shadow: 0 0 0 3px rgba(22, 124, 114, 0.2);
+}
+
+.activityBody {
+  flex: 1;
+  background: #f8fafc;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+.activityTypeRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.activityType {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #167C72;
+}
+
+.activitySite {
+  font-size: 0.72rem;
+  color: #64748b;
+}
+
+.activityDesc {
+  font-size: 0.82rem;
+  color: #334155;
+  margin: 0;
+}
+
+.viewAllBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: transparent;
+  border: none;
+  color: #167C72;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* Details Grids */
+.detailsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.25rem;
+}
+
+.detailsGrid2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.25rem;
+}
+
+@media (max-width: 992px) {
+  .detailsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .detailsGrid, .detailsGrid2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+.detailItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.detailItemFull {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.detailLabel {
+  font-size: 0.72rem;
+  color: #64748b;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.detailVal {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.detailValMonospace {
+  font-size: 0.9rem;
+  font-family: monospace;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.detailValEmphasized {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #167C72;
+}
+
+.detailValSafe {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #059669;
+}
+
+.separator {
+  height: 1px;
+  background: #f1f5f9;
+  margin: 0.5rem 0;
+}
+
+.subSectionHeading {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+}
+
+/* Skills Section */
+.skillsSection {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.skillRow {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.primaryTrade {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0;
+}
+
+.tagWrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.skillTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: #f0fdf9;
+  border: 1px solid #ccfbf1;
+  color: #0f766e;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+/* Project History */
+.projectHistoryTimeline {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.historyCard {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.historyTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.histProjName {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 2px 0;
+}
+
+.histRole {
+  font-size: 0.82rem;
+  color: #64748b;
+}
+
+.badgeCurrent {
+  background: #d1fae5;
+  color: #065f46;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+
+.badgeDone {
+  background: #e2e8f0;
+  color: #334155;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+
+.historyMetaRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.78rem;
+  color: #64748b;
+  border-top: 1px solid #e2e8f0;
+  padding-top: 0.6rem;
+}
+
+.histPeriod {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.histRating strong {
+  color: #d97706;
+}
+
+/* Attendance Day Grid */
+.attendanceCalendarBox {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.calendarHeaderRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.82rem;
+  color: #475569;
+  font-weight: 600;
+}
+
+.calLegend {
+  display: flex;
+  gap: 12px;
+}
+
+.legendPresent { color: #059669; }
+.legendAbsent { color: #dc2626; }
+.legendLeave { color: #d97706; }
+
+.dayGrid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+}
+
+@media (max-width: 600px) {
+  .dayGrid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.dayCell {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 55px;
+}
+
+.dayNum {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.dayStatusText {
+  font-size: 0.75rem;
+  font-weight: 800;
+  margin-top: 2px;
+}
+
+.dayCell.present {
+  background: #ecfdf5;
+  border-color: #a7f3d0;
+  color: #059669;
+}
+
+.dayCell.absent {
+  background: #fef2f2;
+  border-color: #fecaca;
+  color: #dc2626;
+}
+
+.dayCell.leave {
+  background: #fef3c7;
+  border-color: #fde68a;
+  color: #d97706;
+}
+
+.dayCell.holiday {
+  background: #f1f5f9;
+  border-color: #e2e8f0;
+  color: #64748b;
+}
+
+.attendanceStatsFooter {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  background: #fafaf9;
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid #f1f5f9;
+}
+
+.attStatItem {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
+.attStatItem strong {
+  font-size: 1.1rem;
+  color: #0f172a;
+}
+
+.textEmerald {
+  color: #059669 !important;
+}
+
+/* Salary Overview Grid */
+.salaryOverviewGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+
+@media (max-width: 992px) {
+  .salaryOverviewGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .salaryOverviewGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.salaryCard {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 1.15rem;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.salLabel {
+  font-size: 0.72rem;
+  color: #64748b;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.salAmount {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.salAmountEmerald {
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: #059669;
+}
+
+.salSub {
+  font-size: 0.72rem;
+  color: #94a3b8;
+}
+
+.bankInfoBox {
+  background: #fafaf9;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 1.25rem;
+}
+
+.bankRow {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+
+@media (max-width: 768px) {
+  .bankRow {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Documents List */
+.documentsList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.docRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  gap: 1rem;
+}
+
+.docLeft {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.docIconBox {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background: #e6f4f2;
+  color: #167C72;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.docName {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 3px 0;
+}
+
+.docMeta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  color: #64748b;
+}
+
+.docRight {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.docStatusBadge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+
+.docStatusBadge.verified {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.docStatusBadge.pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.docStatusBadge.expiringsoon {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.docActionBtn {
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  padding: 6px 10px;
+  border-radius: 6px;
+  color: #475569;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.docActionBtn:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.emptyDocState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1rem;
+  color: #94a3b8;
+  gap: 8px;
+}
+
+/* Leave Management */
+.btnApplyLeave {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #167C72;
+  color: #ffffff;
+  border: none;
+  font-weight: 700;
+  font-size: 0.82rem;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.btnApplyLeave:hover {
+  background: #136961;
+}
+
+.leavesList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.leaveCard {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 1.15rem;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.leaveTopRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.leaveType {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #167C72;
+  text-transform: uppercase;
+}
+
+.leaveReason {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 2px 0 0 0;
+}
+
+.badgeApproved {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #d1fae5;
+  color: #065f46;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+
+.leaveMeta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.78rem;
+  color: #64748b;
+  border-top: 1px solid #e2e8f0;
+  padding-top: 0.5rem;
+}
+
+.leavePeriod {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* Activity Timeline Full */
+.activityTimelineFull {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.timelineItem {
+  display: flex;
+  gap: 1.25rem;
+  position: relative;
+}
+
+.tlTime {
+  width: 95px;
+  display: flex;
+  flex-direction: column;
+  font-size: 0.75rem;
+  color: #64748b;
+  padding-top: 4px;
+}
+
+.tlTime strong {
+  color: #0f172a;
+}
+
+.tlDivider {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.tlDot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #167C72;
+  box-shadow: 0 0 0 3px rgba(22, 124, 114, 0.2);
+  margin-top: 6px;
+  z-index: 2;
+}
+
+.tlLine {
+  width: 2px;
+  flex: 1;
+  background: #e2e8f0;
+  min-height: 40px;
+}
+
+.tlContent {
+  flex: 1;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-bottom: 1.25rem;
+}
+
+.tlBadgeRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.tlTypeBadge {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #167C72;
+}
+
+.tlSiteBadge {
+  font-size: 0.72rem;
+  color: #64748b;
+}
+
+.tlText {
+  font-size: 0.82rem;
+  color: #334155;
+  margin: 0;
+}
+
+/* Modals */
+.modalBackdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.leaveModalBox {
+  background: #ffffff;
+  border-radius: 14px;
+  width: 100%;
+  max-width: 520px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid #e2e8f0;
+  background: #fafaf9;
+}
+
+.modalHeader h3 {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0;
+}
+
+.closeBtn {
+  border: none;
+  background: transparent;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.leaveForm {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.formGroup label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #475569;
+}
+
+.formGroup input,
+.formGroup select,
+.formGroup textarea {
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  color: #1e293b;
+  outline: none;
+}
+
+.formRow2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.modalFooterActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 0.5rem;
+}
+
+.btnSecondary {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #475569;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btnPrimary {
+  background: #167C72;
+  border: none;
+  color: #ffffff;
+  padding: 8px 18px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+}

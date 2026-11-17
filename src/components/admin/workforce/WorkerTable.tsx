@@ -2,33 +2,74 @@
 
 import React, { useState, useEffect } from 'react';
 import styles from './WorkerTable.module.css';
-import { Search, Phone, ShieldCheck, MapPin, X, ArrowRight, Award, Plus, CheckCircle } from 'lucide-react';
+import { 
+  Search, Phone, ShieldCheck, MapPin, X, ArrowRight, Award, Plus, 
+  CheckCircle, Users, UserCheck, UserX, Clock, AlertCircle, LayoutGrid, List,
+  Filter, Calendar, DollarSign, FileText, ChevronRight, Briefcase, Sparkles
+} from 'lucide-react';
 import SafeImage from '@/components/admin/ui/SafeImage';
 import { EnterpriseWorkerRecord, getStoredWorkers, saveWorkers } from '@/services/workerStorage';
 import { getStoredProjects, EnterpriseProjectRecord } from '@/services/projectStorage';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 export default function WorkerTable() {
+  const router = useRouter();
   const [workers, setWorkers] = useState<EnterpriseWorkerRecord[]>([]);
   const [availableProjects, setAvailableProjects] = useState<EnterpriseProjectRecord[]>([]);
   const [search, setSearch] = useState('');
-  const [selectedWorker, setSelectedWorker] = useState<EnterpriseWorkerRecord | null>(null);
+  const [categoryFilter, setCategoryFilter] = useState('All');
+  const [statusFilter, setStatusFilter] = useState('All');
+  const [projectFilter, setProjectFilter] = useState('All');
+  const [attendanceFilter, setAttendanceFilter] = useState('All');
+  const [sortBy, setSortBy] = useState('name');
+  const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid');
   const [showAddModal, setShowAddModal] = useState(false);
+  const [onboardingStep, setOnboardingStep] = useState(1);
 
-  // Form State
+  // 5-Section Onboarding Form State
   const [formData, setFormData] = useState({
+    // Section 1: Personal
     name: '',
+    phone: '',
+    dob: '1992-05-15',
+    gender: 'Male' as 'Male' | 'Female' | 'Other',
+    address: '',
+    hometown: '',
+    aadhaarNumber: '',
+    bloodGroup: 'B+',
+    emergencyContact: '',
+    emergencyRelation: 'Spouse',
+    
+    // Section 2: Professional
     category: 'Skilled' as 'Skilled' | 'Semi-Skilled' | 'Unskilled',
     skill: '',
-    dailyWage: 950,
-    phone: '',
-    assignedProject: 'Skyline Commercial Complex',
-    emergencyContact: '',
-    bloodGroup: 'B+',
+    additionalSkills: '',
+    experienceYears: 5,
+    employmentType: 'Direct Payroll' as 'Direct Payroll' | 'Subcontractor Crew' | 'Daily Muster',
+    supervisorName: 'Er. Rajesh Kulkarni',
     safetyCertified: true,
-    aadhaarNumber: ''
+    inductionDate: '2026-11-17',
+    
+    // Section 3: Project Assignment
+    assignedProject: 'Skyline Commercial Complex',
+    roleInProject: 'Lead Mason & Bar Bender',
+    
+    // Section 4: Documents
+    docAadhaarProvided: true,
+    docSafetyCardProvided: true,
+    docMedicalProvided: false,
+    
+    // Section 5: Salary & Bank
+    dailyWage: 950,
+    overtimeHourlyRate: 140,
+    paymentMode: 'Bank Transfer' as 'Bank Transfer' | 'Direct Cash Voucher' | 'UPI',
+    bankName: 'State Bank of India',
+    accountNumber: '',
+    ifscCode: 'SBIN0001234'
   });
 
-  // Load from persistent local storage on mount
+  // Load stored workers & projects
   useEffect(() => {
     setWorkers(getStoredWorkers());
     setAvailableProjects(getStoredProjects());
@@ -47,327 +88,962 @@ export default function WorkerTable() {
     };
   }, []);
 
-  const filtered = workers.filter(w => 
-    w.name.toLowerCase().includes(search.toLowerCase()) || 
-    w.skill.toLowerCase().includes(search.toLowerCase()) ||
-    w.assignedProject.toLowerCase().includes(search.toLowerCase())
-  );
+  // Compute 6 Top Workforce KPIs
+  const totalCount = workers.length;
+  const activeCount = workers.filter(w => w.status === 'Active').length;
+  const presentTodayCount = workers.filter(w => w.todayStatus === 'Present').length;
+  const absentTodayCount = workers.filter(w => w.todayStatus === 'Absent').length;
+  const onLeaveCount = workers.filter(w => w.todayStatus === 'On Leave').length;
+  const unassignedCount = workers.filter(w => !w.assignedProject || w.assignedProject === 'Unassigned').length;
+
+  // Filter & Search Logic
+  let filtered = workers.filter(w => {
+    const matchSearch = 
+      w.name.toLowerCase().includes(search.toLowerCase()) || 
+      w.skill.toLowerCase().includes(search.toLowerCase()) ||
+      w.code.toLowerCase().includes(search.toLowerCase()) ||
+      w.phone.includes(search) ||
+      w.assignedProject.toLowerCase().includes(search.toLowerCase());
+
+    const matchCategory = categoryFilter === 'All' || w.category === categoryFilter;
+    const matchStatus = statusFilter === 'All' || w.status === statusFilter;
+    const matchProject = projectFilter === 'All' || w.assignedProject === projectFilter;
+    const matchAttendance = attendanceFilter === 'All' || w.todayStatus === attendanceFilter;
+
+    return matchSearch && matchCategory && matchStatus && matchProject && matchAttendance;
+  });
+
+  // Sorting
+  filtered = [...filtered].sort((a, b) => {
+    if (sortBy === 'dailyWage') return b.dailyWage - a.dailyWage;
+    if (sortBy === 'daysWorked') return b.totalDaysWorked - a.totalDaysWorked;
+    return a.name.localeCompare(b.name);
+  });
 
   const handleCreateWorker = (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name.trim()) return;
 
     const newWorkerId = (Date.now()).toString();
-    const newWorkerCode = `WRK-${formData.assignedProject.slice(0, 3).toUpperCase()}-${Math.floor(100 + Math.random() * 900)}`;
+    const projSlug = formData.assignedProject === 'Unassigned' ? 'GEN' : formData.assignedProject.slice(0, 3).toUpperCase();
+    const newWorkerCode = `WRK-${projSlug}-${Math.floor(100 + Math.random() * 900)}`;
 
     const newWorker: EnterpriseWorkerRecord = {
       id: newWorkerId,
       name: formData.name,
       code: newWorkerCode,
-      category: formData.category,
-      skill: formData.skill || (formData.category === 'Skilled' ? 'Site Specialist' : 'Civil Labour'),
-      dailyWage: Number(formData.dailyWage) || 750,
       phone: formData.phone || '+91 98220 00000',
+      category: formData.category,
+      skill: formData.skill || (formData.category === 'Skilled' ? 'Master Structural Artisan' : 'Civil Labour'),
+      additionalSkills: formData.additionalSkills ? formData.additionalSkills.split(',').map(s => s.trim()) : [],
+      dailyWage: Number(formData.dailyWage) || 800,
+      overtimeHourlyRate: Number(formData.overtimeHourlyRate) || 120,
       status: 'Active',
+      todayStatus: 'Present',
       assignedProject: formData.assignedProject,
       avatar: '/images/worker1.jpg',
-      emergencyContact: formData.emergencyContact || 'Verified Relative',
-      bloodGroup: formData.bloodGroup || 'O+',
+      
+      dob: formData.dob || '1992-05-15',
+      gender: formData.gender,
+      address: formData.address || 'Site Labour Colony Camp #2, Pune',
+      hometown: formData.hometown || 'Satara, Maharashtra',
+      aadhaarNumber: formData.aadhaarNumber ? `XXXX-XXXX-${formData.aadhaarNumber.slice(-4)}` : 'XXXX-XXXX-8910',
+      bloodGroup: formData.bloodGroup,
+      emergencyContact: formData.emergencyContact || '+91 94220 00000',
+      emergencyRelation: formData.emergencyRelation,
+      
+      joiningDate: '2026-11-17',
+      experienceYears: Number(formData.experienceYears) || 4,
+      employmentType: formData.employmentType,
+      supervisorName: formData.supervisorName,
       safetyCertified: formData.safetyCertified,
-      aadhaarNumber: formData.aadhaarNumber ? `XXXX-XXXX-${formData.aadhaarNumber.slice(-4)}` : 'XXXX-XXXX-9988',
-      totalDaysWorked: 1
+      inductionDate: formData.inductionDate,
+      
+      bankName: formData.bankName,
+      accountNumberMasked: formData.accountNumber ? `•••• •••• ${formData.accountNumber.slice(-4)}` : '•••• •••• 5521',
+      ifscCode: formData.ifscCode,
+      paymentMode: formData.paymentMode,
+      
+      totalDaysWorked: 1,
+      presentDaysThisMonth: 1,
+      overtimeHoursThisMonth: 0,
+      advanceTakenThisMonth: 0,
+      
+      documents: [
+        {
+          id: `doc-${Date.now()}-1`,
+          name: 'Aadhaar Card Copy',
+          category: 'Aadhaar Card',
+          uploadedAt: '17 Nov 2026',
+          status: 'Verified',
+          url: '#'
+        },
+        ...(formData.docSafetyCardProvided ? [{
+          id: `doc-${Date.now()}-2`,
+          name: 'Site EHS Induction Clearance',
+          category: 'Safety Induction Certificate' as const,
+          uploadedAt: '17 Nov 2026',
+          expiryDate: '16 Nov 2027',
+          status: 'Verified' as const,
+          url: '#'
+        }] : [])
+      ],
+      leaves: [],
+      projectHistory: [
+        {
+          projectId: '1',
+          projectName: formData.assignedProject,
+          role: formData.roleInProject || formData.skill || 'Site Worker',
+          startDate: '17 Nov 2026',
+          status: 'Current',
+          performanceRating: 5.0
+        }
+      ],
+      recentActivities: [
+        {
+          id: `act-${Date.now()}`,
+          date: 'Today',
+          time: '09:00 AM',
+          type: 'Site Check-in',
+          description: 'Onboarded to Structiva Enterprise OS and registered for biometric muster',
+          site: formData.assignedProject
+        }
+      ]
     };
 
     const updated = [newWorker, ...workers];
     setWorkers(updated);
     saveWorkers(updated);
     setShowAddModal(false);
+    setOnboardingStep(1);
 
     // Reset Form
     setFormData({
       name: '',
+      phone: '',
+      dob: '1992-05-15',
+      gender: 'Male',
+      address: '',
+      hometown: '',
+      aadhaarNumber: '',
+      bloodGroup: 'B+',
+      emergencyContact: '',
+      emergencyRelation: 'Spouse',
       category: 'Skilled',
       skill: '',
-      dailyWage: 950,
-      phone: '',
-      assignedProject: 'Skyline Commercial Complex',
-      emergencyContact: '',
-      bloodGroup: 'B+',
+      additionalSkills: '',
+      experienceYears: 5,
+      employmentType: 'Direct Payroll',
+      supervisorName: 'Er. Rajesh Kulkarni',
       safetyCertified: true,
-      aadhaarNumber: ''
+      inductionDate: '2026-11-17',
+      assignedProject: 'Skyline Commercial Complex',
+      roleInProject: 'Lead Mason & Bar Bender',
+      docAadhaarProvided: true,
+      docSafetyCardProvided: true,
+      docMedicalProvided: false,
+      dailyWage: 950,
+      overtimeHourlyRate: 140,
+      paymentMode: 'Bank Transfer',
+      bankName: 'State Bank of India',
+      accountNumber: '',
+      ifscCode: 'SBIN0001234'
     });
   };
 
   return (
     <div className={styles.container}>
-      <div className={styles.topBar}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: '#f8fafc', padding: '6px 14px', borderRadius: 8, border: '1px solid #cbd5e1', width: 340 }}>
-          <Search size={16} color="#64748b" />
-          <input 
-            type="text" 
-            placeholder="Search workers by name, skill, project..." 
-            style={{ border: 'none', background: 'transparent', outline: 'none', fontSize: '0.85rem', width: '100%' }}
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-          />
+      {/* Top 6 Workforce KPI Summary Cards */}
+      <div className={styles.kpiGrid}>
+        <div 
+          className={`${styles.kpiCard} ${statusFilter === 'All' && attendanceFilter === 'All' ? styles.kpiActive : ''}`}
+          onClick={() => { setStatusFilter('All'); setAttendanceFilter('All'); }}
+        >
+          <div className={styles.kpiHeader}>
+            <span className={styles.kpiLabel}>Total Workers</span>
+            <div className={`${styles.kpiIconBox} ${styles.iconTeal}`}>
+              <Users size={18} />
+            </div>
+          </div>
+          <div className={styles.kpiValueRow}>
+            <span className={styles.kpiValue}>{totalCount}</span>
+            <span className={styles.kpiBadge}>Registered</span>
+          </div>
+          <span className={styles.kpiSubtext}>All workforce in central registry</span>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-          <span style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: 600 }}>
-            Total Registered Workforce: <strong style={{ color: '#0f172a', fontSize: '1rem' }}>{filtered.length} Real-world Personnel</strong>
-          </span>
-          <button className={styles.btnAddWorker} onClick={() => setShowAddModal(true)}>
+
+        <div 
+          className={`${styles.kpiCard} ${statusFilter === 'Active' ? styles.kpiActive : ''}`}
+          onClick={() => setStatusFilter(statusFilter === 'Active' ? 'All' : 'Active')}
+        >
+          <div className={styles.kpiHeader}>
+            <span className={styles.kpiLabel}>Active Workers</span>
+            <div className={`${styles.kpiIconBox} ${styles.iconEmerald}`}>
+              <UserCheck size={18} />
+            </div>
+          </div>
+          <div className={styles.kpiValueRow}>
+            <span className={styles.kpiValue}>{activeCount}</span>
+            <span className={styles.kpiBadgeEmerald}>In Service</span>
+          </div>
+          <span className={styles.kpiSubtext}>Active employment status</span>
+        </div>
+
+        <div 
+          className={`${styles.kpiCard} ${attendanceFilter === 'Present' ? styles.kpiActive : ''}`}
+          onClick={() => setAttendanceFilter(attendanceFilter === 'Present' ? 'All' : 'Present')}
+        >
+          <div className={styles.kpiHeader}>
+            <span className={styles.kpiLabel}>Present Today</span>
+            <div className={`${styles.kpiIconBox} ${styles.iconEmerald}`}>
+              <CheckCircle size={18} />
+            </div>
+          </div>
+          <div className={styles.kpiValueRow}>
+            <span className={styles.kpiValue}>{presentTodayCount}</span>
+            <span className={styles.kpiBadgeEmerald}>On Site</span>
+          </div>
+          <span className={styles.kpiSubtext}>Biometric & muster verified</span>
+        </div>
+
+        <div 
+          className={`${styles.kpiCard} ${attendanceFilter === 'Absent' ? styles.kpiActive : ''}`}
+          onClick={() => setAttendanceFilter(attendanceFilter === 'Absent' ? 'All' : 'Absent')}
+        >
+          <div className={styles.kpiHeader}>
+            <span className={styles.kpiLabel}>Absent Today</span>
+            <div className={`${styles.kpiIconBox} ${styles.iconDanger}`}>
+              <UserX size={18} />
+            </div>
+          </div>
+          <div className={styles.kpiValueRow}>
+            <span className={styles.kpiValue}>{absentTodayCount}</span>
+            <span className={styles.kpiBadgeDanger}>Unreported</span>
+          </div>
+          <span className={styles.kpiSubtext}>Requires supervisor check</span>
+        </div>
+
+        <div 
+          className={`${styles.kpiCard} ${attendanceFilter === 'On Leave' ? styles.kpiActive : ''}`}
+          onClick={() => setAttendanceFilter(attendanceFilter === 'On Leave' ? 'All' : 'On Leave')}
+        >
+          <div className={styles.kpiHeader}>
+            <span className={styles.kpiLabel}>On Leave</span>
+            <div className={`${styles.kpiIconBox} ${styles.iconBronze}`}>
+              <Clock size={18} />
+            </div>
+          </div>
+          <div className={styles.kpiValueRow}>
+            <span className={styles.kpiValue}>{onLeaveCount}</span>
+            <span className={styles.kpiBadgeBronze}>Sanctioned</span>
+          </div>
+          <span className={styles.kpiSubtext}>Approved leave balance</span>
+        </div>
+
+        <div 
+          className={`${styles.kpiCard} ${projectFilter === 'Unassigned' ? styles.kpiActive : ''}`}
+          onClick={() => setProjectFilter(projectFilter === 'Unassigned' ? 'All' : 'Unassigned')}
+        >
+          <div className={styles.kpiHeader}>
+            <span className={styles.kpiLabel}>Unassigned Workers</span>
+            <div className={`${styles.kpiIconBox} ${styles.iconMuted}`}>
+              <AlertCircle size={18} />
+            </div>
+          </div>
+          <div className={styles.kpiValueRow}>
+            <span className={styles.kpiValue}>{unassignedCount}</span>
+            <span className={styles.kpiBadgeMuted}>Reserve Pool</span>
+          </div>
+          <span className={styles.kpiSubtext}>Ready for site allocation</span>
+        </div>
+      </div>
+
+      {/* Control & Search Toolbar */}
+      <div className={styles.topBar}>
+        <div className={styles.searchAndFilters}>
+          {/* Search Box */}
+          <div className={styles.searchBox}>
+            <Search size={16} className={styles.searchIcon} />
+            <input 
+              type="text" 
+              placeholder="Search by worker name, code, trade, skill or mobile..." 
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+            {search && (
+              <button onClick={() => setSearch('')} className={styles.clearSearchBtn}>
+                <X size={14} />
+              </button>
+            )}
+          </div>
+
+          {/* Filter Dropdowns */}
+          <div className={styles.filterGroup}>
+            <div className={styles.filterItem}>
+              <Filter size={14} className={styles.filterIcon} />
+              <select value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)}>
+                <option value="All">All Categories</option>
+                <option value="Skilled">Skilled</option>
+                <option value="Semi-Skilled">Semi-Skilled</option>
+                <option value="Unskilled">Unskilled</option>
+              </select>
+            </div>
+
+            <div className={styles.filterItem}>
+              <select value={projectFilter} onChange={(e) => setProjectFilter(e.target.value)}>
+                <option value="All">All Project Sites</option>
+                <option value="Unassigned">Unassigned (Pool)</option>
+                {availableProjects.map(p => (
+                  <option key={p.id} value={p.name}>{p.name}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className={styles.filterItem}>
+              <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+                <option value="name">Sort by: Name (A-Z)</option>
+                <option value="dailyWage">Sort by: Daily Wage (High to Low)</option>
+                <option value="daysWorked">Sort by: Total Days Worked</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        {/* View Toggle & Onboard Button */}
+        <div className={styles.actionButtons}>
+          <div className={styles.viewToggleGroup}>
+            <button 
+              className={`${styles.viewBtn} ${viewMode === 'grid' ? styles.viewBtnActive : ''}`}
+              onClick={() => setViewMode('grid')}
+              title="Grid View"
+            >
+              <LayoutGrid size={16} />
+            </button>
+            <button 
+              className={`${styles.viewBtn} ${viewMode === 'table' ? styles.viewBtnActive : ''}`}
+              onClick={() => setViewMode('table')}
+              title="Table View"
+            >
+              <List size={16} />
+            </button>
+          </div>
+
+          <button onClick={() => setShowAddModal(true)} className={styles.btnAddWorker}>
             <Plus size={16} />
-            <span>Onboard New Worker</span>
+            <span>Onboard Worker</span>
           </button>
         </div>
       </div>
 
-      <div className={styles.workerGrid}>
-        {filtered.map(w => (
-          <div key={w.id} className={styles.card} onClick={() => setSelectedWorker(w)}>
-            <div className={styles.profileHeader}>
-              <SafeImage src={w.avatar} alt={w.name} fallbackType="worker" className={styles.avatar} />
-              <div className={styles.info}>
-                <span className={styles.code}>{w.code}</span>
-                <h3 className={styles.name}>{w.name}</h3>
-                <span className={`${styles.categoryBadge} ${
-                  w.category === 'Skilled' ? styles.skilled : 
-                  w.category === 'Semi-Skilled' ? styles.semi : styles.unskilled
-                }`}>
-                  {w.category}
-                </span>
-              </div>
-            </div>
-
-            <div className={styles.cardBody}>
-              <div className={styles.row}>
-                <span style={{ color: '#64748b' }}>Trade / Skill:</span>
-                <span style={{ fontWeight: 600 }}>{w.skill}</span>
-              </div>
-              <div className={styles.row}>
-                <span style={{ color: '#64748b' }}>Current Site:</span>
-                <span style={{ fontWeight: 600 }}>{w.assignedProject}</span>
-              </div>
-              <div className={styles.row}>
-                <span style={{ color: '#64748b' }}>Phone:</span>
-                <span>{w.phone}</span>
-              </div>
-            </div>
-
-            <div className={styles.cardFooter}>
-              <div>
-                <span style={{ fontSize: '0.7rem', color: '#64748b', display: 'block' }}>DAILY RATE</span>
-                <span className={styles.wageBadge}>₹ {w.dailyWage} / day</span>
-              </div>
-              <span style={{ color: '#f59e0b', display: 'flex', alignItems: 'center', gap: 3 }}>
-                View Dossier <ArrowRight size={13} />
-              </span>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Onboard Worker Modal */}
-      {showAddModal && (
-        <div className={styles.modalOverlay} onClick={() => setShowAddModal(false)}>
-          <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
-            <div className={styles.modalHeader}>
-              <div>
-                <h2 style={{ fontSize: '1.2rem', fontWeight: 800, margin: 0 }}>Onboard New Site Worker</h2>
-                <span style={{ fontSize: '0.75rem', color: '#cbd5e1' }}>Direct Entry into Master Labour Ledger</span>
-              </div>
-              <button className={styles.modalClose} onClick={() => setShowAddModal(false)}>
-                <X size={20} />
+      {/* Main Content: Grid View OR Table View */}
+      {viewMode === 'grid' ? (
+        <div className={styles.workerGrid}>
+          {filtered.length === 0 ? (
+            <div className={styles.emptyState}>
+              <Users size={44} className={styles.emptyIcon} />
+              <h3>No workforce records found</h3>
+              <p>Try adjusting your search criteria or filter tags.</p>
+              <button 
+                onClick={() => { setSearch(''); setCategoryFilter('All'); setStatusFilter('All'); setProjectFilter('All'); setAttendanceFilter('All'); }} 
+                className={styles.resetBtn}
+              >
+                Reset All Filters
               </button>
             </div>
+          ) : (
+            filtered.map(w => (
+              <div 
+                key={w.id} 
+                className={styles.card}
+                onClick={() => router.push(`/admin/workforce/${w.id}`)}
+                role="button"
+                tabIndex={0}
+              >
+                {/* Header with Avatar & Status */}
+                <div className={styles.profileHeader}>
+                  <div className={styles.avatarWrapper}>
+                    <SafeImage 
+                      src={w.avatar} 
+                      alt={w.name} 
+                      fallbackType="worker" 
+                      className={styles.avatar} 
+                    />
+                    <span className={`${styles.statusDot} ${styles[w.todayStatus.toLowerCase().replace(' ', '')]}`} />
+                  </div>
 
-            <form onSubmit={handleCreateWorker} className={styles.modalBody}>
-              <div className={styles.formGroup}>
-                <label className={styles.formLabel}>Full Worker Name *</label>
-                <input 
-                  type="text" 
-                  required
-                  placeholder="e.g. Anand Kulkarni"
-                  className={styles.formInput}
-                  value={formData.name}
-                  onChange={e => setFormData({ ...formData, name: e.target.value })}
-                />
-              </div>
+                  <div className={styles.info}>
+                    <div className={styles.nameRow}>
+                      <h4 className={styles.name}>{w.name}</h4>
+                      <span className={`${styles.categoryBadge} ${styles[w.category.toLowerCase().replace('-', '')]}`}>
+                        {w.category}
+                      </span>
+                    </div>
 
-              <div className={styles.formGrid2}>
-                <div className={styles.formGroup}>
-                  <label className={styles.formLabel}>Skill Classification</label>
-                  <select 
-                    className={styles.formSelect}
-                    value={formData.category}
-                    onChange={e => {
-                      const cat = e.target.value as any;
-                      const wage = cat === 'Skilled' ? 950 : cat === 'Semi-Skilled' ? 650 : 500;
-                      setFormData({ ...formData, category: cat, dailyWage: wage });
-                    }}
-                  >
-                    <option value="Skilled">Skilled (Mason/Bar Bender/Operator)</option>
-                    <option value="Semi-Skilled">Semi-Skilled (Carpenter/Helper)</option>
-                    <option value="Unskilled">Unskilled (Civil Handling/Curing)</option>
-                  </select>
+                    <span className={styles.workerCode}>{w.code}</span>
+                    <span className={styles.tradeSkill}>{w.skill}</span>
+                  </div>
                 </div>
 
-                <div className={styles.formGroup}>
-                  <label className={styles.formLabel}>Daily Wage Rate (₹) *</label>
-                  <input 
-                    type="number" 
-                    required
-                    className={styles.formInput}
-                    value={formData.dailyWage}
-                    onChange={e => setFormData({ ...formData, dailyWage: Number(e.target.value) })}
-                  />
-                </div>
-              </div>
-
-              <div className={styles.formGrid2}>
-                <div className={styles.formGroup}>
-                  <label className={styles.formLabel}>Trade / Specialization</label>
-                  <input 
-                    type="text" 
-                    placeholder="e.g. Shuttering Carpenter"
-                    className={styles.formInput}
-                    value={formData.skill}
-                    onChange={e => setFormData({ ...formData, skill: e.target.value })}
-                  />
+                {/* Project Assignment */}
+                <div className={styles.siteAllocationRow}>
+                  <MapPin size={13} className={styles.siteIcon} />
+                  <span className={styles.siteName}>
+                    {w.assignedProject || 'Unassigned (Reserve Pool)'}
+                  </span>
                 </div>
 
-                <div className={styles.formGroup}>
-                  <label className={styles.formLabel}>Assigned Construction Project</label>
-                  <select 
-                    className={styles.formSelect}
-                    value={formData.assignedProject}
-                    onChange={e => setFormData({ ...formData, assignedProject: e.target.value })}
-                  >
-                    {availableProjects.map(p => (
-                      <option key={p.id} value={p.name}>{p.name} ({p.code})</option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              <div className={styles.formGrid2}>
-                <div className={styles.formGroup}>
-                  <label className={styles.formLabel}>Mobile Number</label>
-                  <input 
-                    type="text" 
-                    placeholder="+91 98000 00000"
-                    className={styles.formInput}
-                    value={formData.phone}
-                    onChange={e => setFormData({ ...formData, phone: e.target.value })}
-                  />
+                {/* Key Metrics Grid */}
+                <div className={styles.cardMetrics}>
+                  <div className={styles.metricItem}>
+                    <span className={styles.metricLabel}>Daily Wage</span>
+                    <strong className={styles.metricValue}>₹ {w.dailyWage}</strong>
+                  </div>
+                  <div className={styles.metricItem}>
+                    <span className={styles.metricLabel}>This Month</span>
+                    <strong className={styles.metricValue}>{w.presentDaysThisMonth} Days</strong>
+                  </div>
+                  <div className={styles.metricItem}>
+                    <span className={styles.metricLabel}>Overtime</span>
+                    <strong className={styles.metricValue}>{w.overtimeHoursThisMonth} hrs</strong>
+                  </div>
                 </div>
 
-                <div className={styles.formGroup}>
-                  <label className={styles.formLabel}>Aadhaar Number (Last 4 Digits)</label>
-                  <input 
-                    type="text" 
-                    placeholder="e.g. 8492"
-                    maxLength={4}
-                    className={styles.formInput}
-                    value={formData.aadhaarNumber}
-                    onChange={e => setFormData({ ...formData, aadhaarNumber: e.target.value })}
-                  />
+                {/* Footer with Contact & Link */}
+                <div className={styles.cardFooter}>
+                  <div className={styles.phoneChip}>
+                    <Phone size={11} />
+                    <span>{w.phone}</span>
+                  </div>
+
+                  <div className={styles.viewProfileBtn}>
+                    <span>View Profile</span>
+                    <ArrowRight size={13} />
+                  </div>
                 </div>
               </div>
-
-              <div style={{ display: 'flex', gap: 10, marginTop: 10 }}>
-                <button 
-                  type="submit"
-                  style={{
-                    flex: 1, padding: '10px', background: '#059669', color: '#ffffff',
-                    border: 'none', borderRadius: 8, fontWeight: 700, cursor: 'pointer',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6
-                  }}
-                >
-                  <CheckCircle size={16} />
-                  <span>Confirm & Save Worker</span>
-                </button>
-                <button 
-                  type="button"
-                  onClick={() => setShowAddModal(false)}
-                  style={{
-                    padding: '10px 18px', background: '#f1f5f9', color: '#475569',
-                    border: '1px solid #cbd5e1', borderRadius: 8, fontWeight: 700, cursor: 'pointer'
-                  }}
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
-          </div>
+            ))
+          )}
+        </div>
+      ) : (
+        /* Table View Mode */
+        <div className={styles.tablePanel}>
+          <table className={styles.dataTable}>
+            <thead>
+              <tr>
+                <th>Worker & ID</th>
+                <th>Category & Trade</th>
+                <th>Project Site</th>
+                <th>Today's Muster</th>
+                <th>Daily Wage</th>
+                <th>Experience</th>
+                <th>Emergency Contact</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.map(w => (
+                <tr key={w.id} onClick={() => router.push(`/admin/workforce/${w.id}`)} className={styles.tableRowClickable}>
+                  <td>
+                    <div className={styles.tableWorkerInfo}>
+                      <SafeImage src={w.avatar} alt={w.name} fallbackType="worker" className={styles.tableAvatar} />
+                      <div>
+                        <strong className={styles.tableWorkerName}>{w.name}</strong>
+                        <span className={styles.tableWorkerCode}>{w.code}</span>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div className={styles.tableTradeInfo}>
+                      <span className={`${styles.categoryBadge} ${styles[w.category.toLowerCase().replace('-', '')]}`}>
+                        {w.category}
+                      </span>
+                      <span className={styles.tableSkillName}>{w.skill}</span>
+                    </div>
+                  </td>
+                  <td>
+                    <span className={styles.tableProjectTag}>
+                      {w.assignedProject || 'Unassigned'}
+                    </span>
+                  </td>
+                  <td>
+                    <span className={`${styles.attendancePill} ${styles[w.todayStatus.toLowerCase().replace(' ', '')]}`}>
+                      ● {w.todayStatus}
+                    </span>
+                  </td>
+                  <td>
+                    <strong>₹ {w.dailyWage}</strong>
+                    <span className={styles.subTextMuted}>/ day</span>
+                  </td>
+                  <td>{w.experienceYears} Years</td>
+                  <td>
+                    <span className={styles.emergencyText}>{w.emergencyContact}</span>
+                  </td>
+                  <td>
+                    <Link href={`/admin/workforce/${w.id}`} className={styles.tableActionLink} onClick={e => e.stopPropagation()}>
+                      View Profile
+                      <ChevronRight size={14} />
+                    </Link>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
 
-      {/* Interactive Worker Profile Modal */}
-      {selectedWorker && (
-        <div className={styles.modalOverlay} onClick={() => setSelectedWorker(null)}>
-          <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
+      {/* 5-Section Enterprise Onboarding Modal */}
+      {showAddModal && (
+        <div className={styles.modalBackdrop} onClick={() => setShowAddModal(false)}>
+          <div className={styles.onboardingModalBox} onClick={e => e.stopPropagation()}>
+            {/* Modal Header */}
             <div className={styles.modalHeader}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                <SafeImage src={selectedWorker.avatar} alt={selectedWorker.name} fallbackType="worker" className={styles.modalAvatar} />
+              <div className={styles.modalHeaderTitle}>
+                <div className={styles.modalHeaderIcon}>
+                  <Sparkles size={20} />
+                </div>
                 <div>
-                  <span style={{ color: '#f59e0b', fontSize: '0.75rem', fontWeight: 800 }}>{selectedWorker.code}</span>
-                  <h2 style={{ fontSize: '1.25rem', fontWeight: 800, margin: '2px 0' }}>{selectedWorker.name}</h2>
-                  <span style={{ fontSize: '0.8rem', color: '#cbd5e1' }}>{selectedWorker.skill}</span>
+                  <h3>Worker Onboarding & Central Registration</h3>
+                  <p>Enterprise construction worker lifecycle registration</p>
                 </div>
               </div>
-              <button className={styles.modalClose} onClick={() => setSelectedWorker(null)}>
-                <X size={20} />
+              <button onClick={() => setShowAddModal(false)} className={styles.closeBtn}>
+                <X size={18} />
               </button>
             </div>
 
-            <div className={styles.modalBody}>
-              <div className={styles.statsGrid3}>
-                <div style={{ background: '#f8fafc', padding: 12, borderRadius: 8, textAlign: 'center', border: '1px solid #e2e8f0' }}>
-                  <span style={{ fontSize: '0.7rem', color: '#64748b', fontWeight: 700 }}>DAILY WAGE</span>
-                  <div style={{ fontWeight: 800, color: '#0f172a', fontSize: '1.1rem' }}>₹ {selectedWorker.dailyWage}</div>
-                </div>
-                <div style={{ background: '#f8fafc', padding: 12, borderRadius: 8, textAlign: 'center', border: '1px solid #e2e8f0' }}>
-                  <span style={{ fontSize: '0.7rem', color: '#64748b', fontWeight: 700 }}>DAYS WORKED</span>
-                  <div style={{ fontWeight: 800, color: '#10b981', fontSize: '1.1rem' }}>{selectedWorker.totalDaysWorked} Days</div>
-                </div>
-                <div style={{ background: '#f8fafc', padding: 12, borderRadius: 8, textAlign: 'center', border: '1px solid #e2e8f0' }}>
-                  <span style={{ fontSize: '0.7rem', color: '#64748b', fontWeight: 700 }}>BLOOD GROUP</span>
-                  <div style={{ fontWeight: 800, color: '#dc2626', fontSize: '1.1rem' }}>{selectedWorker.bloodGroup}</div>
-                </div>
-              </div>
-
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 8, fontSize: '0.85rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 12px', background: '#f8fafc', borderRadius: 6 }}>
-                  <span style={{ color: '#64748b' }}>Assigned Project Site:</span>
-                  <strong>{selectedWorker.assignedProject}</strong>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 12px', background: '#f8fafc', borderRadius: 6 }}>
-                  <span style={{ color: '#64748b' }}>Aadhaar Identity Verification:</span>
-                  <strong style={{ color: '#059669' }}>Verified ({selectedWorker.aadhaarNumber})</strong>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 12px', background: '#f8fafc', borderRadius: 6 }}>
-                  <span style={{ color: '#64748b' }}>Emergency Family Contact:</span>
-                  <strong>{selectedWorker.emergencyContact}</strong>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 12px', background: '#f8fafc', borderRadius: 6 }}>
-                  <span style={{ color: '#64748b' }}>MNC PPE Safety Compliance:</span>
-                  <span style={{ color: selectedWorker.safetyCertified ? '#10b981' : '#f59e0b', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 4 }}>
-                    <ShieldCheck size={14} /> {selectedWorker.safetyCertified ? 'Certified & Equipped' : 'Pending Induction'}
-                  </span>
-                </div>
-              </div>
-
+            {/* Stepper Tabs */}
+            <div className={styles.stepperTabs}>
               <button 
-                onClick={() => setSelectedWorker(null)}
-                style={{
-                  padding: '10px', background: '#0f172a', color: '#ffffff',
-                  border: 'none', borderRadius: 8, fontWeight: 700, cursor: 'pointer', marginTop: 6
-                }}
+                type="button" 
+                className={`${styles.stepTab} ${onboardingStep === 1 ? styles.stepTabActive : ''}`}
+                onClick={() => setOnboardingStep(1)}
               >
-                Close Labour Record
+                <span className={styles.stepNum}>1</span>
+                <span>Personal</span>
+              </button>
+              <button 
+                type="button" 
+                className={`${styles.stepTab} ${onboardingStep === 2 ? styles.stepTabActive : ''}`}
+                onClick={() => setOnboardingStep(2)}
+              >
+                <span className={styles.stepNum}>2</span>
+                <span>Professional</span>
+              </button>
+              <button 
+                type="button" 
+                className={`${styles.stepTab} ${onboardingStep === 3 ? styles.stepTabActive : ''}`}
+                onClick={() => setOnboardingStep(3)}
+              >
+                <span className={styles.stepNum}>3</span>
+                <span>Site Allocation</span>
+              </button>
+              <button 
+                type="button" 
+                className={`${styles.stepTab} ${onboardingStep === 4 ? styles.stepTabActive : ''}`}
+                onClick={() => setOnboardingStep(4)}
+              >
+                <span className={styles.stepNum}>4</span>
+                <span>Documents</span>
+              </button>
+              <button 
+                type="button" 
+                className={`${styles.stepTab} ${onboardingStep === 5 ? styles.stepTabActive : ''}`}
+                onClick={() => setOnboardingStep(5)}
+              >
+                <span className={styles.stepNum}>5</span>
+                <span>Salary & Bank</span>
               </button>
             </div>
+
+            {/* Form Form Body */}
+            <form onSubmit={handleCreateWorker} className={styles.onboardingForm}>
+              {/* Step 1: Personal Details */}
+              {onboardingStep === 1 && (
+                <div className={styles.stepSection}>
+                  <h4 className={styles.sectionTitle}>Section 1: Personal Details & Identity</h4>
+                  <div className={styles.formRow2}>
+                    <div className={styles.formGroup}>
+                      <label>Full Legal Name *</label>
+                      <input 
+                        type="text" 
+                        required 
+                        value={formData.name} 
+                        onChange={e => setFormData({ ...formData, name: e.target.value })}
+                        placeholder="e.g. Ramesh Shankar Patil"
+                      />
+                    </div>
+                    <div className={styles.formGroup}>
+                      <label>Mobile Number *</label>
+                      <input 
+                        type="tel" 
+                        required 
+                        value={formData.phone} 
+                        onChange={e => setFormData({ ...formData, phone: e.target.value })}
+                        placeholder="+91 98220 12345"
+                      />
+                    </div>
+                  </div>
+
+                  <div className={styles.formRow3}>
+                    <div className={styles.formGroup}>
+                      <label>Date of Birth</label>
+                      <input 
+                        type="date" 
+                        value={formData.dob} 
+                        onChange={e => setFormData({ ...formData, dob: e.target.value })}
+                      />
+                    </div>
+                    <div className={styles.formGroup}>
+                      <label>Gender</label>
+                      <select 
+                        value={formData.gender} 
+                        onChange={e => setFormData({ ...formData, gender: e.target.value as any })}
+                      >
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                      </select>
+                    </div>
+                    <div className={styles.formGroup}>
+                      <label>Blood Group</label>
+                      <select 
+                        value={formData.bloodGroup} 
+                        onChange={e => setFormData({ ...formData, bloodGroup: e.target.value })}
+                      >
+                        <option value="A+">A+</option>
+                        <option value="A-">A-</option>
+                        <option value="B+">B+</option>
+                        <option value="B-">B-</option>
+                        <option value="O+">O+</option>
+                        <option value="O-">O-</option>
+                        <option value="AB+">AB+</option>
+                        <option value="AB-">AB-</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className={styles.formRow2}>
+                    <div className={styles.formGroup}>
+                      <label>Aadhaar / ID Number</label>
+                      <input 
+                        type="text" 
+                        value={formData.aadhaarNumber} 
+                        onChange={e => setFormData({ ...formData, aadhaarNumber: e.target.value })}
+                        placeholder="12-digit Aadhaar number"
+                      />
+                    </div>
+                    <div className={styles.formGroup}>
+                      <label>Native Hometown & State</label>
+                      <input 
+                        type="text" 
+                        value={formData.hometown} 
+                        onChange={e => setFormData({ ...formData, hometown: e.target.value })}
+                        placeholder="e.g. Satara, Maharashtra"
+                      />
+                    </div>
+                  </div>
+
+                  <div className={styles.formGroup}>
+                    <label>Current Residential Address / Camp Details</label>
+                    <input 
+                      type="text" 
+                      value={formData.address} 
+                      onChange={e => setFormData({ ...formData, address: e.target.value })}
+                      placeholder="e.g. Room 14, Kharadi Labour Colony, Pune"
+                    />
+                  </div>
+
+                  <div className={styles.formRow2}>
+                    <div className={styles.formGroup}>
+                      <label>Emergency Contact Phone</label>
+                      <input 
+                        type="tel" 
+                        value={formData.emergencyContact} 
+                        onChange={e => setFormData({ ...formData, emergencyContact: e.target.value })}
+                        placeholder="+91 94220 88771"
+                      />
+                    </div>
+                    <div className={styles.formGroup}>
+                      <label>Emergency Contact Relationship</label>
+                      <input 
+                        type="text" 
+                        value={formData.emergencyRelation} 
+                        onChange={e => setFormData({ ...formData, emergencyRelation: e.target.value })}
+                        placeholder="e.g. Sunita Patil (Wife)"
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Step 2: Professional Details */}
+              {onboardingStep === 2 && (
+                <div className={styles.stepSection}>
+                  <h4 className={styles.sectionTitle}>Section 2: Professional Skills & Safety Compliance</h4>
+                  <div className={styles.formRow2}>
+                    <div className={styles.formGroup}>
+                      <label>Labour Classification *</label>
+                      <select 
+                        value={formData.category} 
+                        onChange={e => setFormData({ ...formData, category: e.target.value as any })}
+                      >
+                        <option value="Skilled">Skilled Artisan</option>
+                        <option value="Semi-Skilled">Semi-Skilled Crew</option>
+                        <option value="Unskilled">Unskilled Civil Labour</option>
+                      </select>
+                    </div>
+                    <div className={styles.formGroup}>
+                      <label>Primary Trade / Specialization *</label>
+                      <input 
+                        type="text" 
+                        required 
+                        value={formData.skill} 
+                        onChange={e => setFormData({ ...formData, skill: e.target.value })}
+                        placeholder="e.g. Master Bar Bender & Structural Mason"
+                      />
+                    </div>
+                  </div>
+
+                  <div className={styles.formGroup}>
+                    <label>Additional Skills (comma separated)</label>
+                    <input 
+                      type="text" 
+                      value={formData.additionalSkills} 
+                      onChange={e => setFormData({ ...formData, additionalSkills: e.target.value })}
+                      placeholder="e.g. Rebar Tying, Shuttering, Aluform, Scaffolding"
+                    />
+                  </div>
+
+                  <div className={styles.formRow3}>
+                    <div className={styles.formGroup}>
+                      <label>Years of Site Experience</label>
+                      <input 
+                        type="number" 
+                        min="0" 
+                        max="40" 
+                        value={formData.experienceYears} 
+                        onChange={e => setFormData({ ...formData, experienceYears: Number(e.target.value) })}
+                      />
+                    </div>
+                    <div className={styles.formGroup}>
+                      <label>Employment Engagement</label>
+                      <select 
+                        value={formData.employmentType} 
+                        onChange={e => setFormData({ ...formData, employmentType: e.target.value as any })}
+                      >
+                        <option value="Direct Payroll">Direct Payroll</option>
+                        <option value="Subcontractor Crew">Subcontractor Crew</option>
+                        <option value="Daily Muster">Daily Muster</option>
+                      </select>
+                    </div>
+                    <div className={styles.formGroup}>
+                      <label>Reporting Supervisor</label>
+                      <input 
+                        type="text" 
+                        value={formData.supervisorName} 
+                        onChange={e => setFormData({ ...formData, supervisorName: e.target.value })}
+                        placeholder="Er. Rajesh Kulkarni"
+                      />
+                    </div>
+                  </div>
+
+                  <div className={styles.checkboxGroup}>
+                    <label className={styles.checkboxLabel}>
+                      <input 
+                        type="checkbox" 
+                        checked={formData.safetyCertified} 
+                        onChange={e => setFormData({ ...formData, safetyCertified: e.target.checked })}
+                      />
+                      <span>Safety Induction Completed (EHS Certified with PPE kit issued)</span>
+                    </label>
+                  </div>
+                </div>
+              )}
+
+              {/* Step 3: Project Allocation */}
+              {onboardingStep === 3 && (
+                <div className={styles.stepSection}>
+                  <h4 className={styles.sectionTitle}>Section 3: Project Site Assignment</h4>
+                  <div className={styles.formRow2}>
+                    <div className={styles.formGroup}>
+                      <label>Assign to Construction Project</label>
+                      <select 
+                        value={formData.assignedProject} 
+                        onChange={e => setFormData({ ...formData, assignedProject: e.target.value })}
+                      >
+                        <option value="Unassigned">Unassigned (Reserve Labour Pool)</option>
+                        {availableProjects.map(p => (
+                          <option key={p.id} value={p.name}>{p.name} ({p.code})</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className={styles.formGroup}>
+                      <label>Designated Site Role</label>
+                      <input 
+                        type="text" 
+                        value={formData.roleInProject} 
+                        onChange={e => setFormData({ ...formData, roleInProject: e.target.value })}
+                        placeholder="e.g. Lead Bar Bender Pier P-12"
+                      />
+                    </div>
+                  </div>
+                  <div className={styles.infoCallout}>
+                    <AlertCircle size={18} className={styles.infoIcon} />
+                    <div>
+                      <strong>Automated Muster & Biometric Sync</strong>
+                      <p>Once assigned to a project, the worker is automatically enrolled in the site biometric terminal and daily morning muster rolls.</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Step 4: Documents */}
+              {onboardingStep === 4 && (
+                <div className={styles.stepSection}>
+                  <h4 className={styles.sectionTitle}>Section 4: Verification & Compliance Documents</h4>
+                  <div className={styles.docCheckList}>
+                    <label className={styles.docItem}>
+                      <input 
+                        type="checkbox" 
+                        checked={formData.docAadhaarProvided} 
+                        onChange={e => setFormData({ ...formData, docAadhaarProvided: e.target.checked })}
+                      />
+                      <div>
+                        <strong>Government Identity Proof (Aadhaar / Voter ID)</strong>
+                        <span>Mandatory for statutory compliance and insurance enrollment</span>
+                      </div>
+                    </label>
+
+                    <label className={styles.docItem}>
+                      <input 
+                        type="checkbox" 
+                        checked={formData.docSafetyCardProvided} 
+                        onChange={e => setFormData({ ...formData, docSafetyCardProvided: e.target.checked })}
+                      />
+                      <div>
+                        <strong>Safety Induction Training Certificate</strong>
+                        <span>Issued by Site EHS Officer upon helmet, boots, and harness training</span>
+                      </div>
+                    </label>
+
+                    <label className={styles.docItem}>
+                      <input 
+                        type="checkbox" 
+                        checked={formData.docMedicalProvided} 
+                        onChange={e => setFormData({ ...formData, docMedicalProvided: e.target.checked })}
+                      />
+                      <div>
+                        <strong>Annual Medical Fitness Certificate</strong>
+                        <span>Vision, blood pressure, and heights clearance report</span>
+                      </div>
+                    </label>
+                  </div>
+                </div>
+              )}
+
+              {/* Step 5: Salary & Bank */}
+              {onboardingStep === 5 && (
+                <div className={styles.stepSection}>
+                  <h4 className={styles.sectionTitle}>Section 5: Daily Wage, Overtime & Bank Details</h4>
+                  <div className={styles.formRow2}>
+                    <div className={styles.formGroup}>
+                      <label>Daily Standard Wage (₹ / Day) *</label>
+                      <input 
+                        type="number" 
+                        required 
+                        value={formData.dailyWage} 
+                        onChange={e => setFormData({ ...formData, dailyWage: Number(e.target.value) })}
+                        placeholder="950"
+                      />
+                    </div>
+                    <div className={styles.formGroup}>
+                      <label>Overtime Hourly Rate (₹ / Hour)</label>
+                      <input 
+                        type="number" 
+                        value={formData.overtimeHourlyRate} 
+                        onChange={e => setFormData({ ...formData, overtimeHourlyRate: Number(e.target.value) })}
+                        placeholder="140"
+                      />
+                    </div>
+                  </div>
+
+                  <div className={styles.formRow3}>
+                    <div className={styles.formGroup}>
+                      <label>Disbursement Mode</label>
+                      <select 
+                        value={formData.paymentMode} 
+                        onChange={e => setFormData({ ...formData, paymentMode: e.target.value as any })}
+                      >
+                        <option value="Bank Transfer">Bank Transfer (NEFT/IMPS)</option>
+                        <option value="Direct Cash Voucher">Direct Cash Voucher</option>
+                        <option value="UPI">UPI Digital Payment</option>
+                      </select>
+                    </div>
+                    <div className={styles.formGroup}>
+                      <label>Bank Name</label>
+                      <input 
+                        type="text" 
+                        value={formData.bankName} 
+                        onChange={e => setFormData({ ...formData, bankName: e.target.value })}
+                        placeholder="State Bank of India"
+                      />
+                    </div>
+                    <div className={styles.formGroup}>
+                      <label>IFSC Code</label>
+                      <input 
+                        type="text" 
+                        value={formData.ifscCode} 
+                        onChange={e => setFormData({ ...formData, ifscCode: e.target.value })}
+                        placeholder="SBIN0001234"
+                      />
+                    </div>
+                  </div>
+
+                  <div className={styles.formGroup}>
+                    <label>Bank Account Number</label>
+                    <input 
+                      type="password" 
+                      value={formData.accountNumber} 
+                      onChange={e => setFormData({ ...formData, accountNumber: e.target.value })}
+                      placeholder="Account number for direct salary credit"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* Modal Footer Controls */}
+              <div className={styles.modalFooter}>
+                <div className={styles.footerNavLeft}>
+                  {onboardingStep > 1 && (
+                    <button 
+                      type="button" 
+                      onClick={() => setOnboardingStep(onboardingStep - 1)} 
+                      className={styles.btnSecondary}
+                    >
+                      Back to Step {onboardingStep - 1}
+                    </button>
+                  )}
+                </div>
+
+                <div className={styles.footerNavRight}>
+                  {onboardingStep < 5 ? (
+                    <button 
+                      type="button" 
+                      onClick={() => setOnboardingStep(onboardingStep + 1)} 
+                      className={styles.btnPrimary}
+                    >
+                      <span>Continue</span>
+                      <ArrowRight size={14} />
+                    </button>
+                  ) : (
+                    <button type="submit" className={styles.btnSuccess}>
+                      <CheckCircle size={16} />
+                      <span>Complete Onboarding & Register Worker</span>
+                    </button>
+                  )}
+                </div>
+              </div>
+            </form>
           </div>
         </div>
       )}
