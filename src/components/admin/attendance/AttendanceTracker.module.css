@@ -173,12 +173,24 @@
   border-radius: 12px;
   border: 1px solid #e2e8f0;
   padding: 4px;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .tabNav {
   display: flex;
-  gap: 4px;
+  gap: 6px;
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding: 2px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.tabNav::-webkit-scrollbar {
+  display: none;
 }
 
 .navTabBtn {
@@ -194,7 +206,9 @@
   border-radius: 8px;
   cursor: pointer;
   white-space: nowrap;
+  flex-shrink: 0;
   transition: all 0.15s ease;
+  min-height: 40px;
 }
 
 .navTabBtn:hover {
@@ -388,10 +402,54 @@
     display: none;
   }
 
+  .toolbarRow {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.65rem;
+    width: 100%;
+  }
+
+  .filtersGroup {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    gap: 0.5rem;
+  }
+
+  .filterItem {
+    width: 100%;
+    box-sizing: border-box;
+    justify-content: space-between;
+  }
+
+  .filterItem select {
+    width: 100%;
+  }
+
+  .btnPrimarySmall {
+    width: 100%;
+    justify-content: center;
+    box-sizing: border-box;
+    padding: 10px;
+  }
+
   .mobileMusterCardList {
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .mobileMusterCard {
+    width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+
+  .navTabBtn {
+    padding: 8px 12px;
+    font-size: 0.78rem;
   }
 }
 
