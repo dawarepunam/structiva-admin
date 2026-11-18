@@ -50,7 +50,7 @@ export default function SupervisorLayoutWrapper({ children }: SupervisorLayoutPr
     { label: 'My Sites', href: '/supervisor/sites', icon: Building },
     { label: 'Workforce', href: '/supervisor/workforce', icon: Users },
     { label: 'Attendance', href: '/supervisor/attendance', icon: ClockCheck },
-    { label: 'Activities & Tasks', href: '/supervisor/tasks', icon: CheckSquare },
+    { label: 'Activities & Tasks', href: '/supervisor/activities', icon: CheckSquare },
     { label: 'Daily Progress Reports', href: '/supervisor/dpr', icon: FileText },
     { label: 'Machinery & Vehicles', href: '/supervisor/machinery', icon: Truck },
     { label: 'Fuel Management', href: '/supervisor/fuel', icon: Fuel },
