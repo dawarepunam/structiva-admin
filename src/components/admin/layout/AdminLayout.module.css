@@ -8,11 +8,12 @@
 
 .mainContent {
   flex: 1;
-  margin-left: 260px;
+  margin-left: 250px;
   display: flex;
   flex-direction: column;
   min-width: 0;
-  width: calc(100% - 260px);
+  width: calc(100% - 250px);
+  padding-top: 64px;
   transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -33,6 +34,7 @@
   .mainContent {
     margin-left: 0 !important;
     width: 100% !important;
+    padding-top: 64px;
   }
 
   .pageBody {
@@ -59,6 +61,10 @@
 
 /* Mobile Screens (768px and below) */
 @media (max-width: 768px) {
+  .mainContent {
+    padding-top: 56px;
+  }
+
   .pageBody {
     padding: 0.85rem 0.75rem 90px 0.75rem; /* Generous bottom padding to ensure zero content hides behind Mobile Bottom Bar */
   }
