@@ -30,6 +30,9 @@
 @media (max-width: 600px) {
   .container {
     gap: 1rem;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
   }
   .kpiGrid {
     grid-template-columns: repeat(2, 1fr);
@@ -55,33 +58,46 @@
     align-items: stretch;
     gap: 0.75rem;
     padding: 0.75rem;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
   }
   .searchAndFilters {
     flex-direction: column;
     align-items: stretch;
     width: 100%;
+    max-width: 100%;
     gap: 0.65rem;
   }
   .searchBox {
-    width: 100%;
-    min-width: 0;
-    max-width: 100%;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    box-sizing: border-box;
   }
   .filterGroup {
     flex-direction: column;
     align-items: stretch;
     width: 100%;
+    max-width: 100%;
+    gap: 0.5rem;
   }
   .filterItem {
-    width: 100%;
-  }
-  .filterSelect {
-    width: 100%;
-  }
-  .actionsRow {
-    width: 100%;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box;
+    display: flex;
     justify-content: space-between;
   }
+  .filterItem select {
+    width: 100%;
+  }
+  .actionButtons {
+    width: 100%;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .actionsRow,
   .actionGroup {
     width: 100%;
     justify-content: space-between;
@@ -90,10 +106,19 @@
   .btnAdd {
     flex: 1;
     justify-content: center;
+    padding: 9px 12px;
+    font-size: 0.8rem;
   }
   .fleetGrid {
     grid-template-columns: 1fr;
     gap: 0.85rem;
+    width: 100%;
+    max-width: 100%;
+  }
+  .card {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
   }
   .imageWrapper {
     height: 140px;
@@ -108,12 +133,19 @@
   .metricsGrid {
     padding: 6px 8px;
     gap: 4px;
+    grid-template-columns: repeat(3, 1fr);
   }
   .metricLabel {
-    font-size: 0.6rem;
+    font-size: 0.58rem;
   }
   .metricValue {
-    font-size: 0.75rem;
+    font-size: 0.72rem;
+  }
+  .metricValueSmall {
+    font-size: 0.68rem;
+  }
+  .metricValueService {
+    font-size: 0.72rem;
   }
   .modalLargeBox {
     max-height: 88vh;
@@ -285,6 +317,8 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
   flex-wrap: wrap;
   gap: 12px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .searchAndFilters {
@@ -293,6 +327,8 @@
   gap: 12px;
   flex: 1;
   flex-wrap: wrap;
+  min-width: 0;
+  width: 100%;
 }
 
 .searchBox {
@@ -303,13 +339,15 @@
   padding: 8px 14px;
   border-radius: 8px;
   border: 1px solid #cbd5e1;
-  min-width: 320px;
+  min-width: 260px;
   max-width: 420px;
   flex: 1;
+  box-sizing: border-box;
 }
 
 .searchIcon {
   color: #94a3b8;
+  flex-shrink: 0;
 }
 
 .searchBox input {
@@ -319,6 +357,7 @@
   font-size: 0.85rem;
   color: #1e293b;
   width: 100%;
+  min-width: 0;
 }
 
 .clearSearchBtn {
@@ -328,6 +367,7 @@
   color: #94a3b8;
   display: flex;
   align-items: center;
+  flex-shrink: 0;
 }
 
 .filterGroup {
@@ -335,6 +375,7 @@
   align-items: center;
   gap: 8px;
   flex-wrap: wrap;
+  min-width: 0;
 }
 
 .filterItem {
@@ -345,10 +386,13 @@
   padding: 7px 12px;
   border-radius: 8px;
   border: 1px solid #cbd5e1;
+  box-sizing: border-box;
+  max-width: 100%;
 }
 
 .filterIcon {
   color: #64748b;
+  flex-shrink: 0;
 }
 
 .filterItem select {
@@ -359,6 +403,7 @@
   color: #334155;
   font-weight: 500;
   cursor: pointer;
+  max-width: 100%;
 }
 
 .actionButtons {

@@ -267,14 +267,21 @@
   border: 1px solid #e2e8f0;
   padding: 4px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .tabsScroller {
   display: flex;
-  gap: 4px;
+  gap: 6px;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
+  padding: 2px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .tabsScroller::-webkit-scrollbar {
@@ -287,21 +294,22 @@
   gap: 8px;
   padding: 9px 16px;
   border-radius: 8px;
-  border: none;
+  border: 1px solid transparent;
   background: transparent;
-  color: #64748b;
+  color: #475569;
   font-size: 0.82rem;
   font-weight: 600;
   cursor: pointer;
   white-space: nowrap;
-  transition: background-color 0.15s ease, color 0.15s ease;
+  flex-shrink: 0;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
   -webkit-tap-highlight-color: transparent;
   outline: none;
 }
 
 .tabBtn:hover {
-  background: #f8fafc;
-  color: #1e293b;
+  background: #f1f5f9;
+  color: #0f172a;
 }
 
 .tabBtn:focus-visible {
@@ -310,8 +318,11 @@
 }
 
 .tabBtnActive {
-  background: #167C72;
+  background: #167C72 !important;
   color: #ffffff !important;
+  font-weight: 700;
+  box-shadow: 0 2px 6px rgba(22, 124, 114, 0.3);
+  border-color: #12635b !important;
 }
 
 /* Tab Content Area */
@@ -934,22 +945,34 @@
 }
 
 @media (max-width: 600px) {
+  .container {
+    gap: 1rem;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
   .heroCard {
     padding: 1rem;
     gap: 1rem;
     border-radius: 12px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
   }
   .heroLeft {
     flex-direction: column;
     align-items: flex-start;
     gap: 0.75rem;
+    width: 100%;
   }
   .heroImageWrapper {
     width: 100%;
-    height: 140px;
+    height: 150px;
+    border-radius: 10px;
   }
   .assetTitle {
     font-size: 1.15rem;
+    line-height: 1.25;
   }
   .heroRight {
     width: 100%;
@@ -958,9 +981,16 @@
     min-width: 0;
     width: 100%;
     padding: 0.85rem 1rem;
+    box-sizing: border-box;
   }
   .meterNumber {
     font-size: 1.45rem;
+  }
+  .tabsContainer {
+    border-radius: 10px;
+    padding: 3px;
+    width: 100%;
+    box-sizing: border-box;
   }
   .tabsScroller,
   .tabsNav {
@@ -969,25 +999,41 @@
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
+    width: 100%;
+    box-sizing: border-box;
   }
   .tabsScroller::-webkit-scrollbar,
   .tabsNav::-webkit-scrollbar {
     display: none;
   }
   .tabBtn {
-    min-height: 44px;
-    padding: 8px 12px;
+    min-height: 42px;
+    padding: 8px 14px;
     font-size: 0.78rem;
     white-space: nowrap;
     border-radius: 8px;
     flex-shrink: 0;
   }
+  .tabContentArea {
+    width: 100%;
+    max-width: 100%;
+    gap: 1rem;
+  }
+  .contentCard {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    padding: 1rem;
+    border-radius: 12px;
+  }
   .kpiRow4 {
     grid-template-columns: repeat(2, 1fr) !important;
     gap: 0.65rem;
+    width: 100%;
   }
   .statBox {
     padding: 0.75rem 0.85rem;
+    box-sizing: border-box;
   }
   .statBoxVal {
     font-size: 1.15rem;
@@ -1012,6 +1058,7 @@
   .detailsGrid4, .detailsGrid {
     grid-template-columns: 1fr;
     gap: 0.75rem;
+    width: 100%;
   }
   .timelineMeta {
     flex-direction: column;
@@ -1036,18 +1083,12 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 0.75rem;
+    padding: 0.85rem;
+    box-sizing: border-box;
   }
   .docRight {
     width: 100%;
     justify-content: space-between;
-  }
-  .heroImageWrapper {
-    height: 160px;
-    border-radius: 10px;
-  }
-  .assetTitle {
-    font-size: 1.15rem;
-    line-height: 1.25;
   }
   .heroTitleRow {
     flex-wrap: wrap;
@@ -1060,6 +1101,7 @@
     font-size: 0.72rem;
     padding: 3px 8px;
     width: 100%;
+    box-sizing: border-box;
   }
 }
 
