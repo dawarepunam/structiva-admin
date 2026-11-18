@@ -68,12 +68,16 @@ export default function WorkerProfilePage() {
 
     const newLeave: WorkerLeaveRecord = {
       id: `lv-${Date.now()}`,
+      workerId: worker.id,
+      workerName: worker.name,
+      workerCode: worker.code,
       type: leaveForm.type,
       startDate: leaveForm.startDate,
       endDate: leaveForm.endDate,
       days: Number(leaveForm.days) || 1,
       reason: leaveForm.reason,
       status: 'Approved',
+      appliedOn: new Date().toISOString().split('T')[0],
       approvedBy: 'Er. Rajesh Kulkarni (Auto-Approved)'
     };
 
