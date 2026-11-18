@@ -132,23 +132,23 @@ export default function FuelAuditTable() {
       {/* High-Level Fuel Telematics KPIs */}
       <div className={styles.kpiRow}>
         <div className={styles.kpiCard}>
-          <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>Today's Fuel Disbursed</span>
-          <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#0f172a', marginTop: 4 }}>265 Liters</div>
-          <span style={{ fontSize: '0.75rem', color: '#64748b' }}>Verified Pump Invoices: ₹ 24,512</span>
+          <span className={styles.kpiLabel}>Today's Fuel Disbursed</span>
+          <div className={styles.kpiValue}>265 Liters</div>
+          <span className={styles.kpiSub}>Pump Invoices: ₹ 24,512</span>
         </div>
 
         <div className={`${styles.kpiCard} ${styles.alertCard}`}>
-          <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#dc2626', textTransform: 'uppercase' }}>Anti-Theft Mismatch Alerts</span>
-          <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#ef4444', marginTop: 4 }}>
-            {audits.filter(a => a.status !== 'Optimal').length} Discrepancies
+          <span className={styles.kpiLabelAlert}>Anti-Theft Mismatch</span>
+          <div className={styles.kpiValueAlert}>
+            {audits.filter(a => a.status !== 'Optimal').length} Anomaly
           </div>
-          <span style={{ fontSize: '0.75rem', color: '#b91c1c' }}>Tata Tipper +30L above GPS norm</span>
+          <span className={styles.kpiSubAlert}>Tipper +30L vs norm</span>
         </div>
 
         <div className={styles.kpiCard}>
-          <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>Monthly Fleet Fuel Burn</span>
-          <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#10b981', marginTop: 4 }}>4,870 Litres</div>
-          <span style={{ fontSize: '0.75rem', color: '#059669' }}>Total Expense: ₹ 4,50,475</span>
+          <span className={styles.kpiLabel}>Monthly Fleet Burn</span>
+          <div className={styles.kpiValueGreen}>4,870 Litres</div>
+          <span className={styles.kpiSubGreen}>Expense: ₹ 4,50,475</span>
         </div>
       </div>
 
