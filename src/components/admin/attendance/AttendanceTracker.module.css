@@ -1678,3 +1678,57 @@
 .btnSuccess:hover {
   background: #047857;
 }
+
+@media (max-width: 600px) {
+  .inspectModalBox,
+  .reviewModalBox {
+    width: 95%;
+    max-height: 90vh;
+    border-radius: 12px;
+  }
+
+  .modalHeader {
+    padding: 1rem;
+  }
+
+  .inspectBody,
+  .reviewBody {
+    padding: 1rem;
+    gap: 1rem;
+  }
+
+  .todayEvidenceGrid {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  .evidenceGrid {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  .inspectFooter {
+    flex-direction: column-reverse;
+    gap: 0.65rem;
+  }
+
+  .btnOpenFullProfile,
+  .btnCloseModal {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .modalFooterActions {
+    flex-direction: column-reverse;
+    width: 100%;
+    gap: 0.5rem;
+  }
+
+  .btnDanger,
+  .btnSuccess {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+  }
+}

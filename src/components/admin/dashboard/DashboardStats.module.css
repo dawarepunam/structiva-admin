@@ -263,3 +263,22 @@
     display: none;
   }
 }
+
+@media (max-width: 375px) {
+  .kpiGrid {
+    gap: 0.5rem;
+  }
+
+  .kpiCard {
+    padding: 0.65rem 0.65rem;
+    min-height: 90px;
+  }
+
+  .metricNumber {
+    font-size: 1.05rem;
+  }
+
+  .cardLabel {
+    font-size: 0.64rem;
+  }
+}
