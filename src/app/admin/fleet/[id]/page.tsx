@@ -22,7 +22,7 @@ export default function AssetDetailsPage() {
 
   const [asset, setAsset] = useState<EnterpriseAssetRecord | null>(null);
   const [activeTab, setActiveTab] = useState<
-    'overview' | 'specs' | 'assignment' | 'fuel' | 'maintenance' | 'inspections' | 'documents' | 'operating' | 'costs'
+    'overview' | 'specs' | 'allocation' | 'dispatch' | 'fuel' | 'maintenance' | 'inspections' | 'documents' | 'operators'
   >('overview');
 
   // Maintenance & Inspection Modals
@@ -228,11 +228,19 @@ export default function AssetDetailsPage() {
           </button>
 
           <button 
-            className={`${styles.tabBtn} ${activeTab === 'assignment' ? styles.tabBtnActive : ''}`}
-            onClick={() => setActiveTab('assignment')}
+            className={`${styles.tabBtn} ${activeTab === 'allocation' ? styles.tabBtnActive : ''}`}
+            onClick={() => setActiveTab('allocation')}
           >
             <Building size={15} />
-            <span>3. Assignment History</span>
+            <span>3. Allocation</span>
+          </button>
+
+          <button 
+            className={`${styles.tabBtn} ${activeTab === 'dispatch' ? styles.tabBtnActive : ''}`}
+            onClick={() => setActiveTab('dispatch')}
+          >
+            <Truck size={15} />
+            <span>4. Dispatch</span>
           </button>
 
           <button 
@@ -240,7 +248,7 @@ export default function AssetDetailsPage() {
             onClick={() => setActiveTab('fuel')}
           >
             <Fuel size={15} />
-            <span>4. Fuel History</span>
+            <span>5. Fuel</span>
           </button>
 
           <button 
@@ -248,7 +256,7 @@ export default function AssetDetailsPage() {
             onClick={() => setActiveTab('maintenance')}
           >
             <Wrench size={15} />
-            <span>5. Maintenance & Repairs ({asset.maintenanceRecords?.length || 0})</span>
+            <span>6. Maintenance ({asset.maintenanceRecords?.length || 0})</span>
           </button>
 
           <button 
@@ -256,7 +264,7 @@ export default function AssetDetailsPage() {
             onClick={() => setActiveTab('inspections')}
           >
             <ShieldCheck size={15} />
-            <span>6. Inspections ({asset.inspections?.length || 0})</span>
+            <span>7. Inspections ({asset.inspections?.length || 0})</span>
           </button>
 
           <button 
@@ -264,23 +272,15 @@ export default function AssetDetailsPage() {
             onClick={() => setActiveTab('documents')}
           >
             <FileText size={15} />
-            <span>7. Documents ({asset.documents?.length || 0})</span>
+            <span>8. Documents ({asset.documents?.length || 0})</span>
           </button>
 
           <button 
-            className={`${styles.tabBtn} ${activeTab === 'operating' ? styles.tabBtnActive : ''}`}
-            onClick={() => setActiveTab('operating')}
+            className={`${styles.tabBtn} ${activeTab === 'operators' ? styles.tabBtnActive : ''}`}
+            onClick={() => setActiveTab('operators')}
           >
-            <Activity size={15} />
-            <span>8. Operating Logs</span>
-          </button>
-
-          <button 
-            className={`${styles.tabBtn} ${activeTab === 'costs' ? styles.tabBtnActive : ''}`}
-            onClick={() => setActiveTab('costs')}
-          >
-            <DollarSign size={15} />
-            <span>9. Cost & Financials</span>
+            <UserCheck size={15} />
+            <span>9. Operators</span>
           </button>
         </div>
       </div>
@@ -421,13 +421,13 @@ export default function AssetDetailsPage() {
           </div>
         )}
 
-        {/* Tab 3: Assignment History */}
-        {activeTab === 'assignment' && (
+        {/* Tab 3: Allocation */}
+        {activeTab === 'allocation' && (
           <div className={styles.contentCard}>
             <div className={styles.cardHeader}>
               <div className={styles.cardHeaderTitle}>
                 <Building size={18} className={styles.headerIcon} />
-                <h3>Project Deployment & Movement History</h3>
+                <h3>Project Allocation & Deployment History</h3>
               </div>
             </div>
 
@@ -450,6 +450,35 @@ export default function AssetDetailsPage() {
                   </div>
                 </div>
               ))}
+            </div>
+          </div>
+        )}
+
+        {/* Tab 4: Dispatch */}
+        {activeTab === 'dispatch' && (
+          <div className={styles.contentCard}>
+            <div className={styles.cardHeader}>
+              <div className={styles.cardHeaderTitle}>
+                <Truck size={18} className={styles.headerIcon} />
+                <h3>Site Dispatch & Demobilization Log</h3>
+              </div>
+            </div>
+
+            <div className={styles.timelineList}>
+              <div className={styles.timelineCard}>
+                <div className={styles.timelineTop}>
+                  <div>
+                    <h4 className={styles.tlProjectName}>Active Deployment Dispatch</h4>
+                    <span className={styles.tlLocation}>{asset.currentProject}</span>
+                  </div>
+                  <span className={styles.badgeActive}>Dispatched & Active</span>
+                </div>
+                <div className={styles.timelineMeta}>
+                  <span>Assigned Operator: <strong>{asset.assignedOperator}</strong></span>
+                  <span>Telematics: <strong>{asset.telematicsStatus}</strong></span>
+                  <span>Meter: <strong>{asset.operatingHoursOrKm} {asset.meterUnit}</strong></span>
+                </div>
+              </div>
             </div>
           </div>
         )}
@@ -670,78 +699,30 @@ export default function AssetDetailsPage() {
           </div>
         )}
 
-        {/* Tab 8: Operating Logs */}
-        {activeTab === 'operating' && (
+        {/* Tab 9: Operators */}
+        {activeTab === 'operators' && (
           <div className={styles.contentCard}>
             <div className={styles.cardHeader}>
               <div className={styles.cardHeaderTitle}>
-                <Activity size={18} className={styles.headerIcon} />
-                <h3>Daily Machine Telematics & Shift Utilization Log</h3>
+                <UserCheck size={18} className={styles.headerIcon} />
+                <h3>Assigned Heavy Equipment Operators & Pilots</h3>
               </div>
             </div>
 
-            <div className={styles.operatingGrid}>
-              <div className={styles.opBox}>
-                <span>Current Calibrated Reading</span>
-                <strong>{asset.operatingHoursOrKm} {asset.meterUnit}</strong>
-              </div>
-              <div className={styles.opBox}>
-                <span>Average Daily Shift Duration</span>
-                <strong>7.5 Hours / Shift</strong>
-              </div>
-              <div className={styles.opBox}>
-                <span>Idle vs Productive Ratio</span>
-                <strong className={styles.textEmerald}>88% Productive</strong>
-              </div>
-              <div className={styles.opBox}>
-                <span>Telematics Sync</span>
-                <strong>Live IMEI Connected</strong>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Tab 9: Cost & Financials */}
-        {activeTab === 'costs' && (
-          <div className={styles.contentCard}>
-            <div className={styles.cardHeader}>
-              <div className={styles.cardHeaderTitle}>
-                <DollarSign size={18} className={styles.headerIcon} />
-                <h3>Asset TCO (Total Cost of Ownership) & Financial Ledger</h3>
-              </div>
-            </div>
-
-            <div className={styles.costGrid}>
-              {asset.purchaseCost && (
-                <div className={styles.costBox}>
-                  <span>Capital Acquisition Cost</span>
-                  <strong>₹ {asset.purchaseCost.toLocaleString()}</strong>
-                  <span className={styles.subText}>Initial purchase valuation</span>
+            <div className={styles.timelineList}>
+              <div className={styles.timelineCard}>
+                <div className={styles.timelineTop}>
+                  <div>
+                    <h4 className={styles.tlProjectName}>{asset.assignedOperator}</h4>
+                    <span className={styles.tlLocation}>Certified Pilot • License: {asset.operatorLicence}</span>
+                  </div>
+                  <span className={styles.badgeActive}>Primary Assigned Operator</span>
                 </div>
-              )}
-              {asset.rentalRatePerDay && (
-                <div className={styles.costBox}>
-                  <span>Hired Daily Rate</span>
-                  <strong className={styles.textDanger}>₹ {asset.rentalRatePerDay.toLocaleString()} / Day</strong>
-                  <span className={styles.subText}>Vendor: {asset.rentalVendor}</span>
+                <div className={styles.timelineMeta}>
+                  <span>Contact: <strong>{asset.operatorPhone}</strong></span>
+                  <span>Project Assignment: <strong>{asset.currentProject}</strong></span>
+                  <span>Safety Status: <strong>Verified & Inducted</strong></span>
                 </div>
-              )}
-              <div className={styles.costBox}>
-                <span>Cumulative Fuel Expense</span>
-                <strong>₹ {(asset.totalFuelCost || 0).toLocaleString()}</strong>
-                <span className={styles.subText}>Recorded fuel entries</span>
-              </div>
-              <div className={styles.costBox}>
-                <span>Cumulative Maintenance Expense</span>
-                <strong>₹ {(asset.totalMaintenanceCost || 0).toLocaleString()}</strong>
-                <span className={styles.subText}>Work orders and overhauls</span>
-              </div>
-              <div className={styles.costBox}>
-                <span>Total Recorded Operating Cost</span>
-                <strong className={styles.textEmeraldBig}>
-                  ₹ {((asset.totalFuelCost || 0) + (asset.totalMaintenanceCost || 0)).toLocaleString()}
-                </strong>
-                <span className={styles.subText}>Lifetime direct field cost</span>
               </div>
             </div>
           </div>
