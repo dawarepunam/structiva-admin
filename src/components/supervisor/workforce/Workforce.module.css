@@ -1,0 +1,541 @@
+/* ─────────────────────────────────────────────────────────────
+   STRUCTIVA SUPERVISOR WORKFORCE — LUXURY INDUSTRIAL LIGHT THEME
+   Palette:
+   - Midnight Graphite: #172B32
+   - Deep Forest Teal: #203A3B
+   - Premium Emerald: #167C72
+   - Warm Ivory: #F4F2EC
+   - Soft Stone: #ECEBE5
+   - Porcelain White: #FFFFFF
+   - Champagne Bronze: #B58B59
+   - Muted Sage: #A8B9AA
+   ───────────────────────────────────────────────────────────── */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  width: 100%;
+}
+
+/* Header Banner */
+.headerBanner {
+  background: linear-gradient(135deg, #172B32 0%, #203A3B 100%);
+  color: #FFFFFF;
+  padding: 1.35rem 1.75rem;
+  border-radius: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 16px rgba(23, 43, 50, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  flex-wrap: wrap;
+  gap: 1.25rem;
+}
+
+.titleArea h1 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  margin: 0;
+  color: #FFFFFF;
+  line-height: 1.2;
+}
+
+.titleArea p {
+  margin: 0.25rem 0 0 0;
+  font-size: 0.82rem;
+  color: #ECEBE5;
+}
+
+.headerMeta {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.badge {
+  background: rgba(181, 139, 89, 0.22);
+  color: #F4F2EC;
+  border: 1px solid rgba(181, 139, 89, 0.4);
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 4px;
+  letter-spacing: 0.04em;
+}
+
+.refreshBtn {
+  background: #167C72;
+  color: #FFFFFF;
+  border: none;
+  padding: 0.5rem 0.95rem;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.refreshBtn:hover:not(:disabled) {
+  background: #136961;
+}
+
+.refreshBtn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  100% { transform: rotate(360deg); }
+}
+
+/* ─────────────────────────────────────────────────────────
+   WORKFORCE OVERVIEW CARDS
+   ───────────────────────────────────────────────────────── */
+.overviewGrid {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 0.75rem;
+}
+
+.overviewCard {
+  background: #FFFFFF;
+  border: 1px solid #ECEBE5;
+  border-radius: 8px;
+  padding: 0.85rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 1px 3px rgba(23, 43, 50, 0.03);
+}
+
+.overviewLabel {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: #8C9990;
+  text-transform: uppercase;
+  margin-bottom: 0.35rem;
+  display: block;
+}
+
+.overviewValue {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #172B32;
+  line-height: 1.1;
+  display: block;
+}
+
+.overviewTag {
+  font-size: 0.68rem;
+  font-weight: 600;
+  margin-top: 0.25rem;
+  display: block;
+}
+
+.tagGreen { color: #10B981; }
+.tagTeal { color: #167C72; }
+.tagAmber { color: #D97706; }
+.tagRed { color: #EF4444; }
+
+/* ─────────────────────────────────────────────────────────
+   CONTROLS & FILTER STRIP
+   ───────────────────────────────────────────────────────── */
+.controlsStrip {
+  background: #FFFFFF;
+  border: 1px solid #ECEBE5;
+  border-radius: 8px;
+  padding: 0.75rem 1.15rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 1px 3px rgba(23, 43, 50, 0.03);
+  gap: 0.85rem;
+  flex-wrap: wrap;
+}
+
+.searchBox {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #F4F2EC;
+  border: 1px solid #ECEBE5;
+  border-radius: 6px;
+  padding: 0.45rem 0.75rem;
+  flex: 1;
+  max-width: 320px;
+  min-width: 180px;
+}
+
+.searchIcon {
+  color: #8C9990;
+}
+
+.searchInput {
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: 0.82rem;
+  color: #172B32;
+  width: 100%;
+}
+
+.filterGroup {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  flex-wrap: wrap;
+}
+
+.filterSelect {
+  background: #F4F2EC;
+  border: 1px solid #ECEBE5;
+  border-radius: 6px;
+  padding: 0.45rem 0.65rem;
+  font-size: 0.78rem;
+  color: #172B32;
+  font-weight: 600;
+  outline: none;
+  cursor: pointer;
+}
+
+.clearBtn {
+  background: transparent;
+  border: 1px dashed #CBD5E1;
+  border-radius: 6px;
+  padding: 0.45rem 0.65rem;
+  font-size: 0.75rem;
+  color: #64748B;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  transition: all 0.2s;
+}
+
+.clearBtn:hover {
+  border-color: #EF4444;
+  color: #EF4444;
+}
+
+/* ─────────────────────────────────────────────────────────
+   DATA TABLE
+   ───────────────────────────────────────────────────────── */
+.tableCard {
+  background: #FFFFFF;
+  border: 1px solid #ECEBE5;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(23, 43, 50, 0.03);
+  overflow: hidden;
+}
+
+.tableWrapper {
+  overflow-x: auto;
+}
+
+.dataTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+}
+
+.dataTable th {
+  text-align: left;
+  padding: 0.65rem 0.85rem;
+  background: #F4F2EC;
+  color: #203A3B;
+  font-size: 0.72rem;
+  font-weight: 700;
+  border-bottom: 1px solid #ECEBE5;
+  white-space: nowrap;
+}
+
+.dataTable td {
+  padding: 0.75rem 0.85rem;
+  border-bottom: 1px solid #ECEBE5;
+  color: #172B32;
+}
+
+.dataTable tbody tr:hover {
+  background: #FAF9F6;
+}
+
+.workerCell {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.avatarCircle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #167C72;
+  color: #FFFFFF;
+  font-size: 0.75rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.workerName {
+  font-weight: 700;
+  color: #172B32;
+  display: block;
+}
+
+.workerCode {
+  font-size: 0.7rem;
+  color: #8C9990;
+  font-family: monospace;
+}
+
+.categoryTag {
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 4px;
+}
+
+.catSkilled { background: rgba(22, 124, 114, 0.12); color: #167C72; }
+.catSemi { background: rgba(181, 139, 89, 0.15); color: #B58B59; }
+.catUnskilled { background: rgba(100, 116, 139, 0.12); color: #475569; }
+
+.statusPresent {
+  background: rgba(16, 185, 129, 0.12);
+  color: #10B981;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.statusAbsent {
+  background: rgba(239, 68, 68, 0.1);
+  color: #EF4444;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 4px;
+}
+
+.viewBtn {
+  background: #F4F2EC;
+  border: 1px solid #ECEBE5;
+  color: #167C72;
+  padding: 0.35rem 0.65rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  transition: all 0.2s;
+}
+
+.viewBtn:hover {
+  background: #167C72;
+  color: #FFFFFF;
+  border-color: #167C72;
+}
+
+/* ─────────────────────────────────────────────────────────
+   PROFILE DRAWER (MODAL SIDE PANEL)
+   ───────────────────────────────────────────────────────── */
+.drawerOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(23, 43, 50, 0.5);
+  backdrop-filter: blur(2px);
+  z-index: 1000;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.drawerContent {
+  width: 440px;
+  max-width: 100%;
+  height: 100%;
+  background: #FFFFFF;
+  box-shadow: -4px 0 24px rgba(23, 43, 50, 0.15);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  animation: slideIn 0.25s ease-out;
+}
+
+@keyframes slideIn {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+.drawerHeader {
+  background: linear-gradient(135deg, #172B32 0%, #203A3B 100%);
+  color: #FFFFFF;
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.drawerCloseBtn {
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: #FFFFFF;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.drawerCloseBtn:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.drawerBody {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.drawerSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.drawerSectionTitle {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #8C9990;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid #ECEBE5;
+  padding-bottom: 0.35rem;
+  margin: 0;
+}
+
+.drawerFieldRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  border-bottom: 1px dashed #F4F2EC;
+  padding-bottom: 0.35rem;
+}
+
+.drawerFieldLabel {
+  color: #64748B;
+}
+
+.drawerFieldValue {
+  color: #172B32;
+  font-weight: 600;
+  text-align: right;
+}
+
+.transferRequestBtn {
+  background: #167C72;
+  color: #FFFFFF;
+  border: none;
+  padding: 0.65rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  cursor: pointer;
+  margin-top: 0.5rem;
+  transition: background 0.2s;
+}
+
+.transferRequestBtn:hover {
+  background: #136961;
+}
+
+/* Empty States */
+.stateBox {
+  background: #FFFFFF;
+  border: 1px dashed #CBD5E1;
+  border-radius: 8px;
+  padding: 3rem 1.5rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+}
+
+.stateIcon {
+  color: #8C9990;
+}
+
+.stateTitle {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #172B32;
+  margin: 0;
+}
+
+.stateText {
+  font-size: 0.82rem;
+  color: #64748B;
+  max-width: 440px;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .overviewGrid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .overviewGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .headerBanner {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1.15rem;
+  }
+
+  .controlsStrip {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .searchBox {
+    max-width: 100%;
+  }
+
+  .drawerContent {
+    width: 100%;
+  }
+}
