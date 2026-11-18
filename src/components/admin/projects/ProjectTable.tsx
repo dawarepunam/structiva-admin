@@ -22,7 +22,12 @@ import {
   Filter,
   ArrowUpDown,
   LayoutGrid,
-  List
+  List,
+  Layers,
+  Activity,
+  CheckCircle2,
+  Clock,
+  RotateCcw
 } from 'lucide-react';
 import SafeImage from '@/components/admin/ui/SafeImage';
 import { EnterpriseProjectRecord, getStoredProjects, saveProjects } from '@/services/projectStorage';
@@ -37,6 +42,7 @@ export default function ProjectTable() {
   const [categoryFilter, setCategoryFilter] = useState('All');
   const [sortBy, setSortBy] = useState<'progress' | 'budget' | 'date'>('progress');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [showMobileFilterSheet, setShowMobileFilterSheet] = useState(false);
   
   // Modal states for Create / Edit
   const [showAddModal, setShowAddModal] = useState(false);
@@ -242,8 +248,96 @@ export default function ProjectTable() {
     return new Date(b.startDate).getTime() - new Date(a.startDate).getTime();
   });
 
+  // Genuine Statistics from Real Projects Data
+  const totalProjectsCount = projects.length;
+  const activeProjectsCount = projects.filter(p => p.status === 'Active').length;
+  const underReviewCount = projects.filter(p => p.status === 'Under Review').length;
+  const completedCount = projects.filter(p => p.status === 'Completed').length;
+  const totalBudgetCr = (projects.reduce((acc, p) => acc + (p.budget || 0), 0) / 10000000).toFixed(1);
+  const avgProgress = projects.length > 0 ? Math.round(projects.reduce((acc, p) => acc + (p.progress || 0), 0) / projects.length) : 0;
+  const activeFiltersCount = (statusFilter !== 'All' ? 1 : 0) + (categoryFilter !== 'All' ? 1 : 0) + (search ? 1 : 0);
+
   return (
     <div className={styles.container}>
+      {/* Mobile-First Project Summary KPIs (Real Project Statistics) */}
+      <div className={styles.summaryGrid}>
+        <div 
+          className={`${styles.summaryCard} ${statusFilter === 'All' ? styles.summaryCardActive : ''}`}
+          onClick={() => setStatusFilter('All')}
+          role="button"
+          tabIndex={0}
+        >
+          <div className={styles.summaryCardHeader}>
+            <span className={styles.summaryLabel}>Total Sites</span>
+            <div className={`${styles.summaryIconBox} ${styles.iconTeal}`}>
+              <Layers size={16} />
+            </div>
+          </div>
+          <div className={styles.summaryValueRow}>
+            <span className={styles.summaryValue}>{totalProjectsCount}</span>
+            <span className={styles.summaryBadge}>₹ {totalBudgetCr} Cr</span>
+          </div>
+          <span className={styles.summarySub}>All infrastructure contracts</span>
+        </div>
+
+        <div 
+          className={`${styles.summaryCard} ${statusFilter === 'Active' ? styles.summaryCardActive : ''}`}
+          onClick={() => setStatusFilter(statusFilter === 'Active' ? 'All' : 'Active')}
+          role="button"
+          tabIndex={0}
+        >
+          <div className={styles.summaryCardHeader}>
+            <span className={styles.summaryLabel}>Active Execution</span>
+            <div className={`${styles.summaryIconBox} ${styles.iconEmerald}`}>
+              <Activity size={16} />
+            </div>
+          </div>
+          <div className={styles.summaryValueRow}>
+            <span className={styles.summaryValue}>{activeProjectsCount}</span>
+            <span className={styles.summaryBadgeEmerald}>Avg {avgProgress}%</span>
+          </div>
+          <span className={styles.summarySub}>On-ground construction live</span>
+        </div>
+
+        <div 
+          className={`${styles.summaryCard} ${statusFilter === 'Under Review' ? styles.summaryCardActive : ''}`}
+          onClick={() => setStatusFilter(statusFilter === 'Under Review' ? 'All' : 'Under Review')}
+          role="button"
+          tabIndex={0}
+        >
+          <div className={styles.summaryCardHeader}>
+            <span className={styles.summaryLabel}>Under Review</span>
+            <div className={`${styles.summaryIconBox} ${styles.iconBronze}`}>
+              <Clock size={16} />
+            </div>
+          </div>
+          <div className={styles.summaryValueRow}>
+            <span className={styles.summaryValue}>{underReviewCount}</span>
+            <span className={styles.summaryBadgeBronze}>Tender / QA</span>
+          </div>
+          <span className={styles.summarySub}>Contract & technical audits</span>
+        </div>
+
+        <div 
+          className={`${styles.summaryCard} ${statusFilter === 'Completed' ? styles.summaryCardActive : ''}`}
+          onClick={() => setStatusFilter(statusFilter === 'Completed' ? 'All' : 'Completed')}
+          role="button"
+          tabIndex={0}
+        >
+          <div className={styles.summaryCardHeader}>
+            <span className={styles.summaryLabel}>Delivered</span>
+            <div className={`${styles.summaryIconBox} ${styles.iconSuccess}`}>
+              <CheckCircle2 size={16} />
+            </div>
+          </div>
+          <div className={styles.summaryValueRow}>
+            <span className={styles.summaryValue}>{completedCount}</span>
+            <span className={styles.summaryBadgeSuccess}>Handed Over</span>
+          </div>
+          <span className={styles.summarySub}>Commissioned & certified</span>
+        </div>
+      </div>
+
       {/* Top Controls Bar */}
       <div className={styles.topBar}>
         <div className={styles.searchAndFilters}>
@@ -257,36 +351,73 @@ export default function ProjectTable() {
               onChange={e => setSearch(e.target.value)}
               className={styles.searchInput}
             />
+            {search && (
+              <button 
+                onClick={() => setSearch('')} 
+                className={styles.searchClearBtn}
+                title="Clear search"
+              >
+                <X size={14} />
+              </button>
+            )}
           </div>
 
-          {/* Status Filter */}
-          <div className={styles.filterPill}>
-            <Filter size={14} className={styles.filterIcon} />
-            <select 
-              value={statusFilter} 
-              onChange={e => setStatusFilter(e.target.value)}
-              className={styles.filterSelect}
-            >
-              <option value="All">All Statuses</option>
-              <option value="Active">Active</option>
-              <option value="Under Review">Under Review</option>
-              <option value="Completed">Completed</option>
-            </select>
+          {/* Desktop Filter Pills */}
+          <div className={styles.desktopFilterGroup}>
+            <div className={styles.filterPill}>
+              <Filter size={14} className={styles.filterIcon} />
+              <select 
+                value={statusFilter} 
+                onChange={e => setStatusFilter(e.target.value)}
+                className={styles.filterSelect}
+              >
+                <option value="All">All Statuses</option>
+                <option value="Active">Active</option>
+                <option value="Under Review">Under Review</option>
+                <option value="Completed">Completed</option>
+              </select>
+            </div>
+
+            <div className={styles.filterPill}>
+              <Building2 size={14} className={styles.filterIcon} />
+              <select 
+                value={categoryFilter} 
+                onChange={e => setCategoryFilter(e.target.value)}
+                className={styles.filterSelect}
+              >
+                <option value="All">All Categories</option>
+                <option value="Commercial Building">Commercial Building</option>
+                <option value="Highway Infrastructure">Highway Infrastructure</option>
+                <option value="Metro Rail transit">Metro Rail transit</option>
+                <option value="Industrial Plant">Industrial Plant</option>
+              </select>
+            </div>
+
+            <div className={styles.filterPill}>
+              <ArrowUpDown size={14} className={styles.filterIcon} />
+              <select 
+                value={sortBy} 
+                onChange={e => setSortBy(e.target.value as any)}
+                className={styles.filterSelect}
+              >
+                <option value="progress">Sort by Progress</option>
+                <option value="budget">Sort by Budget</option>
+                <option value="date">Sort by Date</option>
+              </select>
+            </div>
           </div>
 
-          {/* Sort Selector */}
-          <div className={styles.filterPill}>
-            <ArrowUpDown size={14} className={styles.filterIcon} />
-            <select 
-              value={sortBy} 
-              onChange={e => setSortBy(e.target.value as any)}
-              className={styles.filterSelect}
-            >
-              <option value="progress">Sort by Progress</option>
-              <option value="budget">Sort by Budget</option>
-              <option value="date">Sort by Date</option>
-            </select>
-          </div>
+          {/* Mobile Filter Trigger Button */}
+          <button 
+            className={`${styles.mobileFilterTriggerBtn} ${activeFiltersCount > 0 ? styles.mobileFilterTriggerActive : ''}`}
+            onClick={() => setShowMobileFilterSheet(true)}
+          >
+            <Filter size={15} />
+            <span>Filters</span>
+            {activeFiltersCount > 0 && (
+              <span className={styles.activeFilterCountBadge}>{activeFiltersCount}</span>
+            )}
+          </button>
         </div>
 
         {/* View Toggle & New Project CTA */}
@@ -314,6 +445,66 @@ export default function ProjectTable() {
           </button>
         </div>
       </div>
+
+      {/* Active Filter Chips Bar (Shown when filtered) */}
+      {(statusFilter !== 'All' || categoryFilter !== 'All' || search) && (
+        <div className={styles.activeFiltersRow}>
+          <span className={styles.filterResultsCount}>Showing {filtered.length} of {projects.length} sites:</span>
+          {statusFilter !== 'All' && (
+            <span className={styles.filterChip}>
+              Status: {statusFilter}
+              <button onClick={() => setStatusFilter('All')}><X size={12} /></button>
+            </span>
+          )}
+          {categoryFilter !== 'All' && (
+            <span className={styles.filterChip}>
+              Category: {categoryFilter}
+              <button onClick={() => setCategoryFilter('All')}><X size={12} /></button>
+            </span>
+          )}
+          {search && (
+            <span className={styles.filterChip}>
+              Query: "{search}"
+              <button onClick={() => setSearch('')}><X size={12} /></button>
+            </span>
+          )}
+          <button 
+            onClick={() => { setStatusFilter('All'); setCategoryFilter('All'); setSearch(''); }}
+            className={styles.clearAllFiltersBtn}
+          >
+            <RotateCcw size={12} />
+            <span>Reset All</span>
+          </button>
+        </div>
+      )}
+
+      {/* Empty State when 0 filtered results */}
+      {filtered.length === 0 && (
+        <div className={styles.emptyStateBox}>
+          <div className={styles.emptyIconCircle}>
+            <Building2 size={32} />
+          </div>
+          <h3 className={styles.emptyTitle}>No Projects Found</h3>
+          <p className={styles.emptySubtitle}>
+            {search || statusFilter !== 'All' || categoryFilter !== 'All'
+              ? 'No projects match your current filters or search query.'
+              : 'No projects registered in the enterprise system yet.'}
+          </p>
+          {(search || statusFilter !== 'All' || categoryFilter !== 'All') ? (
+            <button 
+              onClick={() => { setStatusFilter('All'); setCategoryFilter('All'); setSearch(''); }}
+              className={styles.emptyResetBtn}
+            >
+              Clear All Filters
+            </button>
+          ) : (
+            <button onClick={openCreateModal} className={styles.emptyCreateBtn}>
+              <Plus size={15} />
+              <span>Create First Project</span>
+            </button>
+          )}
+        </div>
+      )}
 
       {/* Projects Grid / List View */}
       {viewMode === 'grid' ? (
@@ -657,6 +848,111 @@ export default function ProjectTable() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Mobile Filters Bottom Sheet */}
+      {showMobileFilterSheet && (
+        <div className={styles.bottomSheetBackdrop} onClick={() => setShowMobileFilterSheet(false)}>
+          <div className={styles.bottomSheetPanel} onClick={e => e.stopPropagation()}>
+            <div className={styles.bottomSheetHandle} />
+            <div className={styles.bottomSheetHeader}>
+              <div className={styles.bottomSheetTitleRow}>
+                <Filter size={18} className={styles.filterIcon} />
+                <h3>Filter Projects</h3>
+              </div>
+              <button 
+                onClick={() => setShowMobileFilterSheet(false)} 
+                className={styles.bottomSheetCloseBtn}
+                aria-label="Close filters"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            <div className={styles.bottomSheetContent}>
+              <div className={styles.bottomSheetSection}>
+                <label className={styles.bottomSheetLabel}>Project Status</label>
+                <div className={styles.filterChipsGrid}>
+                  {['All', 'Active', 'Under Review', 'Completed'].map(st => (
+                    <button
+                      key={st}
+                      type="button"
+                      className={`${styles.filterSelectChip} ${statusFilter === st ? styles.filterSelectChipActive : ''}`}
+                      onClick={() => setStatusFilter(st)}
+                    >
+                      {st === 'All' ? 'All Statuses' : st}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className={styles.bottomSheetSection}>
+                <label className={styles.bottomSheetLabel}>Project Category</label>
+                <div className={styles.filterChipsGrid}>
+                  {['All', 'Commercial Building', 'Highway Infrastructure', 'Metro Rail transit', 'Industrial Plant'].map(cat => (
+                    <button
+                      key={cat}
+                      type="button"
+                      className={`${styles.filterSelectChip} ${categoryFilter === cat ? styles.filterSelectChipActive : ''}`}
+                      onClick={() => setCategoryFilter(cat)}
+                    >
+                      {cat === 'All' ? 'All Categories' : cat}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className={styles.bottomSheetSection}>
+                <label className={styles.bottomSheetLabel}>Sort By</label>
+                <div className={styles.filterChipsGrid}>
+                  <button
+                    type="button"
+                    className={`${styles.filterSelectChip} ${sortBy === 'progress' ? styles.filterSelectChipActive : ''}`}
+                    onClick={() => setSortBy('progress')}
+                  >
+                    Progress (High to Low)
+                  </button>
+                  <button
+                    type="button"
+                    className={`${styles.filterSelectChip} ${sortBy === 'budget' ? styles.filterSelectChipActive : ''}`}
+                    onClick={() => setSortBy('budget')}
+                  >
+                    Budget (High to Low)
+                  </button>
+                  <button
+                    type="button"
+                    className={`${styles.filterSelectChip} ${sortBy === 'date' ? styles.filterSelectChipActive : ''}`}
+                    onClick={() => setSortBy('date')}
+                  >
+                    Start Date (Recent)
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div className={styles.bottomSheetFooter}>
+              <button 
+                type="button"
+                className={styles.bottomSheetResetBtn}
+                onClick={() => {
+                  setStatusFilter('All');
+                  setCategoryFilter('All');
+                  setSortBy('progress');
+                  setShowMobileFilterSheet(false);
+                }}
+              >
+                Reset All
+              </button>
+              <button 
+                type="button"
+                className={styles.bottomSheetApplyBtn}
+                onClick={() => setShowMobileFilterSheet(false)}
+              >
+                Apply Filters ({filtered.length} Results)
+              </button>
+            </div>
           </div>
         </div>
       )}
