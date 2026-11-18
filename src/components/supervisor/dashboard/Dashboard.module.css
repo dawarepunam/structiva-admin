@@ -17,20 +17,21 @@
   gap: 1.25rem;
   width: 100%;
   max-width: 100%;
+  color: #172B32;
 }
 
 /* ─────────────────────────────────────────────────────────
-   SECTIONS 1 & 2: Welcome Header & Shift Telemetry Hub
+   WELCOME HEADER & OPERATIONAL PROFILE
    ───────────────────────────────────────────────────────── */
 .welcomeBanner {
   background: linear-gradient(135deg, #172B32 0%, #203A3B 100%);
   color: #FFFFFF;
-  padding: 1.25rem 1.75rem;
-  border-radius: 12px;
+  padding: 1.35rem 1.75rem;
+  border-radius: 10px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 4px 16px rgba(23, 43, 50, 0.12);
+  box-shadow: 0 4px 16px rgba(23, 43, 50, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.08);
   flex-wrap: wrap;
   gap: 1.25rem;
@@ -39,38 +40,40 @@
 .profileMeta {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 1.1rem;
 }
 
 .avatarBadge {
-  width: 48px;
-  height: 48px;
+  width: 50px;
+  height: 50px;
   border-radius: 10px;
   background: #167C72;
   color: #FFFFFF;
-  font-size: 1.15rem;
+  font-size: 1.2rem;
   font-weight: 700;
   display: flex;
   align-items: center;
   justify-content: center;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-  border: 2px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  flex-shrink: 0;
 }
 
 .badgeRow {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
+  gap: 0.65rem;
   margin-bottom: 0.25rem;
+  flex-wrap: wrap;
 }
 
 .roleTag {
-  background: rgba(181, 139, 89, 0.25);
+  background: rgba(181, 139, 89, 0.22);
   color: #F4F2EC;
   border: 1px solid rgba(181, 139, 89, 0.4);
   font-size: 0.68rem;
   font-weight: 700;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.04em;
   padding: 2px 8px;
   border-radius: 4px;
 }
@@ -83,12 +86,27 @@
   color: #A8B9AA;
 }
 
+.statusPillOffline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.72rem;
+  color: #FCD34D;
+}
+
 .greenDot {
   width: 7px;
   height: 7px;
   border-radius: 50%;
   background: #10B981;
   box-shadow: 0 0 6px #10B981;
+}
+
+.amberDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #F59E0B;
 }
 
 .greetingTitle {
@@ -100,7 +118,7 @@
 }
 
 .subSubtitle {
-  margin: 0.2rem 0 0 0;
+  margin: 0.25rem 0 0 0;
   font-size: 0.82rem;
   color: #ECEBE5;
 }
@@ -111,21 +129,22 @@
   font-family: monospace;
 }
 
-/* Section 2: Shift Telemetry */
+/* Operational Telemetry Hub */
 .shiftTelemetryHub {
   display: flex;
   align-items: center;
   gap: 1.25rem;
   background: rgba(255, 255, 255, 0.06);
-  padding: 0.6rem 1rem;
+  padding: 0.65rem 1.15rem;
   border-radius: 8px;
   border: 1px solid rgba(255, 255, 255, 0.1);
+  flex-wrap: wrap;
 }
 
 .telemetryItem {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.55rem;
 }
 
 .telemetryIcon {
@@ -138,6 +157,7 @@
   color: #A8B9AA;
   text-transform: uppercase;
   letter-spacing: 0.04em;
+  font-weight: 600;
 }
 
 .telemetryValue {
@@ -147,23 +167,33 @@
   font-weight: 600;
 }
 
+.telemetryAction {
+  display: flex;
+  align-items: center;
+}
+
 .syncBtn {
   background: #167C72;
   color: #FFFFFF;
   border: none;
   padding: 0.5rem 0.9rem;
   border-radius: 6px;
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   font-weight: 600;
   display: inline-flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: 0.45rem;
   cursor: pointer;
   transition: background 0.2s;
 }
 
-.syncBtn:hover {
+.syncBtn:hover:not(:disabled) {
   background: #136961;
+}
+
+.syncBtn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
 }
 
 .spin {
@@ -175,24 +205,24 @@
 }
 
 /* ─────────────────────────────────────────────────────────
-   SECTION 3: Assigned Project & Site Selector Strip
+   ASSIGNED PROJECT & SITE CONTEXT SELECTOR
    ───────────────────────────────────────────────────────── */
 .siteSelectorStrip {
   background: #FFFFFF;
   border: 1px solid #ECEBE5;
-  border-radius: 10px;
-  padding: 0.65rem 1.25rem;
+  border-radius: 8px;
+  padding: 0.65rem 1.15rem;
   display: flex;
   align-items: center;
   gap: 1rem;
-  box-shadow: 0 1px 3px rgba(23, 43, 50, 0.04);
+  box-shadow: 0 1px 3px rgba(23, 43, 50, 0.03);
   flex-wrap: wrap;
 }
 
 .selectorLabel {
   display: flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: 0.45rem;
   font-size: 0.82rem;
   font-weight: 700;
   color: #172B32;
@@ -201,17 +231,17 @@
 .sitePills {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
+  gap: 0.55rem;
   flex-wrap: wrap;
 }
 
 .sitePill {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.4rem 0.85rem;
+  gap: 0.45rem;
+  padding: 0.38rem 0.85rem;
   border-radius: 20px;
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   background: #F4F2EC;
   border: 1px solid #ECEBE5;
   color: #203A3B;
@@ -237,24 +267,17 @@
   background: #167C72;
 }
 
-.pillDotInactive {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: #A8B9AA;
-}
-
 .activeTag {
   background: #167C72;
   color: #FFFFFF;
   font-size: 0.65rem;
   padding: 1px 6px;
   border-radius: 10px;
-  margin-left: 0.3rem;
+  margin-left: 0.25rem;
 }
 
 /* ─────────────────────────────────────────────────────────
-   SECTION 4: Operational KPI Cards (Tier 1 & Tier 2)
+   OPERATIONAL KPI CARDS
    ───────────────────────────────────────────────────────── */
 .kpiContainer {
   display: flex;
@@ -271,19 +294,19 @@
 .kpiCard {
   background: #FFFFFF;
   border: 1px solid #ECEBE5;
-  border-radius: 10px;
+  border-radius: 8px;
   padding: 0.9rem;
   text-decoration: none;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  box-shadow: 0 1px 3px rgba(23, 43, 50, 0.04);
+  box-shadow: 0 1px 3px rgba(23, 43, 50, 0.03);
   transition: all 0.2s ease;
 }
 
 .kpiCard:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(23, 43, 50, 0.08);
+  box-shadow: 0 4px 12px rgba(23, 43, 50, 0.07);
   border-color: #167C72;
 }
 
@@ -291,14 +314,14 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.45rem;
 }
 
 .kpiTitle {
   font-size: 0.75rem;
   font-weight: 600;
   color: #203A3B;
-  line-height: 1.2;
+  line-height: 1.25;
 }
 
 .kpiIconWrapper {
@@ -308,6 +331,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 .tealIcon { background: rgba(22, 124, 114, 0.1); color: #167C72; }
@@ -316,7 +340,7 @@
 .bronzeIcon { background: rgba(181, 139, 89, 0.15); color: #B58B59; }
 
 .kpiBody {
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.45rem;
 }
 
 .kpiNumber {
@@ -328,7 +352,7 @@
 }
 
 .kpiUnit {
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   font-weight: 600;
   color: #8C9990;
 }
@@ -358,12 +382,12 @@
 .trendNeutral { color: #203A3B; }
 .trendPending { color: #D97706; }
 
-/* Tier 2: Secondary 6 Strip */
+/* Secondary KPI Strip */
 .secondaryKpiStrip {
   background: #F4F2EC;
   border: 1px solid #ECEBE5;
   border-radius: 8px;
-  padding: 0.5rem 0.85rem;
+  padding: 0.55rem 0.95rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -393,7 +417,7 @@
 .alertAmber { color: #D97706; }
 
 /* ─────────────────────────────────────────────────────────
-   2-COLUMN OPERATIONAL LAYOUT (65% / 35%)
+   TWO-COLUMN OPERATIONAL SPLIT (65% / 35%)
    ───────────────────────────────────────────────────────── */
 .mainOperationalSplit {
   display: grid;
@@ -414,13 +438,13 @@
   gap: 1.25rem;
 }
 
-/* Generic Content Block */
+/* Reusable Content Block */
 .contentBlock {
   background: #FFFFFF;
   border: 1px solid #ECEBE5;
-  border-radius: 10px;
+  border-radius: 8px;
   padding: 1.15rem;
-  box-shadow: 0 1px 3px rgba(23, 43, 50, 0.04);
+  box-shadow: 0 1px 3px rgba(23, 43, 50, 0.03);
 }
 
 .blockHeader {
@@ -439,10 +463,11 @@
 }
 
 .blockTitle h3 {
-  font-size: 0.95rem;
+  font-size: 0.92rem;
   font-weight: 700;
   color: #172B32;
   margin: 0;
+  letter-spacing: -0.01em;
 }
 
 .headerIcon {
@@ -460,7 +485,7 @@
   text-decoration: underline;
 }
 
-.shiftTag {
+.tagPill {
   background: rgba(22, 124, 114, 0.1);
   color: #167C72;
   font-size: 0.7rem;
@@ -470,7 +495,7 @@
 }
 
 /* ─────────────────────────────────────────────────────────
-   SECTION 5: My Assigned Projects and Sites Detailed Card
+   ASSIGNED PROJECTS & SITE SPECIFICATIONS
    ───────────────────────────────────────────────────────── */
 .projectDetailedCard {
   display: flex;
@@ -482,6 +507,7 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
+  gap: 1rem;
 }
 
 .projectCodeBadge {
@@ -509,13 +535,15 @@
 
 .projectProgressDial {
   text-align: right;
+  flex-shrink: 0;
 }
 
 .dialPercent {
-  font-size: 1.4rem;
+  font-size: 1.45rem;
   font-weight: 800;
   color: #167C72;
   display: block;
+  line-height: 1.1;
 }
 
 .dialLabel {
@@ -525,7 +553,7 @@
 
 .progressBarWrapper {
   width: 100%;
-  height: 7px;
+  height: 6px;
   background: #ECEBE5;
   border-radius: 4px;
   overflow: hidden;
@@ -559,7 +587,7 @@
 }
 
 /* ─────────────────────────────────────────────────────────
-   SECTION 6: Operations Table
+   OPERATIONS TABLES & LISTINGS
    ───────────────────────────────────────────────────────── */
 .operationsTableWrapper {
   overflow-x: auto;
@@ -573,7 +601,7 @@
 
 .operationsTable th {
   text-align: left;
-  padding: 0.5rem 0.6rem;
+  padding: 0.5rem 0.65rem;
   background: #F4F2EC;
   color: #203A3B;
   font-size: 0.72rem;
@@ -582,7 +610,7 @@
 }
 
 .operationsTable td {
-  padding: 0.65rem 0.6rem;
+  padding: 0.65rem 0.65rem;
   border-bottom: 1px solid #ECEBE5;
   color: #172B32;
 }
@@ -591,19 +619,6 @@
   font-size: 0.7rem;
   color: #8C9990;
   margin-top: 0.15rem;
-}
-
-.miniBar {
-  width: 70px;
-  height: 6px;
-  background: #ECEBE5;
-  border-radius: 3px;
-  overflow: hidden;
-}
-
-.miniBarFill {
-  height: 100%;
-  background: #167C72;
 }
 
 .statusSuccess {
@@ -625,7 +640,7 @@
 }
 
 /* ─────────────────────────────────────────────────────────
-   SECTION 7: Workforce & Attendance Intelligence
+   WORKFORCE & ATTENDANCE INTELLIGENCE
    ───────────────────────────────────────────────────────── */
 .workforceGrid {
   display: grid;
@@ -703,7 +718,7 @@
 }
 
 /* ─────────────────────────────────────────────────────────
-   SECTION 8: Machinery Utilization & Bowser Fuel Table
+   MACHINERY & FUEL TELEMETRY
    ───────────────────────────────────────────────────────── */
 .equipmentTableWrapper {
   overflow-x: auto;
@@ -717,7 +732,7 @@
 
 .equipmentTable th {
   text-align: left;
-  padding: 0.5rem 0.6rem;
+  padding: 0.5rem 0.65rem;
   background: #F4F2EC;
   color: #203A3B;
   font-size: 0.72rem;
@@ -726,7 +741,7 @@
 }
 
 .equipmentTable td {
-  padding: 0.65rem 0.6rem;
+  padding: 0.65rem 0.65rem;
   border-bottom: 1px solid #ECEBE5;
   color: #172B32;
 }
@@ -744,99 +759,50 @@
 }
 
 /* ─────────────────────────────────────────────────────────
-   SECTION 9: Tomorrow's Work Readiness
+   STANDARDIZED EMPTY & UNAVAILABLE STATES
    ───────────────────────────────────────────────────────── */
-.readinessGrid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 0.75rem;
-}
-
-.readinessCard {
-  background: #F4F2EC;
-  border: 1px solid #ECEBE5;
-  border-radius: 8px;
-  padding: 0.75rem;
-}
-
-.readinessHead {
+.emptyStateBlock {
   display: flex;
+  flex-direction: column;
   align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 1.75rem 1rem;
+  background: #F4F2EC;
+  border: 1px dashed #CBD5E1;
+  border-radius: 8px;
+  color: #64748B;
   gap: 0.4rem;
-  margin-bottom: 0.4rem;
-  font-size: 0.8rem;
-  color: #172B32;
 }
 
-.checkGreen {
-  color: #10B981;
+.emptyStateTitle {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #203A3B;
 }
 
-.readinessCard p {
-  margin: 0;
+.emptyStateText {
   font-size: 0.72rem;
-  color: #4A5568;
+  color: #64748B;
+  max-width: 320px;
+  margin: 0;
   line-height: 1.35;
 }
 
-/* ─────────────────────────────────────────────────────────
-   SECTION 10: Construction Progress Analytics (Cycle Times)
-   ───────────────────────────────────────────────────────── */
-.cycleGrid {
-  display: flex;
-  flex-direction: column;
-  gap: 0.85rem;
-}
-
-.cycleItem {
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-}
-
-.cycleLabels {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.78rem;
-  color: #172B32;
-}
-
-.analyticsBar {
-  width: 100%;
-  height: 7px;
-  background: #ECEBE5;
-  border-radius: 4px;
-  overflow: hidden;
-}
-
-.analyticsFill {
-  height: 100%;
-  background: #167C72;
-}
-
-.fillAmber {
-  background: #F59E0B;
-}
-
-.cyclePace {
-  font-size: 0.7rem;
-  color: #10B981;
-  font-weight: 600;
-}
-
-.cyclePaceWarning {
-  font-size: 0.7rem;
-  color: #D97706;
-  font-weight: 600;
+.schemaNote {
+  font-size: 0.65rem;
+  color: #94A3B8;
+  font-style: italic;
+  margin-top: 0.25rem;
 }
 
 /* ─────────────────────────────────────────────────────────
-   SECTION 13: My Pending Actions (Alert Box)
+   PENDING ACTIONS ALERT BOX
    ───────────────────────────────────────────────────────── */
 .alertBox {
   background: #FFFBEB;
   border: 1px solid #FCD34D;
-  border-radius: 10px;
+  border-radius: 8px;
   padding: 1rem;
 }
 
@@ -849,7 +815,7 @@
 
 .alertHeader h4 {
   margin: 0;
-  font-size: 0.92rem;
+  font-size: 0.88rem;
   font-weight: 700;
   color: #92400E;
 }
@@ -860,7 +826,7 @@
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
+  gap: 0.55rem;
 }
 
 .actionListItem {
@@ -871,6 +837,7 @@
   border: 1px solid #FDE68A;
   border-radius: 6px;
   padding: 0.55rem 0.75rem;
+  gap: 0.6rem;
 }
 
 .actionMeta strong {
@@ -891,9 +858,10 @@
   text-decoration: none;
   font-size: 0.72rem;
   font-weight: 600;
-  padding: 0.3rem 0.65rem;
+  padding: 0.32rem 0.65rem;
   border-radius: 4px;
   white-space: nowrap;
+  transition: background 0.2s;
 }
 
 .miniActionBtn:hover {
@@ -901,7 +869,7 @@
 }
 
 /* ─────────────────────────────────────────────────────────
-   SECTION 14: Quick Launchpad
+   QUICK ACTIONS LAUNCHPAD
    ───────────────────────────────────────────────────────── */
 .launchpadGrid {
   display: grid;
@@ -931,20 +899,20 @@
 }
 
 /* ─────────────────────────────────────────────────────────
-   SECTION 11: Safety, Quality & EHS Site Incidents
+   INCIDENTS & SAFETY
    ───────────────────────────────────────────────────────── */
 .ehsScoreCard {
   background: #F4F2EC;
   border: 1px solid #ECEBE5;
   border-radius: 8px;
-  padding: 0.75rem;
+  padding: 0.85rem;
 }
 
 .ehsTop {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.6rem;
 }
 
 .ehsLabel {
@@ -955,7 +923,7 @@
 
 .ehsScore {
   display: block;
-  font-size: 1.1rem;
+  font-size: 1.15rem;
   font-weight: 800;
   color: #10B981;
 }
@@ -969,21 +937,24 @@
   border-radius: 4px;
 }
 
-.incidentRow {
-  padding-top: 0.5rem;
+.incidentList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding-top: 0.55rem;
   border-top: 1px solid #ECEBE5;
 }
 
 .incidentItem {
   display: flex;
   align-items: flex-start;
-  gap: 0.4rem;
+  gap: 0.45rem;
   font-size: 0.75rem;
   color: #172B32;
 }
 
 /* ─────────────────────────────────────────────────────────
-   SECTION 12: Admin Activity Timeline
+   AUDIT & ACTIVITY TIMELINE
    ───────────────────────────────────────────────────────── */
 .timelineList {
   display: flex;
@@ -994,8 +965,7 @@
 .timelineEntry {
   display: flex;
   align-items: flex-start;
-  gap: 0.6rem;
-  position: relative;
+  gap: 0.65rem;
 }
 
 .timelineDot {
@@ -1026,20 +996,21 @@
 }
 
 /* ─────────────────────────────────────────────────────────
-   SECTION 15: Offline Sync Buffer Box
+   OFFLINE BUFFER & TELEMETRY MONITOR
    ───────────────────────────────────────────────────────── */
 .offlineBufferBox {
   background: #172B32;
   color: #FFFFFF;
-  border-radius: 10px;
+  border-radius: 8px;
   padding: 0.85rem 1rem;
 }
 
 .offlineIndicatorRow {
   display: flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: 0.45rem;
   font-size: 0.82rem;
+  color: #FFFFFF;
 }
 
 .syncStatusPulse {
@@ -1050,8 +1021,15 @@
   box-shadow: 0 0 6px #10B981;
 }
 
+.syncStatusPulseOffline {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #F59E0B;
+}
+
 .offlineMeta p {
-  margin: 0.2rem 0 0.6rem 0;
+  margin: 0.25rem 0 0.6rem 0;
   font-size: 0.68rem;
   color: #A8B9AA;
 }
@@ -1081,12 +1059,17 @@
   transition: background 0.2s;
 }
 
-.compactSyncBtn:hover {
+.compactSyncBtn:hover:not(:disabled) {
   background: #136961;
 }
 
+.compactSyncBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 /* ─────────────────────────────────────────────────────────
-   RESPONSIVE MEDIA QUERIES (Windows, Mac, iPad, iPhone, Android)
+   RESPONSIVE DESIGN ACROSS ALL VIEWPORTS
    ───────────────────────────────────────────────────────── */
 @media (max-width: 1200px) {
   .primaryKpiGrid {
@@ -1121,10 +1104,6 @@
   }
 
   .workforceGrid {
-    grid-template-columns: 1fr;
-  }
-
-  .readinessGrid {
     grid-template-columns: 1fr;
   }
 }
