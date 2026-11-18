@@ -649,13 +649,15 @@
 .lightboxBackdrop {
   position: fixed;
   inset: 0;
-  background: rgba(15, 30, 36, 0.92);
-  backdrop-filter: blur(8px);
+  background: rgba(15, 30, 36, 0.95);
   z-index: 120;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 1.5rem;
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
 
 .lightboxContent {
@@ -1051,13 +1053,15 @@
 .modalBackdrop {
   position: fixed;
   inset: 0;
-  background: rgba(23, 43, 50, 0.6);
-  backdrop-filter: blur(4px);
+  background: rgba(23, 43, 50, 0.78);
   z-index: 130;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 1rem;
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
 
 .modalBox {

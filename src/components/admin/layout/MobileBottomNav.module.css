@@ -10,14 +10,16 @@
     left: 0;
     right: 0;
     height: 62px;
-    background: #172B32; /* Midnight Graphite MNC Theme */
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    background: #172B32; /* Solid Midnight Graphite MNC Theme - eliminates Android GPU blur */
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
     z-index: 100;
     justify-content: space-around;
     align-items: center;
     padding: 0 4px;
-    box-shadow: 0 -4px 20px rgba(23, 43, 50, 0.3);
-    backdrop-filter: blur(10px);
+    box-shadow: 0 -4px 20px rgba(23, 43, 50, 0.35);
+    transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
   }
 
   .navItem {

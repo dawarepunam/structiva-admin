@@ -391,7 +391,7 @@ export default function ExpenseApproval({ onlyPending = false }: { onlyPending?:
       {selectedExpense && (
         <div style={{
           position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-          backgroundColor: 'rgba(15, 23, 42, 0.75)', backdropFilter: 'blur(5px)',
+          backgroundColor: 'rgba(15, 23, 42, 0.85)',
           zIndex: 60, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16
         }} onClick={() => setSelectedExpense(null)}>
           <div style={{
@@ -474,7 +474,7 @@ export default function ExpenseApproval({ onlyPending = false }: { onlyPending?:
       {showAddModal && (
         <div style={{
           position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-          backgroundColor: 'rgba(15, 23, 42, 0.75)', backdropFilter: 'blur(5px)',
+          backgroundColor: 'rgba(15, 23, 42, 0.85)',
           zIndex: 65, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16
         }} onClick={() => setShowAddModal(false)}>
           <div style={{
@@ -569,7 +569,7 @@ export default function ExpenseApproval({ onlyPending = false }: { onlyPending?:
       {viewInvoice && (
         <div style={{
           position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-          backgroundColor: 'rgba(15, 23, 42, 0.85)', backdropFilter: 'blur(6px)',
+          backgroundColor: 'rgba(15, 23, 42, 0.90)',
           zIndex: 70, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16
         }} onClick={() => setViewInvoice(null)}>
           <div style={{

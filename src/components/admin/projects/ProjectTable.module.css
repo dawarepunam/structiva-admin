@@ -182,7 +182,6 @@
   font-weight: 700;
   padding: 3px 8px;
   border-radius: 12px;
-  backdrop-filter: blur(4px);
 }
 
 .statusBadge.active {
@@ -514,13 +513,15 @@
 .modalBackdrop {
   position: fixed;
   inset: 0;
-  background: rgba(23, 43, 50, 0.6);
-  backdrop-filter: blur(4px);
+  background: rgba(23, 43, 50, 0.78);
   z-index: 100;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 1rem;
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
 
 .modalBox {

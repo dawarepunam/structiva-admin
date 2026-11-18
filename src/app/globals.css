@@ -78,6 +78,13 @@ img, video, canvas, svg {
   height: auto;
 }
 
+/* Eliminate sticky touch hover and blur artifacting on touch devices */
+@media (hover: none) and (pointer: coarse) {
+  a:hover, button:hover, div:hover {
+    transform: none !important;
+  }
+}
+
 /* Force container cards & tables to never overflow viewport */
 main, section, article, div {
   max-width: 100%;
