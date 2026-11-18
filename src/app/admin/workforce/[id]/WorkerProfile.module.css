@@ -1396,16 +1396,28 @@
   .wageNumber {
     font-size: 1.45rem;
   }
-  .tabsNav {
-    padding: 4px 6px;
-    gap: 4px;
+  .tabsContainer {
+    padding: 3px;
+    border-radius: 10px;
+  }
+  .tabsScroller, .tabsNav {
+    padding: 4px;
+    gap: 6px;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .tabsScroller::-webkit-scrollbar,
+  .tabsNav::-webkit-scrollbar {
+    display: none;
   }
   .tabBtn {
-    padding: 6px 10px;
-    font-size: 0.75rem;
+    min-height: 44px;
+    padding: 8px 12px;
+    font-size: 0.78rem;
     white-space: nowrap;
+    border-radius: 8px;
+    flex-shrink: 0;
   }
   .overviewStatsRow {
     grid-template-columns: repeat(2, 1fr) !important;
@@ -1433,5 +1445,27 @@
     flex-direction: column;
     width: 100%;
     gap: 0.5rem;
+  }
+  .historyTop {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+  .docRow {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .docRight {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .formRow2 {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+  .attendanceStatsFooter {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
   }
 }
