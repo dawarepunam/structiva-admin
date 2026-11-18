@@ -12,31 +12,36 @@ export default function SupervisorDPRWizard() {
   const [labourCount, setLabourCount] = useState(42);
   const [machineryCount, setMachineryCount] = useState(4);
   const [dieselConsumed, setDieselConsumed] = useState(60);
+  const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const payload = {
-      reportDate,
-      shift,
-      workExecuted,
-      labourCount,
-      machineryCount,
-      dieselConsumedLitres: dieselConsumed,
-      submittedBy: 'Er. Pravin Gaikwad (Chief Supervisor)',
-      approvalStatus: 'Under Review'
-    };
-    
-    // Save to Project daily report in Strapi
-    await createStrapiEntity('expenses', {
-      title: `DPR Log: ${shift}`,
-      category: 'DPR Submission',
-      amount: 0,
-      project: 'Skyline Commercial Complex',
-      date: reportDate,
-      remarks: workExecuted
-    });
+    setLoading(true);
 
+    const payload = {
+      requestType: 'DPR',
+      title: `DPR: ${shift} - ${reportDate}`,
+      project: 'Skyline Commercial Complex',
+      site: 'Tower A',
+      category: 'Daily Progress Report',
+      priority: 'Standard',
+      status: 'Submitted',
+      details: {
+        reportDate,
+        shift,
+        workExecuted,
+        labourCount,
+        machineryCount,
+        dieselConsumedLitres: dieselConsumed
+      },
+      remarks: workExecuted,
+      submittedBy: 'Er. Pravin Gaikwad (Chief Supervisor)',
+      submittedDate: reportDate
+    };
+
+    await createStrapiEntity('supervisor-requests', payload);
+    setLoading(false);
     setSubmitted(true);
   };
 
@@ -45,7 +50,7 @@ export default function SupervisorDPRWizard() {
       <div className={styles.headerSection}>
         <div className={styles.titleArea}>
           <h2>Daily Progress Report (DPR) Submission</h2>
-          <p>Submit formal daily site log for Project Manager and Client review.</p>
+          <p>Submit formal daily site log directly to Central Management via Strapi.</p>
         </div>
       </div>
 
@@ -53,9 +58,9 @@ export default function SupervisorDPRWizard() {
         {submitted ? (
           <div style={{ textAlign: 'center', padding: '2rem 1rem' }}>
             <CheckCircle2 size={48} color="#167C72" style={{ margin: '0 auto 1rem auto' }} />
-            <h3 style={{ fontSize: '1.25rem', fontWeight: 700, margin: '0 0 0.5rem 0' }}>DPR Submitted Successfully!</h3>
+            <h3 style={{ fontSize: '1.25rem', fontWeight: 700, margin: '0 0 0.5rem 0' }}>DPR Transmitted Successfully!</h3>
             <p style={{ color: '#718096', fontSize: '0.88rem' }}>
-              Your Daily Progress Report has been transmitted to central Strapi and queued for PM signoff.
+              Your Daily Progress Report has been safely persisted in Strapi backend and queued for Project Manager approval.
             </p>
             <button onClick={() => setSubmitted(false)} className={styles.btnPrimary} style={{ marginTop: '1rem' }}>
               Create Another DPR
@@ -100,9 +105,9 @@ export default function SupervisorDPRWizard() {
               />
             </div>
 
-            <button type="submit" className={styles.btnPrimary} style={{ alignSelf: 'flex-start', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <button type="submit" disabled={loading} className={styles.btnPrimary} style={{ alignSelf: 'flex-start', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <Send size={16} />
-              <span>Transmit DPR to Central Desk</span>
+              <span>{loading ? 'Transmitting to Strapi...' : 'Transmit DPR to Central Desk'}</span>
             </button>
           </form>
         )}
