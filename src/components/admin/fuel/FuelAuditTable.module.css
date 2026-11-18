@@ -104,7 +104,7 @@
   position: fixed;
   inset: 0;
   background-color: rgba(15, 23, 42, 0.78);
-  z-index: 60;
+  z-index: 1000; /* Must be well above .bottomNav (z-index: 100) and header (z-index: 40) */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -120,10 +120,12 @@
   width: 100%;
   max-width: 720px;
   max-height: 90vh;
+  max-height: 90dvh;
   overflow-y: auto;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
   display: flex;
   flex-direction: column;
+  box-sizing: border-box;
 }
 
 .modalHeader {
@@ -287,6 +289,7 @@
   .kpiCard {
     padding: 0.85rem;
     border-radius: 10px;
+    box-sizing: border-box;
   }
 
   .panelHeader {
@@ -304,14 +307,28 @@
     flex-direction: column;
     gap: 0.75rem;
     padding: 0.75rem;
+    box-sizing: border-box;
+    width: 100%;
+  }
+
+  .modalOverlay {
+    padding: 0.5rem;
+    z-index: 1000;
+  }
+
+  .modalContent {
+    max-height: 92vh;
+    max-height: 92dvh;
+    border-radius: 12px;
   }
 
   .modalHeader {
-    padding: 1rem;
+    padding: 0.85rem 1rem;
   }
 
   .modalBody {
-    padding: 1rem;
+    padding: 0.85rem;
+    gap: 1rem;
   }
 
   .metricGrid3 {
@@ -324,5 +341,18 @@
 
   .slipImgWrapper {
     height: 180px;
+  }
+}
+
+@media (max-width: 480px) {
+  .kpiRow {
+    grid-template-columns: 1fr !important;
+  }
+  .mobileCardFooter {
+    flex-direction: row;
+    gap: 8px;
+  }
+  .mobileFuelCard {
+    padding: 0.85rem;
   }
 }
