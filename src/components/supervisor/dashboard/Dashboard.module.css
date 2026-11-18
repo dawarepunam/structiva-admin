@@ -1,0 +1,314 @@
+/* Supervisor Dashboard Styles */
+.dashboardGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+/* Welcome Card */
+.welcomeCard {
+  background: linear-gradient(135deg, #172B32 0%, #203A3B 100%);
+  color: #FFFFFF;
+  padding: 1.5rem 1.75rem;
+  border-radius: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 20px rgba(23, 43, 50, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.welcomeText h2 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  margin: 0 0 0.35rem 0;
+  color: #FFFFFF;
+}
+
+.welcomeText p {
+  margin: 0;
+  font-size: 0.88rem;
+  color: #ECEBE5;
+}
+
+.siteTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: rgba(22, 124, 114, 0.3);
+  color: #A8B9AA;
+  border: 1px solid rgba(22, 124, 114, 0.5);
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-top: 0.6rem;
+}
+
+.actionButtons {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.primaryBtn {
+  background: #167C72;
+  color: #FFFFFF;
+  padding: 0.65rem 1.15rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(22, 124, 114, 0.4);
+  transition: all 0.2s ease;
+}
+
+.primaryBtn:hover {
+  background: #136961;
+}
+
+.secondaryBtn {
+  background: rgba(255, 255, 255, 0.1);
+  color: #FFFFFF;
+  padding: 0.65rem 1.15rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.2s ease;
+}
+
+.secondaryBtn:hover {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+/* Metric Cards Grid */
+.metricsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 1rem;
+  width: 100%;
+}
+
+.metricCard {
+  background: #FFFFFF;
+  border: 1px solid #ECEBE5;
+  border-radius: 10px;
+  padding: 1.15rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  text-decoration: none;
+  color: inherit;
+}
+
+.metricCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(23, 43, 50, 0.08);
+}
+
+.metricHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.metricLabel {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #718096;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.metricIcon {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.metricValue {
+  font-size: 1.65rem;
+  font-weight: 800;
+  color: #172B32;
+  margin: 0;
+}
+
+.metricSubtext {
+  font-size: 0.75rem;
+  color: #718096;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+/* Two Column Content Layout */
+.contentSplit {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 1.25rem;
+  width: 100%;
+}
+
+.sectionCard {
+  background: #FFFFFF;
+  border: 1px solid #ECEBE5;
+  border-radius: 10px;
+  padding: 1.25rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #F4F2EC;
+  padding-bottom: 0.75rem;
+}
+
+.sectionTitle {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #172B32;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.viewAllLink {
+  font-size: 0.78rem;
+  color: #167C72;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.viewAllLink:hover {
+  text-decoration: underline;
+}
+
+/* Site Project Cards */
+.siteList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.siteItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.85rem;
+  background: #F4F2EC;
+  border-radius: 8px;
+  border: 1px solid #ECEBE5;
+}
+
+.siteDetails h4 {
+  margin: 0 0 0.25rem 0;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #172B32;
+}
+
+.siteDetails p {
+  margin: 0;
+  font-size: 0.75rem;
+  color: #718096;
+}
+
+.badgeSuccess {
+  background: #D1FAE5;
+  color: #065F46;
+  font-size: 0.72rem;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+.badgeWarning {
+  background: #FEF3C7;
+  color: #92400E;
+  font-size: 0.72rem;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+/* Quick Action Row */
+.quickActionsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 0.75rem;
+}
+
+.quickActionCard {
+  background: #F4F2EC;
+  border: 1px solid #ECEBE5;
+  padding: 1rem 0.75rem;
+  border-radius: 8px;
+  text-align: center;
+  text-decoration: none;
+  color: #172B32;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.quickActionCard:hover {
+  background: #FFFFFF;
+  border-color: #167C72;
+  box-shadow: 0 3px 10px rgba(22, 124, 114, 0.15);
+  color: #167C72;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .contentSplit {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .welcomeCard {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1.15rem;
+  }
+
+  .actionButtons {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .primaryBtn, .secondaryBtn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .metricsGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+}

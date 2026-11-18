@@ -1,0 +1,145 @@
+/* Supervisor Login Screen Styles */
+.loginContainer {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at top right, #203A3B 0%, #172B32 100%);
+  padding: 1.5rem;
+  box-sizing: border-box;
+}
+
+.loginCard {
+  background: #FFFFFF;
+  border-radius: 14px;
+  width: 100%;
+  max-width: 440px;
+  padding: 2.25rem 2rem;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.brandHeader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.logoBadge {
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #167C72 0%, #203A3B 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FFFFFF;
+  font-weight: 800;
+  font-size: 1.5rem;
+  box-shadow: 0 8px 16px rgba(22, 124, 114, 0.35);
+  margin-bottom: 0.75rem;
+}
+
+.brandName {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #172B32;
+  letter-spacing: 0.5px;
+  margin: 0;
+}
+
+.portalTitle {
+  font-size: 0.82rem;
+  color: #718096;
+  margin-top: 0.25rem;
+  font-weight: 500;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-bottom: 1.25rem;
+}
+
+.label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #172B32;
+}
+
+.inputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.inputField {
+  width: 100%;
+  padding: 0.75rem 1rem 0.75rem 2.5rem;
+  border: 1px solid #ECEBE5;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  color: #172B32;
+  background: #F4F2EC;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.inputField:focus {
+  outline: none;
+  border-color: #167C72;
+  background: #FFFFFF;
+  box-shadow: 0 0 0 3px rgba(22, 124, 114, 0.15);
+}
+
+.inputIcon {
+  position: absolute;
+  left: 0.85rem;
+  color: #718096;
+  pointer-events: none;
+}
+
+.submitBtn {
+  width: 100%;
+  padding: 0.85rem;
+  background: #167C72;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.92rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(22, 124, 114, 0.35);
+  transition: all 0.2s ease;
+  margin-top: 0.5rem;
+}
+
+.submitBtn:hover {
+  background: #136961;
+}
+
+.errorMessage {
+  background: #FEE2E2;
+  color: #991B1B;
+  padding: 0.65rem 0.85rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  margin-bottom: 1rem;
+}
+
+.footerNote {
+  text-align: center;
+  font-size: 0.72rem;
+  color: #718096;
+  margin-top: 1.75rem;
+}
+
+@media (max-width: 480px) {
+  .loginCard {
+    padding: 1.75rem 1.25rem;
+  }
+}

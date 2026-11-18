@@ -1,3 +1,5 @@
+import { fetchStrapiCollection, createStrapiEntity, updateStrapiEntity, deleteStrapiEntity } from './strapiClient';
+
 // Shared storage keys and helpers for Structiva Enterprise Fleet & Heavy Machinery
 export const FLEET_STORAGE_KEY = 'structiva_enterprise_fleet_v1';
 
@@ -652,9 +654,27 @@ export function saveFleet(fleet: EnterpriseAssetRecord[]): void {
     localStorage.setItem(FLEET_STORAGE_KEY, JSON.stringify(fleet));
     window.dispatchEvent(new Event('storage'));
     window.dispatchEvent(new CustomEvent('fleetUpdated', { detail: fleet }));
+
+    // Non-blocking sync to Strapi
+    fleet.forEach(f => {
+      createStrapiEntity('fleets', f).catch(() => {});
+    });
   } catch (e) {
     console.error('Failed to save fleet to localStorage:', e);
   }
+}
+
+export async function fetchFleetFromBackend(): Promise<EnterpriseAssetRecord[]> {
+  try {
+    const list = await fetchStrapiCollection<EnterpriseAssetRecord>('fleets', getStoredFleet());
+    if (list && list.length > 0) {
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(FLEET_STORAGE_KEY, JSON.stringify(list));
+      }
+      return list;
+    }
+  } catch {}
+  return getStoredFleet();
 }
 
 export function getAssetById(id: string): EnterpriseAssetRecord | undefined {

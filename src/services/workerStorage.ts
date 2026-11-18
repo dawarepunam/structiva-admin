@@ -1,3 +1,5 @@
+import { fetchStrapiCollection, createStrapiEntity, updateStrapiEntity, deleteStrapiEntity } from './strapiClient';
+
 // Shared storage keys and helpers for Structiva Enterprise OS
 export const WORKERS_STORAGE_KEY = 'structiva_enterprise_workers_v1';
 export const EXPENSES_STORAGE_KEY = 'structiva_enterprise_expenses_v2';
@@ -650,9 +652,27 @@ export function saveWorkers(workers: EnterpriseWorkerRecord[]): void {
     localStorage.setItem(WORKERS_STORAGE_KEY, JSON.stringify(workers));
     window.dispatchEvent(new Event('storage'));
     window.dispatchEvent(new CustomEvent('workersUpdated', { detail: workers }));
+
+    // Non-blocking sync to Strapi
+    workers.forEach(w => {
+      createStrapiEntity('workers', w).catch(() => {});
+    });
   } catch (e) {
     console.error('Failed to save workers to localStorage:', e);
   }
+}
+
+export async function fetchWorkersFromBackend(): Promise<EnterpriseWorkerRecord[]> {
+  try {
+    const list = await fetchStrapiCollection<EnterpriseWorkerRecord>('workers', getStoredWorkers());
+    if (list && list.length > 0) {
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(WORKERS_STORAGE_KEY, JSON.stringify(list));
+      }
+      return list;
+    }
+  } catch {}
+  return getStoredWorkers();
 }
 
 export function getStoredAttendanceLogs(): AttendanceCheckInRecord[] {
@@ -676,9 +696,27 @@ export function saveAttendanceLogs(logs: AttendanceCheckInRecord[]): void {
     localStorage.setItem(ATTENDANCE_LOGS_STORAGE_KEY, JSON.stringify(logs));
     window.dispatchEvent(new Event('storage'));
     window.dispatchEvent(new CustomEvent('attendanceUpdated', { detail: logs }));
+
+    // Non-blocking sync to Strapi
+    logs.forEach(l => {
+      createStrapiEntity('attendances', l).catch(() => {});
+    });
   } catch (e) {
     console.error('Failed to save attendance logs:', e);
   }
+}
+
+export async function fetchAttendanceFromBackend(): Promise<AttendanceCheckInRecord[]> {
+  try {
+    const list = await fetchStrapiCollection<AttendanceCheckInRecord>('attendances', getStoredAttendanceLogs());
+    if (list && list.length > 0) {
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(ATTENDANCE_LOGS_STORAGE_KEY, JSON.stringify(list));
+      }
+      return list;
+    }
+  } catch {}
+  return getStoredAttendanceLogs();
 }
 
 export function getWorkerById(id: string): EnterpriseWorkerRecord | undefined {

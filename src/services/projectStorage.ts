@@ -1,3 +1,5 @@
+import { fetchStrapiCollection, createStrapiEntity, updateStrapiEntity, deleteStrapiEntity } from './strapiClient';
+
 export const PROJECTS_STORAGE_KEY = 'structiva_enterprise_projects_v2';
 
 export interface ProjectMilestone {
@@ -206,9 +208,27 @@ export function saveProjects(projects: EnterpriseProjectRecord[]): void {
     localStorage.setItem(PROJECTS_STORAGE_KEY, JSON.stringify(projects));
     window.dispatchEvent(new Event('storage'));
     window.dispatchEvent(new CustomEvent('projectsUpdated', { detail: projects }));
+
+    // Non-blocking background sync with Strapi backend
+    projects.forEach(p => {
+      createStrapiEntity('projects', p).catch(() => {});
+    });
   } catch (e) {
     console.error('Failed to save projects to localStorage:', e);
   }
+}
+
+export async function fetchProjectsFromBackend(): Promise<EnterpriseProjectRecord[]> {
+  try {
+    const list = await fetchStrapiCollection<EnterpriseProjectRecord>('projects', getStoredProjects());
+    if (list && list.length > 0) {
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(PROJECTS_STORAGE_KEY, JSON.stringify(list));
+      }
+      return list;
+    }
+  } catch {}
+  return getStoredProjects();
 }
 
 export function updateProject(id: string, updates: Partial<EnterpriseProjectRecord>): boolean {
