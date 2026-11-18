@@ -935,6 +935,17 @@
   font-size: 0.85rem;
   color: #1e293b;
   outline: none;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  text-overflow: ellipsis;
+}
+
+.formGroup select option {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
 }
 
 .formGroup select:focus,

@@ -717,7 +717,7 @@ export default function AttendanceTracker() {
                   >
                     {workers.map(w => (
                       <option key={w.id} value={w.id}>
-                        {w.name} ({w.code}) – {w.skill}
+                        {w.name} ({w.code}) • {w.skill}
                       </option>
                     ))}
                   </select>
