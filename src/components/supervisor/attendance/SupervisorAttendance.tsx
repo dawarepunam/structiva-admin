@@ -2,16 +2,16 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import styles from '../common/SupervisorCommon.module.css';
-import { 
-  Users, 
-  Search, 
-  Filter, 
-  Download, 
-  UserCheck, 
-  Calendar, 
-  Clock, 
-  CheckCircle2, 
-  AlertCircle, 
+import {
+  Users,
+  Search,
+  Filter,
+  Download,
+  UserCheck,
+  Calendar,
+  Clock,
+  CheckCircle2,
+  AlertCircle,
   X,
   FileSpreadsheet
 } from 'lucide-react';
@@ -78,7 +78,7 @@ export default function SupervisorAttendanceView() {
   const filteredLogs = useMemo(() => {
     return attendanceLogs.filter(log => {
       const matchesSearch = log.workerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                            log.workerCode.toLowerCase().includes(searchTerm.toLowerCase());
+        log.workerCode.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesStatus = filterStatus === 'All' || log.status === filterStatus;
       return matchesSearch && matchesStatus;
     });
@@ -163,7 +163,7 @@ export default function SupervisorAttendanceView() {
   const handleExportCSV = () => {
     if (attendanceLogs.length === 0) return;
     const headers = ['Date,Worker Name,Code,Site,Status,Check-In,Check-Out,Hours,Wage (INR),Method'];
-    const rows = attendanceLogs.map(l => 
+    const rows = attendanceLogs.map(l =>
       `"${l.date}","${l.workerName}","${l.workerCode}","${l.site}","${l.status}","${l.checkInTime}","${l.checkOutTime || ''}",${l.hoursWorked},${l.wageEarned},"${l.verificationMethod}"`
     );
     const csvContent = 'data:text/csv;charset=utf-8,' + [headers, ...rows].join('\n');
@@ -245,9 +245,9 @@ export default function SupervisorAttendanceView() {
         <form onSubmit={handleMarkAttendance} className={styles.formGrid}>
           <div className={styles.formGroup}>
             <label className={styles.label}>Select Registered Worker *</label>
-            <select 
-              className={styles.select} 
-              value={selectedWorkerId} 
+            <select
+              className={styles.select}
+              value={selectedWorkerId}
               onChange={e => setSelectedWorkerId(e.target.value)}
               required
             >
@@ -261,20 +261,20 @@ export default function SupervisorAttendanceView() {
 
           <div className={styles.formGroup}>
             <label className={styles.label}>Muster Date *</label>
-            <input 
-              type="text" 
-              className={styles.input} 
-              value={selectedDate} 
-              onChange={e => setSelectedDate(e.target.value)} 
-              required 
+            <input
+              type="text"
+              className={styles.input}
+              value={selectedDate}
+              onChange={e => setSelectedDate(e.target.value)}
+              required
             />
           </div>
 
           <div className={styles.formGroup}>
             <label className={styles.label}>Shift Status *</label>
-            <select 
-              className={styles.select} 
-              value={shiftStatus} 
+            <select
+              className={styles.select}
+              value={shiftStatus}
               onChange={e => setShiftStatus(e.target.value as any)}
             >
               <option value="Present">Present (Full Shift &mdash; 8 Hrs)</option>
@@ -286,31 +286,31 @@ export default function SupervisorAttendanceView() {
 
           <div className={styles.formGroup}>
             <label className={styles.label}>Check-in Time *</label>
-            <input 
-              type="text" 
-              className={styles.input} 
-              value={checkInTime} 
-              onChange={e => setCheckInTime(e.target.value)} 
-              required 
+            <input
+              type="text"
+              className={styles.input}
+              value={checkInTime}
+              onChange={e => setCheckInTime(e.target.value)}
+              required
             />
           </div>
 
           <div className={styles.formGroup}>
             <label className={styles.label}>Check-out Time (Optional)</label>
-            <input 
-              type="text" 
-              className={styles.input} 
-              placeholder="e.g. 05:30 PM" 
-              value={checkOutTime} 
-              onChange={e => setCheckOutTime(e.target.value)} 
+            <input
+              type="text"
+              className={styles.input}
+              placeholder="e.g. 05:30 PM"
+              value={checkOutTime}
+              onChange={e => setCheckOutTime(e.target.value)}
             />
           </div>
 
           <div className={styles.formGroup}>
             <label className={styles.label}>Supervisor Overrule Remark</label>
-            <input 
-              type="text" 
-              className={styles.input} 
+            <input
+              type="text"
+              className={styles.input}
               placeholder="Physical presence verified on Tower A Level 4"
               value={supervisorRemark}
               onChange={e => setSupervisorRemark(e.target.value)}
@@ -318,10 +318,10 @@ export default function SupervisorAttendanceView() {
           </div>
 
           <div style={{ display: 'flex', alignItems: 'flex-end', gridColumn: '1 / -1' }}>
-            <button 
-              type="submit" 
-              disabled={submitting} 
-              className={styles.btnPrimary} 
+            <button
+              type="submit"
+              disabled={submitting}
+              className={styles.btnPrimary}
               style={{ width: '100%', height: '42px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
             >
               <UserCheck size={18} />
@@ -335,9 +335,9 @@ export default function SupervisorAttendanceView() {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.75rem', background: '#FFFFFF', padding: '0.75rem 1rem', borderRadius: '8px', border: '1px solid #ECEBE5' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flex: 1, minWidth: '220px' }}>
           <Search size={16} color="#718096" />
-          <input 
-            type="text" 
-            placeholder="Search worker by name or code..." 
+          <input
+            type="text"
+            placeholder="Search worker by name or code..."
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
             style={{ border: 'none', background: 'transparent', outline: 'none', width: '100%', fontSize: '0.85rem' }}
@@ -346,8 +346,8 @@ export default function SupervisorAttendanceView() {
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
           <Filter size={14} color="#718096" />
-          <select 
-            value={filterStatus} 
+          <select
+            value={filterStatus}
             onChange={e => setFilterStatus(e.target.value)}
             style={{ padding: '4px 8px', borderRadius: '6px', border: '1px solid #ECEBE5', fontSize: '0.8rem', background: '#F4F2EC' }}
           >
@@ -403,7 +403,7 @@ export default function SupervisorAttendanceView() {
                   <td>{log.hoursWorked} hrs</td>
                   <td style={{ fontWeight: 700, color: '#167C72' }}>₹{log.wageEarned}</td>
                   <td>
-                    <button 
+                    <button
                       onClick={() => setViewLog(log)}
                       style={{ background: 'none', border: 'none', color: '#167C72', cursor: 'pointer', fontSize: '0.78rem', fontWeight: 600, textDecoration: 'underline' }}
                     >
