@@ -247,11 +247,11 @@
   align-items: center;
   gap: 8px;
   padding: 10px 18px;
-  border: none;
-  background: transparent;
-  color: #64748b;
+  border: 1px solid transparent;
+  background: #f8fafc;
+  color: #334155;
   font-size: 0.85rem;
-  font-weight: 600;
+  font-weight: 700;
   border-radius: 8px;
   cursor: pointer;
   white-space: nowrap;
@@ -261,13 +261,15 @@
 }
 
 .navTabBtn:hover {
-  background: #f8fafc;
+  background: #e2e8f0;
   color: #0f172a;
 }
 
 .navTabBtnActive {
-  background: #167C72;
+  background: #167C72 !important;
   color: #ffffff !important;
+  border-color: #167C72 !important;
+  box-shadow: 0 2px 4px rgba(22, 124, 114, 0.2);
 }
 
 /* Content Sections */
@@ -523,14 +525,16 @@
   }
 
   .navTabBtn {
-    padding: 8px 12px;
-    font-size: 0.78rem;
+    padding: 7px 11px;
+    font-size: 0.76rem;
+    font-weight: 700;
     flex-shrink: 0;
-    min-height: 38px;
+    min-height: 36px;
     display: inline-flex;
     align-items: center;
     gap: 6px;
     white-space: nowrap;
+    border-radius: 7px;
   }
 
   /* Form & Check-in mobile responsiveness */
