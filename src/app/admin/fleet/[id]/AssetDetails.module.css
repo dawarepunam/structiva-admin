@@ -273,6 +273,12 @@
   display: flex;
   gap: 4px;
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.tabsScroller::-webkit-scrollbar {
+  display: none;
 }
 
 .tabBtn {
@@ -288,12 +294,19 @@
   font-weight: 600;
   cursor: pointer;
   white-space: nowrap;
-  transition: all 0.15s ease;
+  transition: background-color 0.15s ease, color 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
 }
 
 .tabBtn:hover {
   background: #f8fafc;
   color: #1e293b;
+}
+
+.tabBtn:focus-visible {
+  outline: 2px solid var(--premium-emerald, #167C72);
+  outline-offset: 2px;
 }
 
 .tabBtnActive {
@@ -949,6 +962,7 @@
   .meterNumber {
     font-size: 1.45rem;
   }
+  .tabsScroller,
   .tabsNav {
     padding: 4px;
     gap: 6px;
@@ -956,6 +970,7 @@
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
   }
+  .tabsScroller::-webkit-scrollbar,
   .tabsNav::-webkit-scrollbar {
     display: none;
   }
@@ -1025,5 +1040,41 @@
   .docRight {
     width: 100%;
     justify-content: space-between;
+  }
+  .heroImageWrapper {
+    height: 160px;
+    border-radius: 10px;
+  }
+  .assetTitle {
+    font-size: 1.15rem;
+    line-height: 1.25;
+  }
+  .heroTitleRow {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .heroMetaList {
+    gap: 6px;
+  }
+  .metaPill {
+    font-size: 0.72rem;
+    padding: 3px 8px;
+    width: 100%;
+  }
+}
+
+@media (max-width: 375px) {
+  .heroCard {
+    padding: 0.85rem;
+    border-radius: 12px;
+  }
+  .assetTitle {
+    font-size: 1.05rem;
+  }
+  .kpiRow4 {
+    grid-template-columns: 1fr !important;
+  }
+  .statBoxVal {
+    font-size: 1.05rem;
   }
 }
