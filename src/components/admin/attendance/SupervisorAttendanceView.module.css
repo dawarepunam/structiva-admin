@@ -1,0 +1,368 @@
+/* ==========================================================================
+   STRUCTIVA ENTERPRISE OS — SEPARATED ATTENDANCE MANAGEMENT STYLES
+   Worker & Supervisor Attendance Partitioning
+   Theme: Luxury Industrial + Clean Enterprise
+   ========================================================================== */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+  color: #172B32;
+  font-family: inherit;
+}
+
+/* Master Navigation Switcher */
+.masterNavSwitcher {
+  background: #FFFFFF;
+  border: 1px solid #ECEBE5;
+  border-radius: 12px;
+  padding: 0.5rem;
+  display: flex;
+  gap: 0.5rem;
+  box-shadow: 0 1px 3px rgba(23, 43, 50, 0.04);
+}
+
+.masterNavBtn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  padding: 0.85rem 1.25rem;
+  border-radius: 8px;
+  border: none;
+  background: none;
+  color: #5A6D74;
+  font-size: 0.925rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.masterNavBtn:hover {
+  background: #F4F2EC;
+  color: #172B32;
+}
+
+.masterNavBtnActive {
+  background: #172B32;
+  color: #FFFFFF;
+  box-shadow: 0 4px 12px rgba(23, 43, 50, 0.15);
+}
+
+.masterNavBtnActive:hover {
+  background: #203A3B;
+  color: #FFFFFF;
+}
+
+.counterBadge {
+  font-size: 0.72rem;
+  padding: 2px 7px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.2);
+  color: #FFFFFF;
+  font-weight: 800;
+}
+
+.masterNavBtn:not(.masterNavBtnActive) .counterBadge {
+  background: #ECEBE5;
+  color: #172B32;
+}
+
+/* KPI Overview Grid */
+.kpiGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.kpiCard {
+  background: #FFFFFF;
+  border: 1px solid #ECEBE5;
+  border-radius: 10px;
+  padding: 1.15rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  box-shadow: 0 1px 3px rgba(23, 43, 50, 0.04);
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.kpiCard:hover {
+  transform: translateY(-2px);
+  border-color: #167C72;
+}
+
+.kpiIconWrapper {
+  width: 46px;
+  height: 46px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.kpiContent {
+  display: flex;
+  flex-direction: column;
+}
+
+.kpiLabel {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #718096;
+  margin-bottom: 0.2rem;
+}
+
+.kpiValue {
+  font-size: 1.55rem;
+  font-weight: 800;
+  color: #172B32;
+  line-height: 1.1;
+}
+
+.kpiSubtitle {
+  font-size: 0.72rem;
+  color: #718096;
+  margin-top: 0.25rem;
+}
+
+/* Toolbar & Filters */
+.toolbarCard {
+  background: #FFFFFF;
+  border: 1px solid #ECEBE5;
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.searchBox {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #F8FAFC;
+  border: 1px solid #ECEBE5;
+  border-radius: 6px;
+  padding: 0.45rem 0.75rem;
+  min-width: 260px;
+  flex: 1;
+}
+
+.searchInput {
+  border: none;
+  background: none;
+  outline: none;
+  font-size: 0.85rem;
+  color: #172B32;
+  width: 100%;
+}
+
+.filtersGroup {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.selectInput {
+  padding: 0.45rem 0.75rem;
+  border: 1px solid #ECEBE5;
+  border-radius: 6px;
+  font-size: 0.825rem;
+  color: #172B32;
+  background: #FFFFFF;
+  outline: none;
+  cursor: pointer;
+}
+
+.btnPrimary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.5rem 1rem;
+  background: #167C72;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.825rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btnPrimary:hover {
+  background: #12655D;
+}
+
+.btnSecondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.5rem 0.9rem;
+  background: #FFFFFF;
+  color: #172B32;
+  border: 1px solid #ECEBE5;
+  border-radius: 6px;
+  font-size: 0.825rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btnSecondary:hover {
+  background: #F4F2EC;
+}
+
+/* Table Container */
+.tableCard {
+  background: #FFFFFF;
+  border: 1px solid #ECEBE5;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(23, 43, 50, 0.04);
+}
+
+.tableHeaderBar {
+  padding: 0.85rem 1.25rem;
+  background: #F4F2EC;
+  border-bottom: 1px solid #ECEBE5;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tableContainer {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.85rem;
+}
+
+.table th {
+  background: #FFFFFF;
+  padding: 0.85rem 1rem;
+  font-weight: 700;
+  color: #5A6D74;
+  font-size: 0.74rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid #ECEBE5;
+}
+
+.table td {
+  padding: 0.95rem 1rem;
+  border-bottom: 1px solid #F4F2EC;
+  vertical-align: middle;
+}
+
+.table tr:hover td {
+  background: #FAF9F6;
+}
+
+/* Badges */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.65rem;
+  border-radius: 9999px;
+  font-size: 0.74rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.badgeSuccess {
+  background: rgba(16, 185, 129, 0.12);
+  color: #047857;
+  border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+.badgeWarning {
+  background: rgba(245, 158, 11, 0.12);
+  color: #B45309;
+  border: 1px solid rgba(245, 158, 11, 0.25);
+}
+
+.badgeDanger {
+  background: rgba(239, 68, 68, 0.12);
+  color: #B91C1C;
+  border: 1px solid rgba(239, 68, 68, 0.25);
+}
+
+.badgeInfo {
+  background: rgba(22, 124, 114, 0.12);
+  color: #167C72;
+  border: 1px solid rgba(22, 124, 114, 0.25);
+}
+
+/* Modal Popup */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(23, 43, 50, 0.5);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 1rem;
+}
+
+.modalCard {
+  background: #FFFFFF;
+  border-radius: 12px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 520px;
+  overflow: hidden;
+  border: 1px solid #ECEBE5;
+}
+
+.modalHeader {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid #ECEBE5;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modalBody {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.modalFooter {
+  padding: 1rem 1.5rem;
+  background: #F8FAFC;
+  border-top: 1px solid #ECEBE5;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+@media (max-width: 768px) {
+  .masterNavSwitcher {
+    flex-direction: column;
+  }
+  .toolbarCard {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .searchBox {
+    min-width: 100%;
+  }
+}
