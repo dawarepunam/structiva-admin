@@ -1,0 +1,335 @@
+.container {
+  padding: 1.5rem;
+  max-width: 1300px;
+  margin: 0 auto;
+  font-family: inherit;
+  color: #172B32;
+}
+
+/* Page Top Header */
+.headerSection {
+  background: linear-gradient(135deg, #172B32 0%, #203A3B 70%, #167C72 100%);
+  border-radius: 12px;
+  padding: 1.75rem 2rem;
+  color: #FFFFFF;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 20px rgba(23, 43, 50, 0.15);
+  position: relative;
+  overflow: hidden;
+}
+
+.titleArea h1 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin: 0 0 0.35rem 0;
+  letter-spacing: -0.02em;
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.titleArea p {
+  font-size: 0.88rem;
+  color: #ECEBE5;
+  margin: 0;
+  line-height: 1.45;
+  opacity: 0.92;
+}
+
+.btnSecondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.55rem 1.1rem;
+  background: #FFFFFF;
+  color: #172B32;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-radius: 6px;
+  border: 1px solid #ECEBE5;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btnSecondary:hover {
+  background: #F4F2EC;
+}
+
+.btnPrimary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.55rem 1.15rem;
+  background: #167C72;
+  color: #FFFFFF;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btnPrimary:hover {
+  background: #12655D;
+}
+
+/* Master Identity Hero Card */
+.identityCard {
+  background: #FFFFFF;
+  border: 1px solid #ECEBE5;
+  border-radius: 12px;
+  padding: 1.75rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  box-shadow: 0 1px 3px rgba(23, 43, 50, 0.04);
+}
+
+.identityLeft {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.avatarWrapper {
+  position: relative;
+}
+
+.avatar {
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  background: #172B32;
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  font-weight: 800;
+  border: 3px solid #167C72;
+}
+
+.identityInfo h2 {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #172B32;
+  margin: 0 0 0.25rem 0;
+}
+
+.identityInfo p {
+  font-size: 0.85rem;
+  color: #718096;
+  margin: 0 0 0.5rem 0;
+}
+
+.identityMetaPills {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* Navigation Tabs */
+.profileTabs {
+  display: flex;
+  gap: 0.5rem;
+  border-bottom: 2px solid #ECEBE5;
+  margin-bottom: 1.5rem;
+  overflow-x: auto;
+}
+
+.tabBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #5A6D74;
+  cursor: pointer;
+  white-space: nowrap;
+  margin-bottom: -2px;
+  transition: all 0.2s ease;
+}
+
+.tabBtn:hover {
+  color: #172B32;
+}
+
+.tabBtnActive {
+  color: #167C72;
+  border-bottom-color: #167C72;
+  font-weight: 700;
+}
+
+/* Sections & Grid */
+.sectionGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+  gap: 1.25rem;
+}
+
+.sectionCard {
+  background: #FFFFFF;
+  border: 1px solid #ECEBE5;
+  border-radius: 10px;
+  padding: 1.25rem 1.5rem;
+  box-shadow: 0 1px 3px rgba(23, 43, 50, 0.04);
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 0.75rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #ECEBE5;
+}
+
+.sectionTitle {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #172B32;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.detailRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #F4F2EC;
+  font-size: 0.85rem;
+}
+
+.detailRow:last-child {
+  border-bottom: none;
+}
+
+.detailKey {
+  color: #718096;
+}
+
+.detailVal {
+  font-weight: 600;
+  color: #172B32;
+}
+
+/* Badges */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.65rem;
+  border-radius: 9999px;
+  font-size: 0.74rem;
+  font-weight: 700;
+}
+
+.badgeSuccess {
+  background: rgba(16, 185, 129, 0.12);
+  color: #047857;
+  border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+.badgeInfo {
+  background: rgba(22, 124, 114, 0.12);
+  color: #167C72;
+  border: 1px solid rgba(22, 124, 114, 0.25);
+}
+
+.badgeWarning {
+  background: rgba(245, 158, 11, 0.12);
+  color: #B45309;
+  border: 1px solid rgba(245, 158, 11, 0.25);
+}
+
+/* Edit Modal */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(23, 43, 50, 0.5);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 1rem;
+}
+
+.modalCard {
+  background: #FFFFFF;
+  border-radius: 12px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 500px;
+  overflow: hidden;
+  border: 1px solid #ECEBE5;
+}
+
+.modalHeader {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid #ECEBE5;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modalBody {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.modalFooter {
+  padding: 1rem 1.5rem;
+  background: #F8FAFC;
+  border-top: 1px solid #ECEBE5;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+.formInput {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #ECEBE5;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  color: #172B32;
+  outline: none;
+}
+
+.formInput:focus {
+  border-color: #167C72;
+}
+
+@media (max-width: 768px) {
+  .identityCard {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .identityLeft {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  .sectionGrid {
+    grid-template-columns: 1fr;
+  }
+}

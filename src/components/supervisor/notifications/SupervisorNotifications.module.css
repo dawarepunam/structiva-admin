@@ -1,0 +1,335 @@
+.container {
+  padding: 1.5rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  font-family: inherit;
+  color: #172B32;
+}
+
+/* Page Top Header */
+.headerSection {
+  background: linear-gradient(135deg, #172B32 0%, #203A3B 70%, #167C72 100%);
+  border-radius: 12px;
+  padding: 1.75rem 2rem;
+  color: #FFFFFF;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 20px rgba(23, 43, 50, 0.15);
+  position: relative;
+  overflow: hidden;
+}
+
+.titleArea h1 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin: 0 0 0.35rem 0;
+  letter-spacing: -0.02em;
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.titleArea p {
+  font-size: 0.88rem;
+  color: #ECEBE5;
+  margin: 0;
+  line-height: 1.45;
+  opacity: 0.92;
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  z-index: 1;
+}
+
+.btnPrimary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.55rem 1.15rem;
+  background: #167C72;
+  color: #FFFFFF;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btnPrimary:hover {
+  background: #12655D;
+}
+
+.btnSecondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.55rem 1.1rem;
+  background: #FFFFFF;
+  color: #172B32;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-radius: 6px;
+  border: 1px solid #ECEBE5;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btnSecondary:hover {
+  background: #F4F2EC;
+}
+
+/* KPI Summary Cards */
+.kpiGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.kpiCard {
+  background: #FFFFFF;
+  border: 1px solid #ECEBE5;
+  border-radius: 10px;
+  padding: 1.15rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  box-shadow: 0 1px 3px rgba(23, 43, 50, 0.04);
+  cursor: pointer;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.kpiCard:hover {
+  transform: translateY(-2px);
+  border-color: #167C72;
+}
+
+.kpiCardActive {
+  border-color: #167C72;
+  background: rgba(22, 124, 114, 0.04);
+}
+
+.kpiIconWrapper {
+  width: 46px;
+  height: 46px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.kpiContent {
+  display: flex;
+  flex-direction: column;
+}
+
+.kpiLabel {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #718096;
+  margin-bottom: 0.2rem;
+}
+
+.kpiValue {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #172B32;
+  line-height: 1.1;
+}
+
+.kpiSubtitle {
+  font-size: 0.72rem;
+  color: #718096;
+  margin-top: 0.25rem;
+}
+
+/* Filter Toolbar */
+.toolbarCard {
+  background: #FFFFFF;
+  border: 1px solid #ECEBE5;
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.searchBox {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #F8FAFC;
+  border: 1px solid #ECEBE5;
+  border-radius: 6px;
+  padding: 0.45rem 0.75rem;
+  min-width: 280px;
+  flex: 1;
+}
+
+.searchInput {
+  border: none;
+  background: none;
+  outline: none;
+  font-size: 0.85rem;
+  color: #172B32;
+  width: 100%;
+}
+
+.filterSelect {
+  padding: 0.45rem 0.75rem;
+  border: 1px solid #ECEBE5;
+  border-radius: 6px;
+  font-size: 0.825rem;
+  color: #172B32;
+  background: #FFFFFF;
+  outline: none;
+  cursor: pointer;
+}
+
+/* Notifications List */
+.notifList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.notifCard {
+  background: #FFFFFF;
+  border: 1px solid #ECEBE5;
+  border-radius: 10px;
+  padding: 1.25rem;
+  box-shadow: 0 1px 3px rgba(23, 43, 50, 0.04);
+  display: flex;
+  gap: 1.25rem;
+  align-items: flex-start;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.notifCard:hover {
+  border-color: #167C72;
+  box-shadow: 0 4px 12px rgba(23, 43, 50, 0.08);
+}
+
+.notifCardUnread {
+  border-left: 4px solid #167C72;
+  background: #FAFDFA;
+}
+
+.notifIconBox {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.notifMain {
+  flex: 1;
+}
+
+.notifTopRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.35rem;
+}
+
+.notifTitle {
+  font-size: 0.975rem;
+  font-weight: 700;
+  color: #172B32;
+  margin: 0;
+}
+
+.notifTime {
+  font-size: 0.75rem;
+  color: #718096;
+}
+
+.notifMessage {
+  font-size: 0.85rem;
+  color: #4A5568;
+  line-height: 1.45;
+  margin: 0 0 0.75rem 0;
+}
+
+.notifBottomRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.notifMetaPills {
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+}
+
+/* Badges */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 9999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.badgeSuccess {
+  background: rgba(16, 185, 129, 0.12);
+  color: #047857;
+  border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+.badgeWarning {
+  background: rgba(245, 158, 11, 0.12);
+  color: #B45309;
+  border: 1px solid rgba(245, 158, 11, 0.25);
+}
+
+.badgeDanger {
+  background: rgba(239, 68, 68, 0.12);
+  color: #B91C1C;
+  border: 1px solid rgba(239, 68, 68, 0.25);
+}
+
+.badgeNeutral {
+  background: #ECEBE5;
+  color: #4A5568;
+  border: 1px solid #E2E8F0;
+}
+
+@media (max-width: 768px) {
+  .headerSection {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  .toolbarCard {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .notifCard {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+}
