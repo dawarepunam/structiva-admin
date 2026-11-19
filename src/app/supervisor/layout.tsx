@@ -1,5 +1,6 @@
 import React from 'react';
 import SupervisorLayoutWrapper from '@/components/supervisor/layout/SupervisorLayout';
+import SupervisorEnterpriseManagement from '@/components/supervisor/SupervisorEnterpriseManagement';
 
 export const metadata = {
   title: 'Supervisor Portal | STRUCTIVA Enterprise OS',
@@ -11,5 +12,9 @@ export default function SupervisorRootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <SupervisorLayoutWrapper>{children}</SupervisorLayoutWrapper>;
+  return (
+    <SupervisorEnterpriseManagement>
+      <SupervisorLayoutWrapper>{children}</SupervisorLayoutWrapper>
+    </SupervisorEnterpriseManagement>
+  );
 }
