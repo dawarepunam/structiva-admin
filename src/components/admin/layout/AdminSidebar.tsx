@@ -19,7 +19,8 @@ import {
   HardHat,
   ChevronRight,
   TrendingUp,
-  X
+  X,
+  AlertOctagon
 } from 'lucide-react';
 
 const navGroups = [
@@ -34,6 +35,7 @@ const navGroups = [
     items: [
       { name: 'Projects', href: '/admin/projects', icon: Building2 },
       { name: 'Site Activities', href: '/admin/activities', icon: HardHat },
+      { name: 'Issues & Incidents', href: '/admin/issues', icon: AlertOctagon },
     ]
   },
   {
