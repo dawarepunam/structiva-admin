@@ -55,6 +55,7 @@ const navGroups = [
     items: [
       { name: 'Expenses', href: '/admin/expenses', icon: Receipt },
       { name: 'Approvals', href: '/admin/approvals', icon: CheckCircle },
+      { name: 'Material Procurement', href: '/admin/materials', icon: Building2 },
     ]
   },
   {
