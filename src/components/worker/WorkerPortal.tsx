@@ -20,6 +20,7 @@ import WorkerDocumentsView from './components/WorkerDocuments';
 import WorkerSupportView from './components/WorkerSupport';
 import WorkerSettingsView from './components/WorkerSettings';
 import { fetchStrapiCollection } from '@/services/strapiClient';
+import { getStoredEnterpriseTasks } from '@/services/taskStorage';
 import { useRouter } from 'next/navigation';
 
 export default function WorkerPortalCoordinator() {
@@ -111,6 +112,31 @@ export default function WorkerPortalCoordinator() {
         }
       ];
 
+      // Read from resilient local task storage as well
+      const localTasks = getStoredEnterpriseTasks();
+      const localWorkerTasks: WorkerTaskRecord[] = localTasks.map(t => {
+        const details = t.details || {};
+        return {
+          id: t.id,
+          documentId: t.documentId,
+          title: t.title,
+          project: t.project,
+          site: t.site,
+          category: t.category,
+          priority: t.priority as any,
+          status: t.status as any,
+          details: details.workInProgress || t.remarks || 'Active site work assignment.',
+          remarks: t.remarks,
+          adminRemarks: t.adminRemarks,
+          submittedBy: t.submittedBy,
+          submittedDate: t.submittedDate,
+          assignedSupervisor: t.assignedSupervisor || 'Er. Pravin Gaikwad',
+          assignedWorkerId: t.assignedWorkerId || 1,
+          assignedWorkerName: t.assignedWorkerName || 'Ramesh Patil',
+          exactLocation: t.exactLocation || t.site
+        };
+      });
+
       if (reqsRes && reqsRes.length > 0) {
         const taskItems: WorkerTaskRecord[] = reqsRes
           .filter((r: any) => r.request_type === 'Task' || r.requestType === 'Task')
@@ -135,9 +161,17 @@ export default function WorkerPortalCoordinator() {
             exactLocation: r.exact_location || 'Level 14 Core Zone'
           }));
 
-        setTasks(taskItems.length > 0 ? taskItems : defaultTasks);
+        // Merge strapi and local tasks
+        const combined = [...localWorkerTasks];
+        taskItems.forEach(item => {
+          if (!combined.some(c => String(c.id) === String(item.id) || (c.documentId && c.documentId === item.documentId))) {
+            combined.push(item);
+          }
+        });
+
+        setTasks(combined.length > 0 ? combined : defaultTasks);
       } else {
-        setTasks(defaultTasks);
+        setTasks(localWorkerTasks.length > 0 ? localWorkerTasks : defaultTasks);
       }
 
       if (attRes && attRes.length > 0) {
