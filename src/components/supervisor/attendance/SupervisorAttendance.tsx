@@ -192,27 +192,27 @@ export default function SupervisorAttendanceView() {
         </div>
       </div>
 
-      {/* Analytics Summary Cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem', width: '100%' }}>
-        <div style={{ background: '#FFFFFF', padding: '1rem', borderRadius: '8px', border: '1px solid #ECEBE5' }}>
-          <span style={{ fontSize: '0.75rem', color: '#718096', textTransform: 'uppercase', fontWeight: 600 }}>Assigned Workforce</span>
-          <h3 style={{ margin: '0.25rem 0', fontSize: '1.5rem', fontWeight: 800, color: '#172B32' }}>{stats.totalAssigned}</h3>
-          <span style={{ fontSize: '0.72rem', color: '#167C72', fontWeight: 600 }}>Skyline Tower A Roster</span>
+      {/* Analytics Summary Cards - 2x2 grid on mobile with compact padding */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '0.65rem', width: '100%' }}>
+        <div style={{ background: '#FFFFFF', padding: '0.75rem', borderRadius: '8px', border: '1px solid #ECEBE5', display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
+          <span style={{ fontSize: '0.68rem', color: '#718096', textTransform: 'uppercase', fontWeight: 600 }}>Assigned Workforce</span>
+          <h3 style={{ margin: '0.1rem 0', fontSize: '1.25rem', fontWeight: 800, color: '#172B32' }}>{stats.totalAssigned}</h3>
+          <span style={{ fontSize: '0.68rem', color: '#167C72', fontWeight: 600 }}>Skyline Roster</span>
         </div>
-        <div style={{ background: '#FFFFFF', padding: '1rem', borderRadius: '8px', border: '1px solid #ECEBE5' }}>
-          <span style={{ fontSize: '0.75rem', color: '#718096', textTransform: 'uppercase', fontWeight: 600 }}>Present on Site</span>
-          <h3 style={{ margin: '0.25rem 0', fontSize: '1.5rem', fontWeight: 800, color: '#10B981' }}>{stats.present}</h3>
-          <span style={{ fontSize: '0.72rem', color: '#718096' }}>Biometric & Geofence Verified</span>
+        <div style={{ background: '#FFFFFF', padding: '0.75rem', borderRadius: '8px', border: '1px solid #ECEBE5', display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
+          <span style={{ fontSize: '0.68rem', color: '#718096', textTransform: 'uppercase', fontWeight: 600 }}>Present on Site</span>
+          <h3 style={{ margin: '0.1rem 0', fontSize: '1.25rem', fontWeight: 800, color: '#10B981' }}>{stats.present}</h3>
+          <span style={{ fontSize: '0.68rem', color: '#718096' }}>Biometric & GPS</span>
         </div>
-        <div style={{ background: '#FFFFFF', padding: '1rem', borderRadius: '8px', border: '1px solid #ECEBE5' }}>
-          <span style={{ fontSize: '0.75rem', color: '#718096', textTransform: 'uppercase', fontWeight: 600 }}>Half-Day / Partial</span>
-          <h3 style={{ margin: '0.25rem 0', fontSize: '1.5rem', fontWeight: 800, color: '#F59E0B' }}>{stats.halfDay}</h3>
-          <span style={{ fontSize: '0.72rem', color: '#718096' }}>4-Hour Cap Allocated</span>
+        <div style={{ background: '#FFFFFF', padding: '0.75rem', borderRadius: '8px', border: '1px solid #ECEBE5', display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
+          <span style={{ fontSize: '0.68rem', color: '#718096', textTransform: 'uppercase', fontWeight: 600 }}>Half-Day / Partial</span>
+          <h3 style={{ margin: '0.1rem 0', fontSize: '1.25rem', fontWeight: 800, color: '#F59E0B' }}>{stats.halfDay}</h3>
+          <span style={{ fontSize: '0.68rem', color: '#718096' }}>4-Hr Cap</span>
         </div>
-        <div style={{ background: '#FFFFFF', padding: '1rem', borderRadius: '8px', border: '1px solid #ECEBE5' }}>
-          <span style={{ fontSize: '0.75rem', color: '#718096', textTransform: 'uppercase', fontWeight: 600 }}>Computed Daily Wages</span>
-          <h3 style={{ margin: '0.25rem 0', fontSize: '1.5rem', fontWeight: 800, color: '#167C72' }}>₹{stats.totalWageToday.toLocaleString('en-IN')}</h3>
-          <span style={{ fontSize: '0.72rem', color: '#718096' }}>Direct Payroll Liability</span>
+        <div style={{ background: '#FFFFFF', padding: '0.75rem', borderRadius: '8px', border: '1px solid #ECEBE5', display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
+          <span style={{ fontSize: '0.68rem', color: '#718096', textTransform: 'uppercase', fontWeight: 600 }}>Computed Wages</span>
+          <h3 style={{ margin: '0.1rem 0', fontSize: '1.25rem', fontWeight: 800, color: '#167C72' }}>₹{stats.totalWageToday.toLocaleString('en-IN')}</h3>
+          <span style={{ fontSize: '0.68rem', color: '#718096' }}>Daily Liability</span>
         </div>
       </div>
 
@@ -332,24 +332,24 @@ export default function SupervisorAttendanceView() {
       </div>
 
       {/* Filter and Search Bar */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.75rem', background: '#FFFFFF', padding: '0.75rem 1rem', borderRadius: '8px', border: '1px solid #ECEBE5' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flex: 1, minWidth: '220px' }}>
-          <Search size={16} color="#718096" />
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.75rem', background: '#FFFFFF', padding: '0.75rem 1rem', borderRadius: '8px', border: '1px solid #ECEBE5', width: '100%', boxSizing: 'border-box' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flex: '1 1 200px', minWidth: '160px', background: '#F8F9FA', padding: '0.4rem 0.65rem', borderRadius: '6px', border: '1px solid #ECEBE5' }}>
+          <Search size={16} color="#718096" style={{ flexShrink: 0 }} />
           <input
             type="text"
             placeholder="Search worker by name or code..."
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
-            style={{ border: 'none', background: 'transparent', outline: 'none', width: '100%', fontSize: '0.85rem' }}
+            style={{ border: 'none', background: 'transparent', outline: 'none', width: '100%', fontSize: '0.82rem', color: '#172B32' }}
           />
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <Filter size={14} color="#718096" />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+          <Filter size={14} color="#718096" style={{ flexShrink: 0 }} />
           <select
             value={filterStatus}
             onChange={e => setFilterStatus(e.target.value)}
-            style={{ padding: '4px 8px', borderRadius: '6px', border: '1px solid #ECEBE5', fontSize: '0.8rem', background: '#F4F2EC' }}
+            style={{ padding: '0.4rem 0.75rem', borderRadius: '6px', border: '1px solid #ECEBE5', fontSize: '0.8rem', background: '#F4F2EC', color: '#172B32', fontWeight: 600 }}
           >
             <option value="All">All Statuses</option>
             <option value="Present">Present</option>
@@ -360,9 +360,9 @@ export default function SupervisorAttendanceView() {
         </div>
       </div>
 
-      {/* Real Live Attendance Database Records */}
-      <div className={styles.tableWrapper}>
-        <table className={styles.table}>
+      {/* Real Live Attendance Database Records with touch scroll and screen boundary protection */}
+      <div className={styles.tableWrapper} style={{ width: '100%', overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
+        <table className={styles.table} style={{ minWidth: '600px', width: '100%' }}>
           <thead>
             <tr>
               <th>Date</th>
