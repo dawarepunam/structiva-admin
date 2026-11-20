@@ -396,8 +396,42 @@
 
 @media (max-width: 640px) {
   .topNav {
-    padding: 0 0.85rem;
-    height: 58px;
+    padding: 0 0.65rem;
+    height: 54px;
+    gap: 0.5rem;
+  }
+
+  .navLeft {
+    gap: 0.5rem;
+    min-width: 0;
+    flex: 1;
+  }
+
+  .pageTitle {
+    font-size: 0.95rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 140px;
+  }
+
+  .navRight {
+    gap: 0.5rem;
+    flex-shrink: 0;
+  }
+
+  .avatar {
+    width: 28px;
+    height: 28px;
+    font-size: 0.75rem;
+  }
+
+  .supervisorName {
+    font-size: 0.78rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 90px;
   }
 
   .supervisorRole {
