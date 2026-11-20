@@ -21,7 +21,8 @@ import {
   TrendingUp,
   X,
   AlertOctagon,
-  MessageSquare
+  MessageSquare,
+  UserCheck
 } from 'lucide-react';
 
 const navGroups = [
@@ -49,6 +50,7 @@ const navGroups = [
     group: 'Workforce',
     items: [
       { name: 'Worker Directory', href: '/admin/workforce', icon: Users },
+      { name: 'Profile Correction Requests', href: '/admin/workforce/corrections', icon: UserCheck },
       { name: 'Attendance', href: '/admin/attendance', icon: CalendarCheck },
     ]
   },
