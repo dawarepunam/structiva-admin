@@ -6,16 +6,39 @@ import HomeHeader from '@/components/home/components/HomeHeader';
 import HomeFooter from '@/components/home/components/HomeFooter';
 import { fetchStrapiCollection } from '@/services/strapiClient';
 import { StrapiProjectData } from '@/components/home/types/homeTypes';
+import { defaultEnterpriseProjects } from '@/services/projectStorage';
 import { Building2, MapPin, ArrowRight, Lock, Filter, ShieldCheck } from 'lucide-react';
 
+const fallbackProjects: StrapiProjectData[] = defaultEnterpriseProjects.map(p => ({
+  id: Number(p.id),
+  name: p.name,
+  code: p.code,
+  slug: p.slug,
+  client: p.client,
+  location: p.location,
+  category: p.category || 'Commercial Building',
+  budget: String(p.budget),
+  spent: String(p.spent),
+  status: p.status,
+  progress: p.progress,
+  startDate: p.startDate,
+  expectedCompletion: p.expectedCompletion,
+  image: p.image,
+  description: p.description,
+  deployedMachinery: p.deployedMachinery,
+  isProtected: p.isProtected
+}));
+
 export default function ProjectsDirectoryPage() {
-  const [projects, setProjects] = useState<StrapiProjectData[]>([]);
+  const [projects, setProjects] = useState<StrapiProjectData[]>(fallbackProjects);
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    fetchStrapiCollection<StrapiProjectData>('projects', [])
-      .then((data) => setProjects(data || []))
+    fetchStrapiCollection<StrapiProjectData>('projects', fallbackProjects)
+      .then((data) => {
+        if (data && data.length > 0) setProjects(data);
+      })
       .finally(() => setLoading(false));
   }, []);
 

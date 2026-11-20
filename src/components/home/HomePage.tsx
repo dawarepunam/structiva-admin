@@ -20,11 +20,71 @@ import {
   StrapiProjectData 
 } from './types/homeTypes';
 import { fetchStrapiCollection, STRAPI_BASE_URL } from '@/services/strapiClient';
+import { defaultEnterpriseProjects } from '@/services/projectStorage';
+
+const defaultHomeServices: StrapiServiceData[] = [
+  {
+    id: 1,
+    title: 'Water Pipeline Infrastructure',
+    slug: 'water-pipeline-infrastructure',
+    shortDescription: 'Large-diameter cross-country bulk water transmission, MS welded pipes, and trenchless HDD boring under highways and rivers.',
+    order: 1,
+    imageUrl: '/images/pipeline_trench.jpg',
+    features: ['1400mm MS Pipeline Laying', 'Micro-tunneling & HDD Crossings', 'Cathodic Corrosion Protection']
+  },
+  {
+    id: 2,
+    title: 'Solar Infrastructure & Balance of Plant (BOP)',
+    slug: 'solar-infrastructure',
+    shortDescription: 'Utility-scale 250+ MWp solar parks, automated pile driving, MMS installation, inverter rooms, and 33kV internal power lines.',
+    order: 2,
+    imageUrl: '/images/solar_park_real.jpg',
+    features: ['Automated Pile Driving Fleet', 'Turnkey 33kV Internal Sub-stations', 'SCADA Plant Performance Monitoring']
+  },
+  {
+    id: 3,
+    title: 'Water Storage Reservoirs (GFS / ESR)',
+    slug: 'water-storage-tanks',
+    shortDescription: 'Glass-Fused-to-Steel (GFS) industrial tanks and Elevated Storage Reservoirs (ESR) engineered to IS 3370 water retaining standards.',
+    order: 3,
+    imageUrl: '/images/water_tank_real.jpg',
+    features: ['Glass-Fused-to-Steel (GFS) Technology', 'RCC Elevated Storage Reservoirs', 'SCADA Chlorination & Flow Telemetry']
+  },
+  {
+    id: 4,
+    title: 'Heavy Structural Fabrication & Erection',
+    slug: 'heavy-fabrication',
+    shortDescription: 'Railway overbridge (ROB) plate girders, industrial warehouse trusses, PEB structures, and heavy machinery support frames.',
+    order: 4,
+    imageUrl: '/images/steel_fabrication_real.jpg',
+    features: ['Clear Span 72m ROB Plate Girders', 'Ultrasonic NDT Quality Verified', 'Automated Submerged Arc Welding (SAW)']
+  }
+];
 
 export default function HomePageCoordinator() {
   const [homepageData, setHomepageData] = useState<StrapiHomepageData | undefined>();
-  const [services, setServices] = useState<StrapiServiceData[]>([]);
-  const [projects, setProjects] = useState<StrapiProjectData[]>([]);
+  const [services, setServices] = useState<StrapiServiceData[]>(defaultHomeServices);
+  const [projects, setProjects] = useState<StrapiProjectData[]>(
+    defaultEnterpriseProjects.map(p => ({
+      id: Number(p.id),
+      name: p.name,
+      code: p.code,
+      slug: p.slug,
+      client: p.client,
+      location: p.location,
+      category: p.category || 'Commercial Building',
+      budget: String(p.budget),
+      spent: String(p.spent),
+      status: p.status,
+      progress: p.progress,
+      startDate: p.startDate,
+      expectedCompletion: p.expectedCompletion,
+      image: p.image,
+      description: p.description,
+      deployedMachinery: p.deployedMachinery,
+      isProtected: p.isProtected
+    }))
+  );
   const [showBackToTop, setShowBackToTop] = useState(false);
 
   useEffect(() => {

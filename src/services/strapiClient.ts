@@ -4,7 +4,10 @@
  * Implements real CRUD, offline synchronization queue, client IDs, and JWT management.
  */
 
-export const STRAPI_BASE_URL = process.env.NEXT_PUBLIC_STRAPI_API_URL || 'http://localhost:1337';
+export const STRAPI_BASE_URL = 
+  process.env.NEXT_PUBLIC_STRAPI_URL || 
+  process.env.NEXT_PUBLIC_STRAPI_API_URL || 
+  'http://localhost:1337';
 const TOKEN_STORAGE_KEY = 'structiva_strapi_jwt';
 const OFFLINE_QUEUE_KEY = 'structiva_offline_queue_v1';
 
