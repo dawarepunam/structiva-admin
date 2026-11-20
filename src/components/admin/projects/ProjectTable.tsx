@@ -32,11 +32,13 @@ import {
 import SafeImage from '@/components/admin/ui/SafeImage';
 import { EnterpriseProjectRecord, getStoredProjects, saveProjects } from '@/services/projectStorage';
 import { getStoredWorkers, EnterpriseWorkerRecord } from '@/services/workerStorage';
+import { getStoredSupervisors, SupervisorOption } from '@/services/supervisorStorage';
 
 export default function ProjectTable() {
   const router = useRouter();
   const [projects, setProjects] = useState<EnterpriseProjectRecord[]>([]);
   const [workers, setWorkers] = useState<EnterpriseWorkerRecord[]>([]);
+  const [supervisors, setSupervisors] = useState<SupervisorOption[]>([]);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
   const [categoryFilter, setCategoryFilter] = useState('All');
@@ -75,6 +77,7 @@ export default function ProjectTable() {
   const loadData = () => {
     setProjects(getStoredProjects());
     setWorkers(getStoredWorkers());
+    setSupervisors(getStoredSupervisors());
   };
 
   useEffect(() => {
@@ -805,13 +808,19 @@ export default function ProjectTable() {
                 </div>
 
                 <div className={styles.formGroup}>
-                  <label>Site Supervisor</label>
-                  <input 
-                    type="text" 
+                  <label>Site Supervisor *</label>
+                  <select 
                     value={formData.projectSupervisor}
                     onChange={e => setFormData({ ...formData, projectSupervisor: e.target.value })}
-                    placeholder="e.g. Er. Pravin Gaikwad"
-                  />
+                    required
+                  >
+                    <option value="">Select Designated Supervisor</option>
+                    {supervisors.map(s => (
+                      <option key={s.id} value={s.name}>
+                        {s.name} ({s.supervisorId})
+                      </option>
+                    ))}
+                  </select>
                 </div>
               </div>
 

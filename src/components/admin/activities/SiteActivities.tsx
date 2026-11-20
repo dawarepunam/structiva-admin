@@ -18,6 +18,9 @@ import {
   Check
 } from 'lucide-react';
 import SafeImage from '@/components/admin/ui/SafeImage';
+import { getStoredSupervisors, SupervisorOption } from '@/services/supervisorStorage';
+import { getStoredProjects, EnterpriseProjectRecord } from '@/services/projectStorage';
+import { createStrapiEntity } from '@/services/strapiClient';
 
 interface SiteActivityLog {
   id: string;
@@ -89,8 +92,15 @@ const initialActivities: SiteActivityLog[] = [
 
 export default function SiteActivities() {
   const [activities, setActivities] = useState<SiteActivityLog[]>(initialActivities);
+  const [supervisors, setSupervisors] = useState<SupervisorOption[]>([]);
+  const [projects, setProjects] = useState<EnterpriseProjectRecord[]>([]);
   const [filterProject, setFilterProject] = useState('All');
   const [showModal, setShowModal] = useState(false);
+
+  React.useEffect(() => {
+    setSupervisors(getStoredSupervisors());
+    setProjects(getStoredProjects());
+  }, []);
 
   // New Activity Form State
   const [formData, setFormData] = useState({
@@ -128,6 +138,28 @@ export default function SiteActivities() {
 
     setActivities([newAct, ...activities]);
     setShowModal(false);
+
+    // Sync created activity as Task to Strapi supervisor-requests so Supervisor sees it immediately
+    createStrapiEntity('supervisor-requests', {
+      requestType: 'Task',
+      title: formData.description.slice(0, 50) || 'Site Activity Task',
+      project: formData.project,
+      site: formData.location,
+      category: formData.trade,
+      priority: 'Standard',
+      status: Number(formData.progressPercent) >= 100 ? 'Completed' : 'In Progress',
+      submittedBy: formData.supervisor,
+      remarks: formData.workCompleted,
+      details: {
+        plannedQty: 100,
+        completedQty: formData.progressPercent,
+        unit: 'm³',
+        progressPercent: Number(formData.progressPercent),
+        assignedTeam: `${formData.labourCount} Workers (${formData.trade})`,
+        startDate: '19 Nov 2026',
+        dueDate: '25 Nov 2026'
+      }
+    }).catch(e => console.warn('Strapi task sync:', e));
     setFormData({
       project: 'Skyline Commercial Complex',
       location: '',
@@ -267,9 +299,16 @@ export default function SiteActivities() {
                     onChange={e => setFormData({ ...formData, project: e.target.value })}
                     className={styles.input}
                   >
-                    <option value="Skyline Commercial Complex">Skyline Commercial Complex</option>
-                    <option value="Eastern Expressway Bridge Sec-4">Eastern Expressway Bridge Sec-4</option>
-                    <option value="Metro Line Corridor Piling">Metro Line Corridor Piling</option>
+                    {projects.map(p => (
+                      <option key={p.id} value={p.name}>{p.name}</option>
+                    ))}
+                    {projects.length === 0 && (
+                      <>
+                        <option value="Skyline Commercial Complex">Skyline Commercial Complex</option>
+                        <option value="Eastern Expressway Bridge Sec-4">Eastern Expressway Bridge Sec-4</option>
+                        <option value="Metro Line Corridor Piling">Metro Line Corridor Piling</option>
+                      </>
+                    )}
                   </select>
                 </div>
 
@@ -288,14 +327,20 @@ export default function SiteActivities() {
 
               <div className={styles.formGrid2}>
                 <div className={styles.inputGroup}>
-                  <label className={styles.label}>Site Supervisor Name</label>
-                  <input 
-                    type="text" 
+                  <label className={styles.label}>Assign to Site Supervisor *</label>
+                  <select
                     value={formData.supervisor}
                     onChange={e => setFormData({ ...formData, supervisor: e.target.value })}
                     className={styles.input}
                     required
-                  />
+                  >
+                    <option value="">Select Supervisor to Assign</option>
+                    {supervisors.map(s => (
+                      <option key={s.id} value={s.name}>
+                        {s.name} ({s.supervisorId})
+                      </option>
+                    ))}
+                  </select>
                 </div>
 
                 <div className={styles.inputGroup}>
