@@ -32,6 +32,7 @@ export default function ProfileCorrectionRequestsView() {
   const [corrections, setCorrections] = useState<WorkerProfileCorrectionRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
+  const [roleFilter, setRoleFilter] = useState<'All' | 'Worker' | 'Supervisor'>('All');
   const [statusFilter, setStatusFilter] = useState('All');
   const [projectFilter, setProjectFilter] = useState('All');
 
@@ -95,12 +96,13 @@ export default function ProfileCorrectionRequestsView() {
         c.fieldLabel.toLowerCase().includes(search.toLowerCase()) ||
         c.reason.toLowerCase().includes(search.toLowerCase());
 
+      const matchRole = roleFilter === 'All' || c.userRole === roleFilter;
       const matchStatus = statusFilter === 'All' || c.status === statusFilter;
       const matchProj = projectFilter === 'All' || c.project === projectFilter;
 
-      return matchSearch && matchStatus && matchProj;
+      return matchSearch && matchRole && matchStatus && matchProj;
     });
-  }, [corrections, search, statusFilter, projectFilter]);
+  }, [corrections, search, roleFilter, statusFilter, projectFilter]);
 
   const handleOpenReview = (item: WorkerProfileCorrectionRecord) => {
     setSelectedRequest(item);
@@ -179,7 +181,7 @@ export default function ProfileCorrectionRequestsView() {
           <Search size={15} color="#6B7280" />
           <input 
             type="text" 
-            placeholder="Search by worker name, code, field or reason..." 
+            placeholder="Search by name, ID, field, role or reason..." 
             value={search}
             onChange={e => setSearch(e.target.value)}
             className={styles.searchInput}
@@ -187,6 +189,17 @@ export default function ProfileCorrectionRequestsView() {
         </div>
 
         <div className={styles.filtersGroup}>
+          <select 
+            value={roleFilter} 
+            onChange={e => setRoleFilter(e.target.value as any)}
+            className={styles.selectInput}
+            style={{ fontWeight: 600, color: '#167C72' }}
+          >
+            <option value="All">All Roles (Workers & Supervisors)</option>
+            <option value="Worker">Workers Only</option>
+            <option value="Supervisor">Supervisors Only</option>
+          </select>
+
           <select 
             value={statusFilter} 
             onChange={e => setStatusFilter(e.target.value)}
@@ -209,9 +222,9 @@ export default function ProfileCorrectionRequestsView() {
             ))}
           </select>
 
-          {(search || statusFilter !== 'All' || projectFilter !== 'All') && (
+          {(search || roleFilter !== 'All' || statusFilter !== 'All' || projectFilter !== 'All') && (
             <button 
-              onClick={() => { setSearch(''); setStatusFilter('All'); setProjectFilter('All'); }}
+              onClick={() => { setSearch(''); setRoleFilter('All'); setStatusFilter('All'); setProjectFilter('All'); }}
               className={styles.btnSecondary}
               style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}
             >
@@ -227,7 +240,7 @@ export default function ProfileCorrectionRequestsView() {
           <table className={styles.table}>
             <thead>
               <tr>
-                <th>Worker</th>
+                <th>Applicant / Role</th>
                 <th>Project & Site</th>
                 <th>Requested Field</th>
                 <th>Type</th>
@@ -259,7 +272,19 @@ export default function ProfileCorrectionRequestsView() {
                   return (
                     <tr key={item.id}>
                       <td>
-                        <strong>{item.workerName}</strong>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                          <strong>{item.workerName}</strong>
+                          <span style={{ 
+                            fontSize: '0.65rem', 
+                            padding: '0.15rem 0.4rem', 
+                            borderRadius: '4px', 
+                            fontWeight: 700,
+                            background: item.userRole === 'Supervisor' ? '#FEF3C7' : '#E0F2FE',
+                            color: item.userRole === 'Supervisor' ? '#92400E' : '#0369A1'
+                          }}>
+                            {item.userRole || 'Worker'}
+                          </span>
+                        </div>
                         <div style={{ fontSize: '0.72rem', color: '#6B7280' }}>
                           ID: {item.workerCode}
                         </div>

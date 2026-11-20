@@ -3,9 +3,10 @@ import { getStoredWorkers, saveWorkers, EnterpriseWorkerRecord } from './workerS
 
 export const CORRECTIONS_STORAGE_KEY = 'structiva_enterprise_profile_corrections_v1';
 
-export interface WorkerProfileCorrectionRecord {
+export interface ProfileCorrectionRecord {
   id: string | number;
   documentId?: string;
+  userRole: 'Worker' | 'Supervisor';
   workerId: string;
   workerName: string;
   workerCode: string;
@@ -27,9 +28,12 @@ export interface WorkerProfileCorrectionRecord {
   reviewedDate?: string;
 }
 
-export const DEFAULT_CORRECTIONS: WorkerProfileCorrectionRecord[] = [
+export type WorkerProfileCorrectionRecord = ProfileCorrectionRecord;
+
+export const DEFAULT_CORRECTIONS: ProfileCorrectionRecord[] = [
   {
     id: 'cor-101',
+    userRole: 'Worker',
     workerId: '1',
     workerName: 'Ramesh Patil',
     workerCode: 'WRK-MUM-104',
@@ -47,6 +51,7 @@ export const DEFAULT_CORRECTIONS: WorkerProfileCorrectionRecord[] = [
   },
   {
     id: 'cor-102',
+    userRole: 'Worker',
     workerId: '1',
     workerName: 'Ramesh Patil',
     workerCode: 'WRK-MUM-104',
@@ -63,10 +68,28 @@ export const DEFAULT_CORRECTIONS: WorkerProfileCorrectionRecord[] = [
     reason: 'Updated clear passport size digital headshot for safety badge verification.',
     status: 'Pending',
     submittedDate: '18 Nov 2026'
+  },
+  {
+    id: 'cor-201',
+    userRole: 'Supervisor',
+    workerId: 'sup-1',
+    workerName: 'Er. Pravin Gaikwad',
+    workerCode: 'SUP-PUN-01',
+    project: 'Skyline Commercial Complex (Tower A)',
+    site: 'Tower A Core & Podium',
+    supervisorName: 'Er. Rajesh Kulkarni (Project Director)',
+    fieldName: 'phone',
+    fieldLabel: 'Official Mobile Phone',
+    oldValue: '+91 98220 11432',
+    newValue: '+91 98220 99441',
+    isPhotoChange: false,
+    reason: 'Field emergency priority number activated for Skyline tower inspection.',
+    status: 'Pending',
+    submittedDate: '20 Nov 2026'
   }
 ];
 
-export function getStoredCorrections(): WorkerProfileCorrectionRecord[] {
+export function getStoredCorrections(): ProfileCorrectionRecord[] {
   if (typeof window === 'undefined') return DEFAULT_CORRECTIONS;
   try {
     const raw = localStorage.getItem(CORRECTIONS_STORAGE_KEY);
@@ -81,7 +104,7 @@ export function getStoredCorrections(): WorkerProfileCorrectionRecord[] {
   }
 }
 
-export function saveStoredCorrections(corrections: WorkerProfileCorrectionRecord[]): void {
+export function saveStoredCorrections(corrections: ProfileCorrectionRecord[]): void {
   if (typeof window === 'undefined') return;
   try {
     localStorage.setItem(CORRECTIONS_STORAGE_KEY, JSON.stringify(corrections));
@@ -92,15 +115,16 @@ export function saveStoredCorrections(corrections: WorkerProfileCorrectionRecord
   }
 }
 
-export async function fetchCorrectionsFromBackend(): Promise<WorkerProfileCorrectionRecord[]> {
+export async function fetchCorrectionsFromBackend(): Promise<ProfileCorrectionRecord[]> {
   try {
     const backendData = await fetchStrapiCollection<any>('worker-profile-corrections', []);
     const local = getStoredCorrections();
 
     if (backendData && backendData.length > 0) {
-      const formatted: WorkerProfileCorrectionRecord[] = backendData.map((d: any) => ({
+      const formatted: ProfileCorrectionRecord[] = backendData.map((d: any) => ({
         id: d.id || d.documentId,
         documentId: d.documentId,
+        userRole: d.userRole || 'Worker',
         workerId: d.workerId,
         workerName: d.workerName,
         workerCode: d.workerCode,
@@ -122,7 +146,6 @@ export async function fetchCorrectionsFromBackend(): Promise<WorkerProfileCorrec
         reviewedDate: d.reviewedDate
       }));
 
-      // Merge local with backend
       const combined = [...local];
       formatted.forEach(f => {
         const idx = combined.findIndex(c => String(c.id) === String(f.id) || (c.documentId && c.documentId === f.documentId));
@@ -141,21 +164,19 @@ export async function fetchCorrectionsFromBackend(): Promise<WorkerProfileCorrec
   }
 }
 
-export async function submitWorkerProfileCorrection(
-  payload: Omit<WorkerProfileCorrectionRecord, 'id' | 'status'>
-): Promise<WorkerProfileCorrectionRecord> {
-  const newRecord: WorkerProfileCorrectionRecord = {
+export async function submitProfileCorrection(
+  payload: Omit<ProfileCorrectionRecord, 'id' | 'status'>
+): Promise<ProfileCorrectionRecord> {
+  const newRecord: ProfileCorrectionRecord = {
     ...payload,
     id: `cor-${Date.now()}`,
     status: 'Pending'
   };
 
-  // 1. Immediately store in local cache
   const existing = getStoredCorrections();
   const updated = [newRecord, ...existing];
   saveStoredCorrections(updated);
 
-  // 2. Sync to Strapi collection
   try {
     const strapiRes = await createStrapiEntity<any>('worker-profile-corrections', newRecord);
     if (strapiRes && (strapiRes.id || strapiRes.documentId)) {
@@ -170,6 +191,8 @@ export async function submitWorkerProfileCorrection(
   return newRecord;
 }
 
+export const submitWorkerProfileCorrection = submitProfileCorrection;
+
 export async function reviewWorkerProfileCorrection(
   correctionId: string | number,
   decision: 'Approved' | 'Rejected',
@@ -182,15 +205,14 @@ export async function reviewWorkerProfileCorrection(
 
   const target = allCorrections[targetIndex];
   if (target.status !== 'Pending') {
-    // Prevent repeated approval or rejection
     return false;
   }
 
   const todayStr = new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
-  const updatedTarget: WorkerProfileCorrectionRecord = {
+  const updatedTarget: ProfileCorrectionRecord = {
     ...target,
     status: decision,
-    adminRemarks: adminRemarks || (decision === 'Approved' ? 'Verified with statutory HR documents.' : 'Rejected per policy.'),
+    adminRemarks: adminRemarks || (decision === 'Approved' ? 'Verified and authorized by Executive HR Admin.' : 'Rejected per compliance policy.'),
     reviewedBy,
     reviewedDate: todayStr
   };
@@ -198,8 +220,8 @@ export async function reviewWorkerProfileCorrection(
   allCorrections[targetIndex] = updatedTarget;
   saveStoredCorrections(allCorrections);
 
-  // If approved, update official Worker record
-  if (decision === 'Approved') {
+  // If approved and it is a Worker, update official Worker record
+  if (decision === 'Approved' && target.userRole === 'Worker') {
     const workers = getStoredWorkers();
     const workerIndex = workers.findIndex(w => String(w.id) === String(target.workerId) || w.code === target.workerCode);
     if (workerIndex >= 0) {
@@ -214,7 +236,6 @@ export async function reviewWorkerProfileCorrection(
       workers[workerIndex] = { ...currentWorker };
       saveWorkers(workers);
 
-      // Also sync worker changes to Strapi workers collection
       try {
         const docId = (currentWorker as any).documentId;
         if (docId) {
