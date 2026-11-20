@@ -325,6 +325,7 @@
   .identityCard {
     flex-direction: column;
     align-items: flex-start;
+    padding: 1.15rem;
   }
   .identityLeft {
     flex-direction: column;
@@ -332,6 +333,32 @@
     gap: 1rem;
   }
   .sectionGrid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.65rem !important;
+  }
+  .sectionCard {
+    padding: 0.85rem 0.75rem !important;
+  }
+  .sectionTitle {
+    font-size: 0.88rem !important;
+  }
+  .detailRow {
+    padding: 0.5rem 0 !important;
+    font-size: 0.78rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .sectionGrid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.5rem !important;
+  }
+  .sectionCard {
+    padding: 0.65rem 0.5rem !important;
+  }
+  .detailRow {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.2rem;
   }
 }
