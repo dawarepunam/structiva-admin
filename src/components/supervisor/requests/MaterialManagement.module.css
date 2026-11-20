@@ -875,3 +875,62 @@
   max-width: 400px;
   margin: 0 auto 1.25rem auto;
 }
+
+/* --------------------------------------------------------------------------
+   Mobile & Cross-Device Responsive Overrides
+   -------------------------------------------------------------------------- */
+@media (max-width: 768px) {
+  .headerSection {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1.25rem;
+    gap: 1rem;
+  }
+
+  .headerActions {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .headerActions button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .filterStrip {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 0.75rem;
+    gap: 0.75rem;
+  }
+
+  .tableToolbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.65rem;
+  }
+
+  .searchBox {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .summaryGrid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.65rem !important;
+  }
+
+  .summaryCard {
+    padding: 0.75rem !important;
+  }
+
+  .formGrid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .summaryGrid {
+    grid-template-columns: 1fr !important;
+  }
+}

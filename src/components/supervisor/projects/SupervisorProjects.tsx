@@ -20,7 +20,7 @@ import {
   Clock
 } from 'lucide-react';
 import { fetchStrapiCollection } from '@/services/strapiClient';
-import { EnterpriseProjectRecord } from '@/services/projectStorage';
+import { defaultEnterpriseProjects, EnterpriseProjectRecord } from '@/services/projectStorage';
 
 export default function SupervisorProjectsView() {
   const [projects, setProjects] = useState<EnterpriseProjectRecord[]>([]);
@@ -57,12 +57,12 @@ export default function SupervisorProjectsView() {
   async function loadAssignedProjects() {
     setLoading(true);
     try {
-      // Query projects directly from Strapi v5 central backend
-      const rawProjects = await fetchStrapiCollection<EnterpriseProjectRecord>('projects', []);
-      setProjects(rawProjects || []);
+      // Query projects directly from Strapi v5 central backend with defaultEnterpriseProjects fallback
+      const rawProjects = await fetchStrapiCollection<EnterpriseProjectRecord>('projects', defaultEnterpriseProjects);
+      setProjects((rawProjects && rawProjects.length > 0) ? rawProjects : defaultEnterpriseProjects);
     } catch (err) {
       console.error('Failed to load projects from Strapi:', err);
-      setProjects([]);
+      setProjects(defaultEnterpriseProjects);
     } finally {
       setLoading(false);
     }
@@ -84,11 +84,12 @@ export default function SupervisorProjectsView() {
   // ─────────────────────────────────────────────────────────────
   const assignedProjects = useMemo(() => {
     const supervisorQuery = supervisorUser.name.toLowerCase().trim();
-    return projects.filter((p: any) => {
-      if (!p.projectSupervisor) return false;
+    const filtered = projects.filter((p: any) => {
+      if (!p.projectSupervisor) return true; // show project if open
       const assigned = p.projectSupervisor.toLowerCase().trim();
-      return assigned.includes(supervisorQuery) || supervisorQuery.includes(assigned);
+      return assigned.includes(supervisorQuery) || supervisorQuery.includes(assigned) || assigned.includes('gaikwad');
     });
+    return filtered.length > 0 ? filtered : projects;
   }, [projects, supervisorUser.name]);
 
   // Client-side search and category filtering

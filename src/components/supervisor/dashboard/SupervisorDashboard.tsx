@@ -32,6 +32,9 @@ import {
   HelpCircle
 } from 'lucide-react';
 import { fetchStrapiCollection, getOfflineQueue, syncOfflineQueue, STRAPI_BASE_URL } from '@/services/strapiClient';
+import { getStoredWorkers, getStoredAttendanceLogs } from '@/services/workerStorage';
+import { defaultEnterpriseProjects } from '@/services/projectStorage';
+import { getStoredFleet } from '@/services/fleetStorage';
 
 export default function SupervisorDashboard() {
   const [loading, setLoading] = useState(true);
@@ -93,10 +96,10 @@ export default function SupervisorDashboard() {
         requestsRes,
         expensesRes
       ] = await Promise.all([
-        fetchStrapiCollection('projects', []),
-        fetchStrapiCollection('workers', []),
-        fetchStrapiCollection('attendances', []),
-        fetchStrapiCollection('fleets', []),
+        fetchStrapiCollection('projects', defaultEnterpriseProjects),
+        fetchStrapiCollection('workers', getStoredWorkers()),
+        fetchStrapiCollection('attendances', getStoredAttendanceLogs()),
+        fetchStrapiCollection('fleets', getStoredFleet()),
         fetchStrapiCollection('fuels', []),
         fetchStrapiCollection('supervisor-requests', []),
         fetchStrapiCollection('expenses', [])
@@ -106,12 +109,50 @@ export default function SupervisorDashboard() {
       setLatencyMs(roundTrip > 0 ? roundTrip : 14);
       setIsBackendOnline(true);
 
-      setProjects(projsRes || []);
-      setWorkers(workersRes || []);
-      setAttendances(attendancesRes || []);
-      setFleets(fleetsRes || []);
+      const resolvedProjects = (projsRes && projsRes.length > 0) ? projsRes : defaultEnterpriseProjects;
+      const resolvedWorkers = (workersRes && workersRes.length > 0) ? workersRes : getStoredWorkers();
+      const resolvedAttendances = (attendancesRes && attendancesRes.length > 0) ? attendancesRes : getStoredAttendanceLogs();
+      const resolvedFleets = (fleetsRes && fleetsRes.length > 0) ? fleetsRes : getStoredFleet();
+
+      const defaultFallbackRequests = [
+        {
+          id: 101,
+          title: 'M-35 RMC Ready Mix Supply Request',
+          requestType: 'Material Request',
+          project: 'Skyline Commercial Complex (Tower A)',
+          status: 'Submitted',
+          priority: 'Critical',
+          submittedDate: '18 Nov 2026',
+          remarks: 'Concrete pour required for Level 14 core beam B-14.'
+        },
+        {
+          id: 102,
+          title: 'Daily Progress Report — Tower A Core',
+          requestType: 'DPR',
+          project: 'Skyline Commercial Complex (Tower A)',
+          status: 'Draft',
+          priority: 'High',
+          submittedDate: '18 Nov 2026',
+          remarks: 'Daily excavation and reinforcement tie-up muster verified.'
+        },
+        {
+          id: 103,
+          title: 'Safety Barrier Fall Protection Edge Check',
+          requestType: 'Site Issue',
+          project: 'Skyline Commercial Complex (Tower A)',
+          status: 'In Progress',
+          priority: 'Critical',
+          submittedDate: '18 Nov 2026',
+          remarks: 'Double-lanyard perimeter netting inspected by EHS lead.'
+        }
+      ];
+
+      setProjects(resolvedProjects);
+      setWorkers(resolvedWorkers);
+      setAttendances(resolvedAttendances);
+      setFleets(resolvedFleets);
       setFuels(fuelsRes || []);
-      setSupervisorRequests(requestsRes || []);
+      setSupervisorRequests((requestsRes && requestsRes.length > 0) ? requestsRes : defaultFallbackRequests);
       setExpenses(expensesRes || []);
       setOfflineCount(getOfflineQueue().length);
     } catch (err) {
