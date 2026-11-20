@@ -50,9 +50,9 @@ export default async function AboutPage() {
       <HomeAbout data={data} />
 
       {/* Corporate Benchmarks */}
-      <section style={{ padding: '80px 1.5rem', background: '#F8F9FA' }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '2rem' }}>
-          <div style={{ background: '#FFFFFF', padding: '2rem', borderRadius: '12px', border: '1px solid #E5E7EB' }}>
+      <section style={{ padding: 'clamp(50px, 6vw, 80px) 1.5rem', background: '#F8F9FA' }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem' }}>
+          <div style={{ background: '#FFFFFF', padding: '2rem', borderRadius: '12px', border: '1px solid #E5E7EB', display: 'flex', flexDirection: 'column' }}>
             <Award size={32} color="#167C72" style={{ marginBottom: '1rem' }} />
             <h3 style={{ fontSize: '1.25rem', fontWeight: 700, margin: '0 0 0.5rem 0' }}>Quality As A Backbone</h3>
             <p style={{ fontSize: '0.88rem', color: '#4B5563', lineHeight: '1.6', margin: 0 }}>
@@ -60,7 +60,7 @@ export default async function AboutPage() {
             </p>
           </div>
 
-          <div style={{ background: '#FFFFFF', padding: '2rem', borderRadius: '12px', border: '1px solid #E5E7EB' }}>
+          <div style={{ background: '#FFFFFF', padding: '2rem', borderRadius: '12px', border: '1px solid #E5E7EB', display: 'flex', flexDirection: 'column' }}>
             <Users2 size={32} color="#D97706" style={{ marginBottom: '1rem' }} />
             <h3 style={{ fontSize: '1.25rem', fontWeight: 700, margin: '0 0 0.5rem 0' }}>Trade Craft & Talent</h3>
             <p style={{ fontSize: '0.88rem', color: '#4B5563', lineHeight: '1.6', margin: 0 }}>
@@ -68,7 +68,7 @@ export default async function AboutPage() {
             </p>
           </div>
 
-          <div style={{ background: '#FFFFFF', padding: '2rem', borderRadius: '12px', border: '1px solid #E5E7EB' }}>
+          <div style={{ background: '#FFFFFF', padding: '2rem', borderRadius: '12px', border: '1px solid #E5E7EB', display: 'flex', flexDirection: 'column' }}>
             <Building size={32} color="#2563EB" style={{ marginBottom: '1rem' }} />
             <h3 style={{ fontSize: '1.25rem', fontWeight: 700, margin: '0 0 0.5rem 0' }}>Asset Independence</h3>
             <p style={{ fontSize: '0.88rem', color: '#4B5563', lineHeight: '1.6', margin: 0 }}>

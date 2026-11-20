@@ -68,44 +68,44 @@ export default async function CapabilitiesPage() {
             </p>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1.5rem' }}>
-            <div style={{ background: '#F8F9FA', borderRadius: '10px', overflow: 'hidden', border: '1px solid #E5E7EB' }}>
-              <div style={{ height: '180px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem' }}>
+            <div style={{ background: '#F8F9FA', borderRadius: '10px', overflow: 'hidden', border: '1px solid #E5E7EB', display: 'flex', flexDirection: 'column' }}>
+              <div style={{ height: '200px', width: '100%', overflow: 'hidden' }}>
                 <img src="/images/crane_real.jpg" alt="Crawler Crane" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               </div>
-              <div style={{ padding: '1.25rem' }}>
-                <h4 style={{ margin: '0 0 0.3rem 0', fontSize: '1.05rem', fontWeight: 700 }}>150T Hydraulic Cranes</h4>
-                <p style={{ fontSize: '0.8rem', color: '#6B7280', margin: 0 }}>Heavy girder erection and pipe stringing.</p>
+              <div style={{ padding: '1.25rem', flex: 1 }}>
+                <h4 style={{ margin: '0 0 0.3rem 0', fontSize: '1.05rem', fontWeight: 700, color: '#172B32' }}>150T Hydraulic Cranes</h4>
+                <p style={{ fontSize: '0.82rem', color: '#6B7280', margin: 0, lineHeight: '1.5' }}>Heavy girder erection and pipe stringing.</p>
               </div>
             </div>
 
-            <div style={{ background: '#F8F9FA', borderRadius: '10px', overflow: 'hidden', border: '1px solid #E5E7EB' }}>
-              <div style={{ height: '180px' }}>
+            <div style={{ background: '#F8F9FA', borderRadius: '10px', overflow: 'hidden', border: '1px solid #E5E7EB', display: 'flex', flexDirection: 'column' }}>
+              <div style={{ height: '200px', width: '100%', overflow: 'hidden' }}>
                 <img src="/images/jcb_real.jpg" alt="Excavator" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               </div>
-              <div style={{ padding: '1.25rem' }}>
-                <h4 style={{ margin: '0 0 0.3rem 0', fontSize: '1.05rem', fontWeight: 700 }}>Heavy Excavators (30T)</h4>
-                <p style={{ fontSize: '0.8rem', color: '#6B7280', margin: 0 }}>Deep earth trenching and rock breaking.</p>
+              <div style={{ padding: '1.25rem', flex: 1 }}>
+                <h4 style={{ margin: '0 0 0.3rem 0', fontSize: '1.05rem', fontWeight: 700, color: '#172B32' }}>Heavy Excavators (30T)</h4>
+                <p style={{ fontSize: '0.82rem', color: '#6B7280', margin: 0, lineHeight: '1.5' }}>Deep earth trenching and rock breaking.</p>
               </div>
             </div>
 
-            <div style={{ background: '#F8F9FA', borderRadius: '10px', overflow: 'hidden', border: '1px solid #E5E7EB' }}>
-              <div style={{ height: '180px' }}>
+            <div style={{ background: '#F8F9FA', borderRadius: '10px', overflow: 'hidden', border: '1px solid #E5E7EB', display: 'flex', flexDirection: 'column' }}>
+              <div style={{ height: '200px', width: '100%', overflow: 'hidden' }}>
                 <img src="/images/water_tanker.jpg" alt="Transit Mixers" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               </div>
-              <div style={{ padding: '1.25rem' }}>
-                <h4 style={{ margin: '0 0 0.3rem 0', fontSize: '1.05rem', fontWeight: 700 }}>Transit Mixers & Pumps</h4>
-                <p style={{ fontSize: '0.8rem', color: '#6B7280', margin: 0 }}>Continuous high-grade concrete pouring.</p>
+              <div style={{ padding: '1.25rem', flex: 1 }}>
+                <h4 style={{ margin: '0 0 0.3rem 0', fontSize: '1.05rem', fontWeight: 700, color: '#172B32' }}>Transit Mixers & Pumps</h4>
+                <p style={{ fontSize: '0.82rem', color: '#6B7280', margin: 0, lineHeight: '1.5' }}>Continuous high-grade concrete pouring.</p>
               </div>
             </div>
 
-            <div style={{ background: '#F8F9FA', borderRadius: '10px', overflow: 'hidden', border: '1px solid #E5E7EB' }}>
-              <div style={{ height: '180px' }}>
+            <div style={{ background: '#F8F9FA', borderRadius: '10px', overflow: 'hidden', border: '1px solid #E5E7EB', display: 'flex', flexDirection: 'column' }}>
+              <div style={{ height: '200px', width: '100%', overflow: 'hidden' }}>
                 <img src="/images/tipper_real.jpg" alt="Tipper Dumpers" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               </div>
-              <div style={{ padding: '1.25rem' }}>
-                <h4 style={{ margin: '0 0 0.3rem 0', fontSize: '1.05rem', fontWeight: 700 }}>Heavy Tippers & Haulers</h4>
-                <p style={{ fontSize: '0.8rem', color: '#6B7280', margin: 0 }}>Bulk aggregate and pipe section mobilization.</p>
+              <div style={{ padding: '1.25rem', flex: 1 }}>
+                <h4 style={{ margin: '0 0 0.3rem 0', fontSize: '1.05rem', fontWeight: 700, color: '#172B32' }}>Heavy Tippers & Haulers</h4>
+                <p style={{ fontSize: '0.82rem', color: '#6B7280', margin: 0, lineHeight: '1.5' }}>Bulk aggregate and pipe section mobilization.</p>
               </div>
             </div>
           </div>
