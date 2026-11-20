@@ -1,13 +1,16 @@
 /* Structiva Supervisor Design System Variables & Layout */
 .supervisorContainer {
   display: flex;
-  min-height: 100vh;
+  height: 100vh;
+  height: 100dvh; /* Adaptive dynamic viewport height for mobile browsers */
   background-color: #F4F2EC; /* Warm Ivory */
   color: #172B32; /* Midnight Graphite */
   font-family: inherit;
-  width: 100%;
+  width: 100vw;
   max-width: 100vw;
-  position: relative;
+  position: fixed;
+  inset: 0;
+  overflow: hidden !important; /* Lock outer viewport so header and container never bounce */
 }
 
 /* Sidebar Styling */
@@ -17,10 +20,9 @@
   color: #FFFFFF;
   display: flex;
   flex-direction: column;
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  left: 0;
+  position: relative;
+  height: 100%;
+  flex-shrink: 0;
   z-index: 50;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   border-right: 1px solid rgba(255, 255, 255, 0.08);
@@ -141,23 +143,21 @@
 /* Main Content Area */
 .mainWrapper {
   flex: 1;
-  margin-left: 260px;
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
-  width: calc(100% - 260px);
-  max-width: 100%;
+  height: 100%;
+  min-width: 0;
+  overflow: hidden; /* Header is pinned, only pageBody scrolls */
+  position: relative;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  padding-top: 64px; /* Space for the fixed header */
 }
 
 /* Fullscreen View when Sidebar is hidden */
 .mainWrapperFull {
-  margin-left: 0 !important;
   width: 100% !important;
 }
 
-/* Top Navigation Bar — PERMANENTLY FIXED & FROZEN ON SCREEN */
+/* Top Navigation Bar — PERMANENTLY FIXED & NEVER SCROLLS */
 .topNav {
   height: 64px;
   background-color: #FFFFFF;
@@ -166,13 +166,9 @@
   align-items: center;
   justify-content: space-between;
   padding: 0 1.5rem;
-  position: fixed !important;
-  top: 0 !important;
-  left: 260px;
-  right: 0;
+  flex-shrink: 0;
   z-index: 40;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-  transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
 .topNavFull {
@@ -279,11 +275,13 @@
   display: block;
 }
 
-/* Page Content Container */
+/* Page Content Container - ONLY THIS SCROLLS */
 .pageBody {
   flex: 1;
   padding: 1.5rem;
   width: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
   box-sizing: border-box;
 }
 
@@ -342,7 +340,12 @@
 
 @media (max-width: 1024px) {
   .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
     transform: translateX(-100%);
+    box-shadow: 4px 0 25px rgba(0, 0, 0, 0.3);
   }
 
   .sidebarOpen {
@@ -372,6 +375,7 @@
 
   .pageBody {
     padding: 1rem;
+    padding-bottom: 80px;
   }
 }
 
