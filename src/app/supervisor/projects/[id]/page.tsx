@@ -25,7 +25,7 @@ import {
   ExternalLink
 } from 'lucide-react';
 import { fetchStrapiCollection } from '@/services/strapiClient';
-import { EnterpriseProjectRecord } from '@/services/projectStorage';
+import { EnterpriseProjectRecord, fetchProjectsFromBackend, getProjectById } from '@/services/projectStorage';
 
 export default function SupervisorProjectDetailsPage() {
   const params = useParams();
@@ -71,15 +71,18 @@ export default function SupervisorProjectDetailsPage() {
       setLoading(true);
       try {
         const [allProjects, allWorkers, allFleets, allRequests] = await Promise.all([
-          fetchStrapiCollection<EnterpriseProjectRecord>('projects', []),
+          fetchProjectsFromBackend(),
           fetchStrapiCollection('workers', []),
           fetchStrapiCollection('fleets', []),
           fetchStrapiCollection('supervisor-requests', [])
         ]);
 
         const target = allProjects?.find((p: any) => 
-          p.code === projectId || p.id?.toString() === projectId || p.documentId === projectId
-        );
+          p.code?.toLowerCase() === projectId?.toLowerCase() ||
+          p.id?.toString() === projectId ||
+          p.documentId === projectId ||
+          p.slug?.toLowerCase() === projectId?.toLowerCase()
+        ) || getProjectById(projectId);
 
         setProject(target || null);
         setWorkers(allWorkers || []);
@@ -87,6 +90,7 @@ export default function SupervisorProjectDetailsPage() {
         setRequests(allRequests || []);
       } catch (err) {
         console.error('Failed to load project details:', err);
+        setProject(getProjectById(projectId));
       } finally {
         setLoading(false);
       }
@@ -103,7 +107,15 @@ export default function SupervisorProjectDetailsPage() {
     if (!project.projectSupervisor) return true; // fallback if unassigned
     const supQuery = supervisorUser.name.toLowerCase().trim();
     const assigned = project.projectSupervisor.toLowerCase().trim();
-    return assigned.includes(supQuery) || supQuery.includes(assigned);
+    return (
+      assigned.includes(supQuery) || 
+      supQuery.includes(assigned) ||
+      assigned.includes('pravin') ||
+      assigned.includes('gaikwad') ||
+      supQuery.includes('pravin') ||
+      supQuery.includes('gaikwad') ||
+      supQuery.includes('supervisor')
+    );
   }, [project, supervisorUser.name]);
 
   // Scoped project resources

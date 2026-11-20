@@ -20,7 +20,7 @@ import {
   Clock
 } from 'lucide-react';
 import { fetchStrapiCollection } from '@/services/strapiClient';
-import { defaultEnterpriseProjects, EnterpriseProjectRecord } from '@/services/projectStorage';
+import { defaultEnterpriseProjects, EnterpriseProjectRecord, fetchProjectsFromBackend } from '@/services/projectStorage';
 
 export default function SupervisorProjectsView() {
   const [projects, setProjects] = useState<EnterpriseProjectRecord[]>([]);
@@ -57,11 +57,10 @@ export default function SupervisorProjectsView() {
   async function loadAssignedProjects() {
     setLoading(true);
     try {
-      // Query projects directly from Strapi v5 central backend with defaultEnterpriseProjects fallback
-      const rawProjects = await fetchStrapiCollection<EnterpriseProjectRecord>('projects', defaultEnterpriseProjects);
+      const rawProjects = await fetchProjectsFromBackend();
       setProjects((rawProjects && rawProjects.length > 0) ? rawProjects : defaultEnterpriseProjects);
     } catch (err) {
-      console.error('Failed to load projects from Strapi:', err);
+      console.error('Failed to load projects from Strapi/Storage:', err);
       setProjects(defaultEnterpriseProjects);
     } finally {
       setLoading(false);
