@@ -1,16 +1,15 @@
 /* Structiva Supervisor Design System Variables & Layout */
 .supervisorContainer {
   display: flex;
-  height: 100vh;
-  height: 100dvh; /* Adaptive dynamic viewport height for mobile browsers */
+  min-height: 100vh;
+  min-height: 100dvh;
   background-color: #F4F2EC; /* Warm Ivory */
   color: #172B32; /* Midnight Graphite */
   font-family: inherit;
-  width: 100vw;
+  width: 100%;
   max-width: 100vw;
-  position: fixed;
-  inset: 0;
-  overflow: hidden !important; /* Lock outer viewport so header and container never bounce */
+  position: relative;
+  overflow-x: hidden;
 }
 
 /* Sidebar Styling */
@@ -20,8 +19,12 @@
   color: #FFFFFF;
   display: flex;
   flex-direction: column;
-  position: relative;
-  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  height: 100vh;
+  height: 100dvh;
   flex-shrink: 0;
   z-index: 50;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -145,19 +148,22 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  height: 100%;
+  min-height: 100vh;
+  margin-left: 260px;
   min-width: 0;
-  overflow: hidden; /* Header is pinned, only pageBody scrolls */
+  width: calc(100% - 260px);
+  padding-top: 64px;
   position: relative;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Fullscreen View when Sidebar is hidden */
 .mainWrapperFull {
+  margin-left: 0 !important;
   width: 100% !important;
 }
 
-/* Top Navigation Bar — PERMANENTLY FIXED & NEVER SCROLLS */
+/* Top Navigation Bar — PERMANENTLY FIXED TO TOP & NEVER SCROLLS */
 .topNav {
   height: 64px;
   background-color: #FFFFFF;
@@ -166,9 +172,13 @@
   align-items: center;
   justify-content: space-between;
   padding: 0 1.5rem;
-  flex-shrink: 0;
+  position: fixed;
+  top: 0;
+  left: 260px;
+  right: 0;
   z-index: 40;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .topNavFull {
@@ -275,13 +285,11 @@
   display: block;
 }
 
-/* Page Content Container - ONLY THIS SCROLLS */
+/* Page Content Container */
 .pageBody {
   flex: 1;
   padding: 0;
   width: 100%;
-  overflow-y: auto;
-  overflow-x: hidden;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -376,8 +384,8 @@
   }
 
   .mainWrapper {
-    margin-left: 0;
-    width: 100%;
+    margin-left: 0 !important;
+    width: 100% !important;
   }
 
   .topNav {
@@ -395,6 +403,10 @@
 }
 
 @media (max-width: 640px) {
+  .mainWrapper {
+    padding-top: 54px !important;
+  }
+
   .topNav {
     padding: 0 0.65rem;
     height: 54px;
@@ -452,7 +464,7 @@
   }
 
   .supervisorFooter {
-    padding: 1rem 0.85rem 75px 0.85rem;
+    padding: 1.25rem 0.85rem 85px 0.85rem;
     flex-direction: column;
     text-align: center;
     gap: 0.5rem;
