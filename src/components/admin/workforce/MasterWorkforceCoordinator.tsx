@@ -4,14 +4,15 @@ import React, { useState } from 'react';
 import supStyles from './SupervisorDirectoryView.module.css';
 import WorkerTable from './WorkerTable';
 import SupervisorDirectoryView from './SupervisorDirectoryView';
-import { Users, HardHat, ShieldCheck } from 'lucide-react';
+import ProfileCorrectionRequestsView from './ProfileCorrectionRequestsView';
+import { Users, HardHat, ShieldCheck, UserCheck } from 'lucide-react';
 
 export default function MasterWorkforceCoordinator() {
-  const [activeTab, setActiveTab] = useState<'workers' | 'supervisors'>('workers');
+  const [activeTab, setActiveTab] = useState<'workers' | 'supervisors' | 'corrections'>('workers');
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', width: '100%' }}>
-      {/* Workforce Dual Switcher */}
+      {/* Workforce Triple Switcher */}
       <div className={supStyles.masterNavSwitcher}>
         <button
           className={`${supStyles.masterNavBtn} ${activeTab === 'workers' ? supStyles.masterNavBtnActive : ''}`}
@@ -30,13 +31,24 @@ export default function MasterWorkforceCoordinator() {
           <span>Field Supervisors Management</span>
           <span className={supStyles.counterBadge}>Field Management</span>
         </button>
+
+        <button
+          className={`${supStyles.masterNavBtn} ${activeTab === 'corrections' ? supStyles.masterNavBtnActive : ''}`}
+          onClick={() => setActiveTab('corrections')}
+        >
+          <UserCheck size={18} />
+          <span>Profile Correction Requests</span>
+          <span className={supStyles.counterBadge} style={{ background: '#FEF3C7', color: '#92400E' }}>Verification</span>
+        </button>
       </div>
 
       {/* Render Selected View */}
       {activeTab === 'workers' ? (
         <WorkerTable />
-      ) : (
+      ) : activeTab === 'supervisors' ? (
         <SupervisorDirectoryView />
+      ) : (
+        <ProfileCorrectionRequestsView />
       )}
     </div>
   );
