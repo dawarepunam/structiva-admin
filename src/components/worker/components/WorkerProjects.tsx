@@ -31,7 +31,7 @@ export default function WorkerProjectsView({ worker }: WorkerProjectsProps) {
           </span>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1.5rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.25rem' }}>
           <div>
             <h3 style={{ margin: '0 0 0.5rem 0', fontSize: '1.15rem', color: '#172B32' }}>
               {worker.assignedProject}
@@ -63,7 +63,7 @@ export default function WorkerProjectsView({ worker }: WorkerProjectsProps) {
               <h4 style={{ margin: '0 0 0.75rem 0', fontSize: '0.92rem', color: '#172B32', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                 <Clock size={16} color="#167C72" /> Site Shift & Working Hours
               </h4>
-              <div style={{ fontSize: '0.82rem', color: '#374151', display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.75rem' }}>
+              <div style={{ fontSize: '0.82rem', color: '#374151', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '0.75rem' }}>
                 <div>
                   <span style={{ color: '#6B7280' }}>Morning Shift Check-in:</span>
                   <div style={{ fontWeight: 600 }}>08:00 AM – 08:30 AM</div>
@@ -78,7 +78,7 @@ export default function WorkerProjectsView({ worker }: WorkerProjectsProps) {
                 </div>
                 <div>
                   <span style={{ color: '#6B7280' }}>Tea Breaks:</span>
-                  <div style={{ fontWeight: 600 }}>10:30 AM & 04:00 PM (15 min)</div>
+                  <div style={{ fontWeight: 600 }}>10:30 AM & 04:00 PM</div>
                 </div>
               </div>
 

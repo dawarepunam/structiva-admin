@@ -67,7 +67,7 @@ export default function WorkerSalaryView({ worker }: WorkerSalaryProps) {
         </div>
 
         {/* Breakdown Grid */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1.5rem', marginBottom: '1.25rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem', marginBottom: '1.25rem' }}>
           {/* Earnings */}
           <div style={{ background: '#F8F9FA', padding: '1rem', borderRadius: '8px' }}>
             <h4 style={{ margin: '0 0 0.75rem 0', fontSize: '0.9rem', color: '#059669', borderBottom: '1px solid #D1D5DB', paddingBottom: '0.4rem' }}>

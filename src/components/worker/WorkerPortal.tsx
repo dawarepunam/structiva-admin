@@ -62,37 +62,36 @@ export default function WorkerPortalCoordinator() {
         fetchStrapiCollection<any>('attendances', [])
       ]);
 
-      if (workersRes && workersRes.length > 0) {
-        const found = workersRes.find((w: any) => w.id === 1 || w.code === 'WRK-MUM-104') || workersRes[0];
-        setWorker({
-          id: found.id,
-          documentId: found.documentId,
-          workerId: String(found.workerId || found.id),
-          code: found.code || 'WRK-MUM-104',
-          name: found.name || 'Ramesh Patil',
-          phone: found.phone || '+91 98220 12345',
-          email: found.email || 'ramesh.patil@structiva.internal',
-          category: found.category || 'Skilled',
-          skill: found.skill || 'Master Bar Bender & Structural Mason',
-          dailyWage: found.dailyWage || 950,
-          overtimeHourlyRate: found.overtimeHourlyRate || 140,
-          status: found.status || 'Active',
-          assignedProject: found.assignedProject || 'Skyline Commercial Complex (Tower A)',
-          supervisorName: found.supervisorName || 'Er. Pravin Gaikwad',
-          presentDaysThisMonth: found.presentDaysThisMonth || 19,
-          overtimeHoursThisMonth: found.overtimeHoursThisMonth || 14,
-          advanceTakenThisMonth: found.advanceTakenThisMonth || 3000,
-          totalDaysWorked: found.totalDaysWorked || 185,
-          dob: found.dob,
-          gender: found.gender,
-          address: found.address,
-          hometown: found.hometown,
-          aadhaarNumber: found.aadhaarNumber,
-          bankName: found.bankName,
-          accountNumberMasked: found.accountNumberMasked,
-          ifscCode: found.ifscCode
-        });
-      }
+      const defaultTasks: WorkerTaskRecord[] = [
+        {
+          id: 1,
+          title: 'M-35 Ready-Mix Concrete Pouring (Level 14 Slab)',
+          project: 'Skyline Commercial Complex (Tower A)',
+          site: 'Tower A (Core & Podium)',
+          category: 'Civil & Concreting',
+          priority: 'Critical',
+          status: 'In Progress',
+          details: 'Guide concrete pump boom operator, ensure mechanical needle vibrator coverage across edge beams, and prevent air voids.',
+          assignedSupervisor: 'Er. Pravin Gaikwad',
+          assignedWorkerId: 1,
+          assignedWorkerName: 'Ramesh Patil',
+          exactLocation: 'Level 14 East Face Grid C-4'
+        },
+        {
+          id: 2,
+          title: 'Fe 550D TMT Reinforcement Tie-Up (Beam B-14)',
+          project: 'Skyline Commercial Complex (Tower A)',
+          site: 'Tower A (Core & Podium)',
+          category: 'Bar Bending',
+          priority: 'High',
+          status: 'In Progress',
+          details: 'Double binding wire ties on top reinforcement mesh before scheduled evening slump testing.',
+          assignedSupervisor: 'Er. Pravin Gaikwad',
+          assignedWorkerId: 1,
+          assignedWorkerName: 'Ramesh Patil',
+          exactLocation: 'Level 14 North Core'
+        }
+      ];
 
       if (reqsRes && reqsRes.length > 0) {
         const taskItems: WorkerTaskRecord[] = reqsRes
@@ -101,12 +100,12 @@ export default function WorkerPortalCoordinator() {
             id: r.id,
             documentId: r.documentId || r.document_id,
             title: r.title,
-            project: r.project,
-            site: r.site,
+            project: r.project || 'Skyline Commercial Complex (Tower A)',
+            site: r.site || 'Tower A (Core & Podium)',
             category: r.category || 'Structural',
             priority: r.priority || 'Standard',
             status: r.status || 'In Progress',
-            details: typeof r.details === 'string' ? r.details : r.details?.workInProgress || r.remarks,
+            details: typeof r.details === 'string' ? r.details : r.details?.workInProgress || r.remarks || 'Active site work assignment.',
             remarks: r.remarks,
             adminRemarks: r.adminRemarks || r.admin_remarks,
             submittedBy: r.submittedBy || r.submitted_by,
@@ -115,10 +114,12 @@ export default function WorkerPortalCoordinator() {
             assignedWorkerId: r.assigned_worker_id || 1,
             assignedWorkerName: r.assigned_worker_name || 'Ramesh Patil',
             workerRemarks: r.worker_remarks,
-            exactLocation: r.exact_location
+            exactLocation: r.exact_location || 'Level 14 Core Zone'
           }));
 
-        setTasks(taskItems);
+        setTasks(taskItems.length > 0 ? taskItems : defaultTasks);
+      } else {
+        setTasks(defaultTasks);
       }
 
       if (attRes && attRes.length > 0) {
@@ -237,6 +238,31 @@ export default function WorkerPortalCoordinator() {
           {currentTab === 'settings' && (
             <WorkerSettingsView worker={worker} />
           )}
+
+          {/* Unified Responsive Worker Portal Footer */}
+          <footer style={{
+            marginTop: '2.5rem',
+            padding: '1.5rem 1rem',
+            borderTop: '1px solid #E5E7EB',
+            background: '#FFFFFF',
+            borderRadius: '8px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '0.75rem',
+            alignItems: 'center',
+            textAlign: 'center'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap', justifyContent: 'center' }}>
+              <span style={{ fontWeight: 700, color: '#172B32', fontSize: '0.9rem', letterSpacing: '0.5px' }}>STRUCTIVA INFRASTRUCTURE CORP.</span>
+              <span style={{ color: '#B58B59', fontWeight: 600, fontSize: '0.85rem' }}>• Worker Field Operations</span>
+            </div>
+            <div style={{ fontSize: '0.78rem', color: '#6B7280', maxWidth: '600px', lineHeight: '1.5' }}>
+              Enterprise Labour Welfare, Real-Time Geo-Muster, Biometric Compliance & Safe Site Engineering Protocol.
+            </div>
+            <div style={{ fontSize: '0.72rem', color: '#9CA3AF' }}>
+              © {new Date().getFullYear()} Structiva Corp. All Rights Reserved. Powered by Strapi v5 & Next.js Engine.
+            </div>
+          </footer>
         </main>
       </div>
 

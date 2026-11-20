@@ -81,9 +81,9 @@ export default function WorkerProfileView({ worker }: WorkerProfileProps) {
         </div>
       </div>
 
-      <div className={styles.grid2}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.25rem' }}>
         {/* Personal & Contact Details */}
-        <div className={styles.card}>
+        <div className={styles.card} style={{ margin: 0 }}>
           <div className={styles.cardHeader}>
             <div className={styles.cardTitle}>
               <User size={18} color="#167C72" />
@@ -91,14 +91,14 @@ export default function WorkerProfileView({ worker }: WorkerProfileProps) {
             </div>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem', fontSize: '0.82rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '0.85rem', fontSize: '0.82rem' }}>
             <div>
               <span style={{ color: '#6B7280' }}>Mobile Phone:</span>
               <div style={{ fontWeight: 600, color: '#172B32' }}>{worker.phone || '+91 98220 12345'}</div>
             </div>
             <div>
               <span style={{ color: '#6B7280' }}>Email Address:</span>
-              <div style={{ fontWeight: 600, color: '#172B32' }}>{worker.email || 'ramesh.patil@structiva.internal'}</div>
+              <div style={{ fontWeight: 600, color: '#172B32', wordBreak: 'break-all' }}>{worker.email || 'ramesh.patil@structiva.internal'}</div>
             </div>
             <div>
               <span style={{ color: '#6B7280' }}>Date of Birth:</span>
@@ -108,9 +108,9 @@ export default function WorkerProfileView({ worker }: WorkerProfileProps) {
               <span style={{ color: '#6B7280' }}>Gender / Blood Group:</span>
               <div style={{ fontWeight: 600, color: '#172B32' }}>{worker.gender || 'Male'} • {worker.bloodGroup || 'B+'}</div>
             </div>
-            <div style={{ gridColumn: 'span 2' }}>
+            <div style={{ gridColumn: '1 / -1' }}>
               <span style={{ color: '#6B7280' }}>Current Residential Address:</span>
-              <div style={{ fontWeight: 500, color: '#172B32', marginTop: '0.2rem' }}>
+              <div style={{ fontWeight: 500, color: '#172B32', marginTop: '0.2rem', lineHeight: '1.4' }}>
                 {worker.address || 'Room 14, Chawl No. 4, Kharadi Gaon, Pune, Maharashtra 411014'}
               </div>
             </div>
@@ -126,7 +126,7 @@ export default function WorkerProfileView({ worker }: WorkerProfileProps) {
         </div>
 
         {/* Trade & Employment Details */}
-        <div className={styles.card}>
+        <div className={styles.card} style={{ margin: 0 }}>
           <div className={styles.cardHeader}>
             <div className={styles.cardTitle}>
               <Briefcase size={18} color="#167C72" />
@@ -134,7 +134,7 @@ export default function WorkerProfileView({ worker }: WorkerProfileProps) {
             </div>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem', fontSize: '0.82rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '0.85rem', fontSize: '0.82rem' }}>
             <div>
               <span style={{ color: '#6B7280' }}>Skill Category:</span>
               <div style={{ fontWeight: 600, color: '#172B32' }}>{worker.category}</div>
@@ -173,7 +173,7 @@ export default function WorkerProfileView({ worker }: WorkerProfileProps) {
         </div>
 
         {/* Bank & Compliance Details */}
-        <div className={styles.card} style={{ gridColumn: 'span 2' }}>
+        <div className={styles.card} style={{ gridColumn: '1 / -1', margin: 0 }}>
           <div className={styles.cardHeader}>
             <div className={styles.cardTitle}>
               <CreditCard size={18} color="#167C72" />
@@ -181,7 +181,7 @@ export default function WorkerProfileView({ worker }: WorkerProfileProps) {
             </div>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem', fontSize: '0.82rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem', fontSize: '0.82rem' }}>
             <div>
               <span style={{ color: '#6B7280' }}>Bank Name:</span>
               <div style={{ fontWeight: 600, color: '#172B32' }}>{worker.bankName || 'State Bank of India'}</div>

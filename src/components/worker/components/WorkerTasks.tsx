@@ -77,65 +77,74 @@ export default function WorkerTasksView({
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-        {tasks.map((task) => (
-          <div key={task.id} className={styles.card}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '0.75rem', marginBottom: '0.75rem' }}>
-              <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.3rem' }}>
-                  <span className={`${styles.badge} ${
-                    task.priority === 'Critical' ? styles.badgeDanger :
-                    task.priority === 'High' ? styles.badgeWarning :
-                    styles.badgeInfo
-                  }`}>
-                    {task.priority} Priority
-                  </span>
-                  <span className={`${styles.badge} ${
-                    task.status === 'Completed' || task.status === 'Resolution Submitted' ? styles.badgeSuccess :
-                    task.status === 'In Progress' ? styles.badgeWarning :
-                    styles.badgeInfo
-                  }`}>
-                    {task.status}
-                  </span>
+        {tasks && tasks.length > 0 ? (
+          tasks.map((task) => (
+            <div key={task.id} className={styles.card}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '0.75rem', marginBottom: '0.75rem' }}>
+                <div style={{ flex: '1 1 240px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.3rem', flexWrap: 'wrap' }}>
+                    <span className={`${styles.badge} ${
+                      task.priority === 'Critical' ? styles.badgeDanger :
+                      task.priority === 'High' ? styles.badgeWarning :
+                      styles.badgeInfo
+                    }`}>
+                      {task.priority} Priority
+                    </span>
+                    <span className={`${styles.badge} ${
+                      task.status === 'Completed' || task.status === 'Resolution Submitted' ? styles.badgeSuccess :
+                      task.status === 'In Progress' ? styles.badgeWarning :
+                      styles.badgeInfo
+                    }`}>
+                      {task.status}
+                    </span>
+                  </div>
+                  <h3 style={{ margin: 0, fontSize: '1.05rem', color: '#172B32', fontWeight: 600 }}>
+                    {task.title}
+                  </h3>
                 </div>
-                <h3 style={{ margin: 0, fontSize: '1.05rem', color: '#172B32', fontWeight: 600 }}>
-                  {task.title}
-                </h3>
+
+                <button 
+                  className={styles.btnPrimary}
+                  onClick={() => handleOpenUpdate(task)}
+                  style={{ width: 'auto', minWidth: '160px', padding: '0.5rem 0.85rem', fontSize: '0.82rem' }}
+                >
+                  <CheckCircle2 size={16} /> Update Progress
+                </button>
               </div>
 
-              <button 
-                className={styles.btnPrimary}
-                onClick={() => handleOpenUpdate(task)}
-              >
-                <CheckCircle2 size={16} /> Update Progress & Remarks
-              </button>
-            </div>
+              <p style={{ fontSize: '0.82rem', color: '#4B5563', lineHeight: '1.5', margin: '0 0 1rem 0' }}>
+                {task.details || task.remarks || 'Follow standard structural reinforcement specifications.'}
+              </p>
 
-            <p style={{ fontSize: '0.82rem', color: '#4B5563', lineHeight: '1.5', margin: '0 0 1rem 0' }}>
-              {task.details || task.remarks || 'Follow standard structural reinforcement specifications.'}
+              <div style={{ background: '#F8F9FA', padding: '0.85rem', borderRadius: '6px', fontSize: '0.8rem', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '0.75rem' }}>
+                <div>
+                  <span style={{ color: '#6B7280' }}>Location / Grid:</span>
+                  <div style={{ fontWeight: 600, color: '#172B32' }}>{task.exactLocation || 'Level 14 Core Zone'}</div>
+                </div>
+                <div>
+                  <span style={{ color: '#6B7280' }}>Assigned Supervisor:</span>
+                  <div style={{ fontWeight: 600, color: '#172B32' }}>{task.assignedSupervisor || 'Er. Pravin Gaikwad'}</div>
+                </div>
+                <div>
+                  <span style={{ color: '#6B7280' }}>Target Milestone:</span>
+                  <div style={{ fontWeight: 600, color: '#172B32' }}>Pre-pour Structural Inspection</div>
+                </div>
+              </div>
+
+              {task.workerRemarks && (
+                <div style={{ marginTop: '0.75rem', padding: '0.65rem 0.85rem', background: '#ECFDF5', border: '1px solid #A7F3D0', borderRadius: '6px', fontSize: '0.78rem', color: '#065F46' }}>
+                  <strong>Last Worker Submittal:</strong> {task.workerRemarks}
+                </div>
+              )}
+            </div>
+          ))
+        ) : (
+          <div className={styles.card} style={{ textAlign: 'center', padding: '2rem 1rem' }}>
+            <p style={{ margin: 0, color: '#6B7280', fontSize: '0.9rem' }}>
+              No tasks currently pending. Check back later or notify your site supervisor.
             </p>
-
-            <div style={{ background: '#F8F9FA', padding: '0.85rem', borderRadius: '6px', fontSize: '0.8rem', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.75rem' }}>
-              <div>
-                <span style={{ color: '#6B7280' }}>Location / Grid:</span>
-                <div style={{ fontWeight: 600, color: '#172B32' }}>{task.exactLocation || 'Level 14 Core Zone'}</div>
-              </div>
-              <div>
-                <span style={{ color: '#6B7280' }}>Assigned Supervisor:</span>
-                <div style={{ fontWeight: 600, color: '#172B32' }}>{task.assignedSupervisor || 'Er. Pravin Gaikwad'}</div>
-              </div>
-              <div>
-                <span style={{ color: '#6B7280' }}>Target Milestone:</span>
-                <div style={{ fontWeight: 600, color: '#172B32' }}>Pre-pour Structural Inspection</div>
-              </div>
-            </div>
-
-            {task.workerRemarks && (
-              <div style={{ marginTop: '0.75rem', padding: '0.65rem 0.85rem', background: '#ECFDF5', border: '1px solid #A7F3D0', borderRadius: '6px', fontSize: '0.78rem', color: '#065F46' }}>
-                <strong>Last Worker Submittal:</strong> {task.workerRemarks}
-              </div>
-            )}
           </div>
-        ))}
+        )}
       </div>
 
       {/* Update Progress Modal */}
