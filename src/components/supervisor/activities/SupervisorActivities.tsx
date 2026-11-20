@@ -19,10 +19,13 @@ import {
   TrendingUp, 
   AlertCircle,
   FileText,
-  RotateCcw
+  RotateCcw,
+  UserCheck,
+  Plus
 } from 'lucide-react';
 import { fetchStrapiCollection, updateStrapiEntity, createStrapiEntity } from '@/services/strapiClient';
 import { EnterpriseProjectRecord } from '@/services/projectStorage';
+import { EnterpriseWorkerRecord, getStoredWorkers } from '@/services/workerStorage';
 
 export default function SupervisorActivitiesView() {
   const [loading, setLoading] = useState(true);
@@ -31,6 +34,7 @@ export default function SupervisorActivitiesView() {
   // Raw Database Collections from Strapi v5
   const [allRequests, setAllRequests] = useState<any[]>([]);
   const [projects, setProjects] = useState<EnterpriseProjectRecord[]>([]);
+  const [availableWorkers, setAvailableWorkers] = useState<EnterpriseWorkerRecord[]>([]);
 
   // Authenticated Supervisor Identity
   const [supervisorUser, setSupervisorUser] = useState({
@@ -53,6 +57,25 @@ export default function SupervisorActivitiesView() {
   const [remarksInput, setRemarksInput] = useState<string>('');
   const [blockersInput, setBlockersInput] = useState<string>('');
   const [updateSaved, setUpdateSaved] = useState<boolean>(false);
+  const [drawerAssignedWorker, setDrawerAssignedWorker] = useState<string>('');
+
+  // Assign Task to Worker Modal State
+  const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
+  const [assignFormSubmitting, setAssignFormSubmitting] = useState(false);
+  const [assignSuccess, setAssignSuccess] = useState(false);
+  const [assignFormData, setAssignFormData] = useState({
+    title: '',
+    selectedWorkerId: '',
+    project: '',
+    site: '',
+    category: 'Structural',
+    priority: 'High',
+    plannedQty: 100,
+    unit: 'Sq.Mtr',
+    dueDate: new Date(Date.now() + 86400000 * 3).toISOString().split('T')[0],
+    exactLocation: '',
+    scopeInstructions: ''
+  });
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -79,6 +102,9 @@ export default function SupervisorActivitiesView() {
         fetchStrapiCollection('supervisor-requests', []),
         fetchStrapiCollection<EnterpriseProjectRecord>('projects', [])
       ]);
+
+      const storedWorkers = getStoredWorkers();
+      setAvailableWorkers(storedWorkers);
 
       setAllRequests(requestsRes || []);
       setProjects(projectsRes || []);
@@ -210,11 +236,14 @@ export default function SupervisorActivitiesView() {
     setProgressPercentInput(task.progressPercent || 0);
     setRemarksInput(task.remarks || '');
     setBlockersInput(task.blockers !== 'None' ? task.blockers : '');
+    setDrawerAssignedWorker(task.assignedWorkerId || '');
     setUpdateSaved(false);
   };
 
   const handleSaveProgress = async () => {
     if (!selectedTask) return;
+
+    const matchedWorker = availableWorkers.find(w => w.id === drawerAssignedWorker);
 
     const updatedDetails = {
       taskId: selectedTask.taskId,
@@ -231,11 +260,16 @@ export default function SupervisorActivitiesView() {
       blockers: blockersInput || 'None'
     };
 
-    const updatePayload = {
+    const updatePayload: any = {
       status: updateStatus,
       remarks: remarksInput,
       details: JSON.stringify(updatedDetails)
     };
+
+    if (matchedWorker) {
+      updatePayload.assigned_worker_id = matchedWorker.id;
+      updatePayload.assigned_worker_name = matchedWorker.name;
+    }
 
     if (selectedTask.documentId) {
       await updateStrapiEntity('supervisor-requests', selectedTask.documentId, updatePayload);
@@ -247,6 +281,80 @@ export default function SupervisorActivitiesView() {
       setUpdateSaved(false);
       setSelectedTask(null);
     }, 1500);
+  };
+
+  const handleCreateWorkerTask = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!assignFormData.title || !assignFormData.selectedWorkerId) {
+      alert('Please provide Task Title and select a Worker.');
+      return;
+    }
+
+    setAssignFormSubmitting(true);
+    try {
+      const selectedWorker = availableWorkers.find(w => w.id === assignFormData.selectedWorkerId);
+      const chosenProject = assignFormData.project || (assignedProjects[0]?.name || 'Skyline Commercial Complex (Tower A)');
+      const chosenSite = assignFormData.site || 'Tower A Core Zone';
+
+      const taskDetailsObj = {
+        taskId: `TSK-WRK-${Date.now().toString().slice(-4)}`,
+        plannedQty: Number(assignFormData.plannedQty) || 100,
+        completedQty: 0,
+        unit: assignFormData.unit || 'Sq.Mtr',
+        progressPercent: 0,
+        startDate: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
+        dueDate: assignFormData.dueDate,
+        assignedTeam: selectedWorker ? `${selectedWorker.name} (${selectedWorker.skill})` : 'Assigned Worker Crew',
+        workInProgress: assignFormData.scopeInstructions || 'Follow technical specifications and safety protocol.',
+        blockers: 'None'
+      };
+
+      const newEntityPayload = {
+        title: assignFormData.title,
+        requestType: 'Task',
+        request_type: 'Task',
+        project: chosenProject,
+        site: chosenSite,
+        category: assignFormData.category,
+        priority: assignFormData.priority,
+        status: 'In Progress',
+        submittedBy: supervisorUser.name,
+        submitted_by: supervisorUser.name,
+        assigned_supervisor: supervisorUser.name,
+        assigned_worker_id: selectedWorker?.id || '1',
+        assigned_worker_name: selectedWorker?.name || 'Worker',
+        exact_location: assignFormData.exactLocation || chosenSite,
+        details: JSON.stringify(taskDetailsObj),
+        remarks: assignFormData.scopeInstructions || `Assigned to ${selectedWorker?.name} by ${supervisorUser.name}.`
+      };
+
+      await createStrapiEntity('supervisor-requests', newEntityPayload);
+
+      setAssignSuccess(true);
+      setTimeout(async () => {
+        setAssignSuccess(false);
+        setIsAssignModalOpen(false);
+        setAssignFormData({
+          title: '',
+          selectedWorkerId: '',
+          project: '',
+          site: '',
+          category: 'Structural',
+          priority: 'High',
+          plannedQty: 100,
+          unit: 'Sq.Mtr',
+          dueDate: new Date(Date.now() + 86400000 * 3).toISOString().split('T')[0],
+          exactLocation: '',
+          scopeInstructions: ''
+        });
+        await loadTasksData();
+      }, 1200);
+    } catch (err) {
+      console.error('Failed to create and assign worker task:', err);
+      alert('Error creating task in Strapi. Please try again.');
+    } finally {
+      setAssignFormSubmitting(false);
+    }
   };
 
   return (
@@ -261,6 +369,14 @@ export default function SupervisorActivitiesView() {
           </p>
         </div>
         <div className={styles.headerMeta}>
+          <button 
+            onClick={() => setIsAssignModalOpen(true)}
+            className={styles.btnPrimary}
+            style={{ padding: '0.55rem 1rem', fontSize: '0.8rem', background: '#2563EB' }}
+          >
+            <Plus size={15} />
+            <span>Assign Task to Worker</span>
+          </button>
           <span className={styles.badge}>ADMIN ASSIGNED TASKS</span>
           <button 
             onClick={handleRefresh} 
@@ -534,6 +650,23 @@ export default function SupervisorActivitiesView() {
                 
                 <div className={styles.updateForm}>
                   <div>
+                    <label className={styles.formLabel}>Assigned Site Worker (Execution Lead)</label>
+                    <select
+                      value={drawerAssignedWorker}
+                      onChange={(e) => setDrawerAssignedWorker(e.target.value)}
+                      className={styles.formInput}
+                      style={{ width: '100%', marginTop: '4px' }}
+                    >
+                      <option value="">-- Keep Current / General Crew --</option>
+                      {availableWorkers.map((w) => (
+                        <option key={w.id} value={w.id}>
+                          {w.name} ({w.code}) - {w.skill}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
                     <label className={styles.formLabel}>Execution Status</label>
                     <select 
                       value={updateStatus} 
@@ -616,6 +749,217 @@ export default function SupervisorActivitiesView() {
               </div>
 
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* ─────────────────────────────────────────────────────────
+          ASSIGN TASK TO WORKER MODAL
+          ───────────────────────────────────────────────────────── */}
+      {isAssignModalOpen && (
+        <div className={styles.modalBackdrop} onClick={() => setIsAssignModalOpen(false)}>
+          <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.modalHeader}>
+              <div>
+                <h3 className={styles.modalTitle}>Assign Task / Work Package to Worker</h3>
+                <p className={styles.modalSubtitle}>
+                  Allocated task will directly reflect in the worker's portal and daily task checklist
+                </p>
+              </div>
+              <button 
+                onClick={() => setIsAssignModalOpen(false)}
+                className={styles.drawerCloseBtn}
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateWorkerTask}>
+              <div className={styles.modalBody}>
+                {assignSuccess ? (
+                  <div style={{ textAlign: 'center', padding: '2rem 1rem', color: '#167C72' }}>
+                    <CheckCircle2 size={48} style={{ margin: '0 auto 1rem auto', display: 'block' }} />
+                    <h3 style={{ margin: '0 0 0.5rem 0', fontSize: '1.2rem', fontWeight: 700 }}>
+                      Task Assigned Successfully!
+                    </h3>
+                    <p style={{ margin: 0, fontSize: '0.85rem', color: '#475569' }}>
+                      Synched to Central Strapi backend. Worker can now view and update progress.
+                    </p>
+                  </div>
+                ) : (
+                  <>
+                    <div>
+                      <label className={styles.formLabel}>
+                        Target Site Worker *
+                      </label>
+                      <select
+                        required
+                        value={assignFormData.selectedWorkerId}
+                        onChange={(e) => setAssignFormData({ ...assignFormData, selectedWorkerId: e.target.value })}
+                        className={styles.formInput}
+                        style={{ width: '100%', marginTop: '4px' }}
+                      >
+                        <option value="">-- Select Worker from Directory --</option>
+                        {availableWorkers.map((w) => (
+                          <option key={w.id} value={w.id}>
+                            {w.name} ({w.code}) &mdash; {w.skill} &middot; {w.category}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className={styles.formLabel}>
+                        Task Title / Work Activity *
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={assignFormData.title}
+                        onChange={(e) => setAssignFormData({ ...assignFormData, title: e.target.value })}
+                        placeholder="e.g. M-35 RMC Pouring for Level 14 Slab"
+                        className={styles.formInput}
+                        style={{ width: '100%', marginTop: '4px' }}
+                      />
+                    </div>
+
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                      <div>
+                        <label className={styles.formLabel}>Project</label>
+                        <select
+                          value={assignFormData.project || (assignedProjects[0]?.name || '')}
+                          onChange={(e) => setAssignFormData({ ...assignFormData, project: e.target.value })}
+                          className={styles.formInput}
+                          style={{ width: '100%', marginTop: '4px' }}
+                        >
+                          {assignedProjects.length > 0 ? (
+                            assignedProjects.map(p => (
+                              <option key={p.id} value={p.name}>{p.name}</option>
+                            ))
+                          ) : (
+                            <option value="Skyline Commercial Complex (Tower A)">Skyline Commercial Complex (Tower A)</option>
+                          )}
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className={styles.formLabel}>Site / Grid Location</label>
+                        <input
+                          type="text"
+                          value={assignFormData.exactLocation}
+                          onChange={(e) => setAssignFormData({ ...assignFormData, exactLocation: e.target.value })}
+                          placeholder="e.g. Tower A - Level 14 East Face Grid C-4"
+                          className={styles.formInput}
+                          style={{ width: '100%', marginTop: '4px' }}
+                        />
+                      </div>
+                    </div>
+
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.75rem' }}>
+                      <div>
+                        <label className={styles.formLabel}>Trade / Category</label>
+                        <select
+                          value={assignFormData.category}
+                          onChange={(e) => setAssignFormData({ ...assignFormData, category: e.target.value })}
+                          className={styles.formInput}
+                          style={{ width: '100%', marginTop: '4px' }}
+                        >
+                          <option value="Structural">Structural</option>
+                          <option value="Civil & Concreting">Civil & Concreting</option>
+                          <option value="Bar Bending">Bar Bending</option>
+                          <option value="Carpentry & Formwork">Carpentry & Formwork</option>
+                          <option value="Plumbing & Firefighting">Plumbing & Firefighting</option>
+                          <option value="Electrical">Electrical</option>
+                          <option value="Finishing & Masonry">Finishing & Masonry</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className={styles.formLabel}>Target Priority</label>
+                        <select
+                          value={assignFormData.priority}
+                          onChange={(e) => setAssignFormData({ ...assignFormData, priority: e.target.value })}
+                          className={styles.formInput}
+                          style={{ width: '100%', marginTop: '4px' }}
+                        >
+                          <option value="High">High Priority</option>
+                          <option value="Critical">Critical</option>
+                          <option value="Standard">Standard</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className={styles.formLabel}>Target Completion Date</label>
+                        <input
+                          type="date"
+                          value={assignFormData.dueDate}
+                          onChange={(e) => setAssignFormData({ ...assignFormData, dueDate: e.target.value })}
+                          className={styles.formInput}
+                          style={{ width: '100%', marginTop: '4px' }}
+                        />
+                      </div>
+                    </div>
+
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                      <div>
+                        <label className={styles.formLabel}>Planned Target Quantity</label>
+                        <input
+                          type="number"
+                          value={assignFormData.plannedQty}
+                          onChange={(e) => setAssignFormData({ ...assignFormData, plannedQty: Number(e.target.value) || 0 })}
+                          className={styles.formInput}
+                          style={{ width: '100%', marginTop: '4px' }}
+                        />
+                      </div>
+
+                      <div>
+                        <label className={styles.formLabel}>Measurement Unit</label>
+                        <input
+                          type="text"
+                          value={assignFormData.unit}
+                          onChange={(e) => setAssignFormData({ ...assignFormData, unit: e.target.value })}
+                          placeholder="e.g. Sq.Mtr, MT, R.Mtr, Nos"
+                          className={styles.formInput}
+                          style={{ width: '100%', marginTop: '4px' }}
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className={styles.formLabel}>Work Scope & Instructions</label>
+                      <textarea
+                        rows={2}
+                        value={assignFormData.scopeInstructions}
+                        onChange={(e) => setAssignFormData({ ...assignFormData, scopeInstructions: e.target.value })}
+                        placeholder="Detail safety requirements, inspection standards, or equipment to be used..."
+                        className={styles.formInput}
+                        style={{ width: '100%', marginTop: '4px', resize: 'vertical' }}
+                      />
+                    </div>
+                  </>
+                )}
+              </div>
+
+              {!assignSuccess && (
+                <div className={styles.modalFooter}>
+                  <button
+                    type="button"
+                    onClick={() => setIsAssignModalOpen(false)}
+                    className={styles.btnSecondary}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={assignFormSubmitting}
+                    className={styles.btnPrimary}
+                  >
+                    <Send size={14} />
+                    <span>{assignFormSubmitting ? 'Saving to Strapi...' : 'Assign Work Package'}</span>
+                  </button>
+                </div>
+              )}
+            </form>
           </div>
         </div>
       )}
