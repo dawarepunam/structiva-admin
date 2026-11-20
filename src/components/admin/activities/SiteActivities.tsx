@@ -20,6 +20,7 @@ import {
 import SafeImage from '@/components/admin/ui/SafeImage';
 import { getStoredSupervisors, SupervisorOption } from '@/services/supervisorStorage';
 import { getStoredProjects, EnterpriseProjectRecord } from '@/services/projectStorage';
+import { getStoredEnterpriseTasks, saveStoredEnterpriseTasks, EnterpriseTaskRecord } from '@/services/taskStorage';
 import { createStrapiEntity } from '@/services/strapiClient';
 
 interface SiteActivityLog {
@@ -139,9 +140,45 @@ export default function SiteActivities() {
     setActivities([newAct, ...activities]);
     setShowModal(false);
 
-    // Sync created activity as Task to Strapi supervisor-requests so Supervisor sees it immediately
+    // 1. Immediately save to local Enterprise Tasks Storage so Supervisor view updates instantly
+    try {
+      const currentStored = getStoredEnterpriseTasks();
+      const localNewTask: EnterpriseTaskRecord = {
+        id: `tsk-adm-${Date.now()}`,
+        requestType: 'Task',
+        title: formData.description.slice(0, 50) || 'Site Activity Task',
+        project: formData.project,
+        site: formData.location,
+        category: formData.trade,
+        priority: 'Standard',
+        status: Number(formData.progressPercent) >= 100 ? 'Completed' : 'In Progress',
+        submittedBy: formData.supervisor,
+        submittedDate: 'Today',
+        assignedSupervisor: formData.supervisor,
+        remarks: formData.workCompleted,
+        adminRemarks: `Activity logged from Central Admin by ${formData.supervisor}`,
+        details: {
+          taskId: `TSK-ACT-${Date.now().toString().slice(-4)}`,
+          plannedQty: 100,
+          completedQty: Number(formData.progressPercent) || 0,
+          unit: 'm³',
+          progressPercent: Number(formData.progressPercent) || 0,
+          assignedTeam: `${formData.labourCount} Workers (${formData.trade})`,
+          startDate: '19 Nov 2026',
+          dueDate: '25 Nov 2026',
+          workCompletedToday: formData.workCompleted,
+          workInProgress: formData.workInProgress
+        }
+      };
+      saveStoredEnterpriseTasks([localNewTask, ...currentStored]);
+    } catch (e) {
+      console.warn('Local task storage sync:', e);
+    }
+
+    // 2. Sync created activity as Task to Strapi supervisor-requests so Supervisor sees it immediately
     createStrapiEntity('supervisor-requests', {
       requestType: 'Task',
+      request_type: 'Task',
       title: formData.description.slice(0, 50) || 'Site Activity Task',
       project: formData.project,
       site: formData.location,
@@ -149,8 +186,11 @@ export default function SiteActivities() {
       priority: 'Standard',
       status: Number(formData.progressPercent) >= 100 ? 'Completed' : 'In Progress',
       submittedBy: formData.supervisor,
+      submitted_by: formData.supervisor,
+      assigned_supervisor: formData.supervisor,
       remarks: formData.workCompleted,
-      details: {
+      details: JSON.stringify({
+        taskId: `TSK-ACT-${Date.now().toString().slice(-4)}`,
         plannedQty: 100,
         completedQty: formData.progressPercent,
         unit: 'm³',
@@ -158,7 +198,7 @@ export default function SiteActivities() {
         assignedTeam: `${formData.labourCount} Workers (${formData.trade})`,
         startDate: '19 Nov 2026',
         dueDate: '25 Nov 2026'
-      }
+      })
     }).catch(e => console.warn('Strapi task sync:', e));
     setFormData({
       project: 'Skyline Commercial Complex',
