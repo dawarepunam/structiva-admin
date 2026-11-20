@@ -223,25 +223,26 @@ export default function SupervisorLayoutWrapper({ children }: SupervisorLayoutPr
           </div>
         </header>
 
-        {/* Scrollable Page Body */}
+        {/* Scrollable Page Body with Footer inside so footer stays at the very bottom of the page content */}
         <main className={styles.pageBody}>
-          {children}
+          <div className={styles.contentInner}>
+            {children}
+          </div>
+          {/* ENTERPRISE STRUCTIVA FOOTER - inside scrollable flow at the very bottom */}
+          <footer className={styles.supervisorFooter}>
+            <div className={styles.footerLeft}>
+              <HardHat size={16} color="#167C72" />
+              <span>&copy; {new Date().getFullYear()} STRUCTIVA ENTERPRISE OS &bull; Field Operations & Telemetry</span>
+            </div>
+            <div className={styles.footerRight}>
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                <ShieldCheck size={14} color="#167C72" /> Encrypted Field Node
+              </span>
+              <Link href="/supervisor/settings" className={styles.footerLink}>System Status</Link>
+              <Link href="/supervisor/profile" className={styles.footerLink}>Help & Audit</Link>
+            </div>
+          </footer>
         </main>
-
-        {/* ENTERPRISE STRUCTIVA FOOTER */}
-        <footer className={styles.supervisorFooter}>
-          <div className={styles.footerLeft}>
-            <HardHat size={16} color="#167C72" />
-            <span>&copy; {new Date().getFullYear()} STRUCTIVA ENTERPRISE OS &bull; Field Operations & Telemetry</span>
-          </div>
-          <div className={styles.footerRight}>
-            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-              <ShieldCheck size={14} color="#167C72" /> Encrypted Field Node
-            </span>
-            <Link href="/supervisor/settings" className={styles.footerLink}>System Status</Link>
-            <Link href="/supervisor/profile" className={styles.footerLink}>Help & Audit</Link>
-          </div>
-        </footer>
       </div>
 
       {/* Mobile Bottom Tab Navigation for iOS & Android Phones */}

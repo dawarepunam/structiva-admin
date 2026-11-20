@@ -717,7 +717,16 @@
 
 @media (max-width: 768px) {
   .overviewGrid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.65rem !important;
+  }
+
+  .overviewCard {
+    padding: 0.65rem 0.55rem !important;
+  }
+
+  .overviewValue {
+    font-size: 1.15rem !important;
   }
 
   .headerBanner {
@@ -733,9 +742,25 @@
 
   .searchBox {
     max-width: 100%;
+    min-width: 0;
   }
 
   .drawerContent {
     width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .overviewGrid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.5rem !important;
+  }
+
+  .overviewCard {
+    padding: 0.55rem 0.45rem !important;
+  }
+
+  .overviewValue {
+    font-size: 1.05rem !important;
   }
 }
