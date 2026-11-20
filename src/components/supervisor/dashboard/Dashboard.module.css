@@ -445,6 +445,9 @@
   border-radius: 8px;
   padding: 1.15rem;
   box-shadow: 0 1px 3px rgba(23, 43, 50, 0.03);
+  box-sizing: border-box;
+  width: 100%;
+  overflow: hidden;
 }
 
 .blockHeader {
@@ -767,26 +770,30 @@
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 1.75rem 1rem;
+  padding: 1.25rem 0.85rem;
   background: #F4F2EC;
   border: 1px dashed #CBD5E1;
   border-radius: 8px;
   color: #64748B;
   gap: 0.4rem;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .emptyStateTitle {
-  font-size: 0.82rem;
+  font-size: 0.8rem;
   font-weight: 700;
   color: #203A3B;
+  word-break: break-word;
 }
 
 .emptyStateText {
   font-size: 0.72rem;
   color: #64748B;
-  max-width: 320px;
+  max-width: 100%;
   margin: 0;
   line-height: 1.35;
+  word-break: break-word;
 }
 
 .schemaNote {
@@ -794,6 +801,7 @@
   color: #94A3B8;
   font-style: italic;
   margin-top: 0.25rem;
+  word-break: break-all;
 }
 
 /* ─────────────────────────────────────────────────────────
@@ -1118,11 +1126,22 @@
   }
 
   .projectStatsRow {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.5rem !important;
   }
 
   .workforceGrid {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr !important;
+    gap: 0.75rem !important;
+  }
+
+  .mainOperationalSplit {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+
+  .contentBlock {
+    padding: 0.85rem !important;
   }
 
   /* Launchpad 2 cards side-by-side with compact size */
