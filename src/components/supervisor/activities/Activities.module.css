@@ -540,7 +540,8 @@
 
 @media (max-width: 768px) {
   .overviewGrid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.65rem !important;
   }
 
   .headerBanner {
@@ -556,9 +557,17 @@
 
   .searchBox {
     max-width: 100%;
+    min-width: 0;
   }
 
   .drawerContent {
     width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .overviewGrid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.5rem !important;
   }
 }
