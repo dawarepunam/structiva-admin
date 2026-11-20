@@ -259,6 +259,32 @@
   background-color: #F4F2EC;
 }
 
+.headerLogoutBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  color: #DC2626;
+  padding: 0.45rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.headerLogoutBtn:hover {
+  background: #DC2626;
+  color: #FFFFFF;
+  border-color: #DC2626;
+}
+
+.headerLogoutText {
+  display: inline;
+}
+
 .avatar {
   width: 34px;
   height: 34px;
@@ -451,6 +477,15 @@
   }
 
   .statusIndicator {
+    display: none;
+  }
+
+  .headerLogoutBtn {
+    padding: 0.35rem 0.5rem;
+    font-size: 0.72rem;
+  }
+
+  .headerLogoutText {
     display: none;
   }
 

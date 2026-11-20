@@ -662,6 +662,28 @@
 }
 
 @media (max-width: 900px) {
+  .kpiGrid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.65rem !important;
+  }
+  .kpiCard {
+    padding: 0.75rem 0.65rem !important;
+    gap: 0.5rem !important;
+  }
+  .kpiIconWrapper {
+    width: 34px !important;
+    height: 34px !important;
+  }
+  .kpiLabel {
+    font-size: 0.68rem !important;
+  }
+  .kpiValue {
+    font-size: 1.15rem !important;
+  }
+  .kpiSubtitle {
+    font-size: 0.65rem !important;
+    display: none;
+  }
   .tableContainer {
     display: none;
   }
@@ -681,6 +703,16 @@
 }
 
 @media (max-width: 480px) {
+  .kpiGrid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.5rem !important;
+  }
+  .kpiCard {
+    padding: 0.65rem 0.5rem !important;
+  }
+  .kpiValue {
+    font-size: 1.05rem !important;
+  }
   .mobileCardList {
     grid-template-columns: repeat(2, 1fr) !important;
     gap: 0.5rem !important;

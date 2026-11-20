@@ -220,6 +220,16 @@ export default function SupervisorLayoutWrapper({ children }: SupervisorLayoutPr
                 <span className={styles.supervisorRole}>{supervisorProfile.role}</span>
               </div>
             </Link>
+
+            <button
+              onClick={handleLogout}
+              className={styles.headerLogoutBtn}
+              title="Secure Logout"
+              aria-label="Logout"
+            >
+              <LogOut size={16} />
+              <span className={styles.headerLogoutText}>Logout</span>
+            </button>
           </div>
         </header>
 
