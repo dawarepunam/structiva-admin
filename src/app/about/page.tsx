@@ -52,25 +52,25 @@ export default async function AboutPage() {
       {/* Corporate Benchmarks */}
       <section style={{ padding: 'clamp(50px, 6vw, 80px) 1.5rem', background: '#F8F9FA' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem' }}>
-          <div style={{ background: '#FFFFFF', padding: '2rem', borderRadius: '12px', border: '1px solid #E5E7EB', display: 'flex', flexDirection: 'column' }}>
-            <Award size={32} color="#167C72" style={{ marginBottom: '1rem' }} />
-            <h3 style={{ fontSize: '1.25rem', fontWeight: 700, margin: '0 0 0.5rem 0' }}>Quality As A Backbone</h3>
+          <div style={{ background: '#FFFFFF', padding: 'clamp(1.5rem, 3vw, 2rem)', borderRadius: '12px', border: '1px solid #E5E7EB', display: 'flex', flexDirection: 'column', boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
+            <Award size={32} color="#167C72" style={{ marginBottom: '1rem', flexShrink: 0 }} />
+            <h3 style={{ fontSize: '1.25rem', fontWeight: 700, margin: '0 0 0.5rem 0', color: '#172B32' }}>Quality As A Backbone</h3>
             <p style={{ fontSize: '0.88rem', color: '#4B5563', lineHeight: '1.6', margin: 0 }}>
               Zero deviation from structural design codes. Every weld, pour, and joint undergoes accredited third-party non-destructive testing before certification.
             </p>
           </div>
 
-          <div style={{ background: '#FFFFFF', padding: '2rem', borderRadius: '12px', border: '1px solid #E5E7EB', display: 'flex', flexDirection: 'column' }}>
-            <Users2 size={32} color="#D97706" style={{ marginBottom: '1rem' }} />
-            <h3 style={{ fontSize: '1.25rem', fontWeight: 700, margin: '0 0 0.5rem 0' }}>Trade Craft & Talent</h3>
+          <div style={{ background: '#FFFFFF', padding: 'clamp(1.5rem, 3vw, 2rem)', borderRadius: '12px', border: '1px solid #E5E7EB', display: 'flex', flexDirection: 'column', boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
+            <Users2 size={32} color="#D97706" style={{ marginBottom: '1rem', flexShrink: 0 }} />
+            <h3 style={{ fontSize: '1.25rem', fontWeight: 700, margin: '0 0 0.5rem 0', color: '#172B32' }}>Trade Craft & Talent</h3>
             <p style={{ fontSize: '0.88rem', color: '#4B5563', lineHeight: '1.6', margin: 0 }}>
               Over 1,200 site technicians, supervisors, and graduate engineers working in harmonious collaboration across Maharashtra, Gujarat, and South India.
             </p>
           </div>
 
-          <div style={{ background: '#FFFFFF', padding: '2rem', borderRadius: '12px', border: '1px solid #E5E7EB', display: 'flex', flexDirection: 'column' }}>
-            <Building size={32} color="#2563EB" style={{ marginBottom: '1rem' }} />
-            <h3 style={{ fontSize: '1.25rem', fontWeight: 700, margin: '0 0 0.5rem 0' }}>Asset Independence</h3>
+          <div style={{ background: '#FFFFFF', padding: 'clamp(1.5rem, 3vw, 2rem)', borderRadius: '12px', border: '1px solid #E5E7EB', display: 'flex', flexDirection: 'column', boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
+            <Building size={32} color="#2563EB" style={{ marginBottom: '1rem', flexShrink: 0 }} />
+            <h3 style={{ fontSize: '1.25rem', fontWeight: 700, margin: '0 0 0.5rem 0', color: '#172B32' }}>Asset Independence</h3>
             <p style={{ fontSize: '0.88rem', color: '#4B5563', lineHeight: '1.6', margin: 0 }}>
               We own and deploy 85+ heavy equipment assets, ensuring project timelines never stall waiting on third-party machinery availability.
             </p>
