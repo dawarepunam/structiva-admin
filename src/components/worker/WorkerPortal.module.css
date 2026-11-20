@@ -6,12 +6,14 @@
 .portalContainer {
   display: flex;
   height: 100vh;
+  height: 100dvh; /* Adaptive dynamic viewport height for mobile browsers */
   width: 100vw;
   background-color: #F8F9FA;
   color: #172B32;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  overflow: hidden; /* Lock the outer viewport so body never moves */
-  position: relative;
+  overflow: hidden !important; /* Lock the outer viewport so body never moves */
+  position: fixed;
+  inset: 0;
 }
 
 /* ==========================================================================
@@ -237,13 +239,13 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: 100%;
   min-width: 0;
   overflow: hidden; /* Crucial: no window-level scroll */
   position: relative;
 }
 
-/* Header: Statically pinned to top of mainContent */
+/* Header: Permanently pinned to top of mainContent - NEVER scrolls */
 .topHeader {
   height: 64px;
   min-height: 64px;
@@ -254,8 +256,8 @@
   justify-content: space-between;
   padding: 0 1.5rem;
   flex-shrink: 0;
-  z-index: 30;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+  z-index: 50;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
 .headerLeft {
@@ -609,11 +611,14 @@
 
   .topHeader {
     padding: 0 1rem;
-    height: 58px;
-    min-height: 58px;
-    position: sticky;
+    height: 56px;
+    min-height: 56px;
+    position: relative;
     top: 0;
-    z-index: 35;
+    left: 0;
+    right: 0;
+    flex-shrink: 0;
+    z-index: 50;
   }
 
   .bottomNav {

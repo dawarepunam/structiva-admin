@@ -24,9 +24,27 @@ import { useRouter } from 'next/navigation';
 
 export default function WorkerPortalCoordinator() {
   const router = useRouter();
-  const [currentTab, setCurrentTab] = useState('dashboard');
+  const [currentTab, setCurrentTab] = useState<string>('dashboard');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+
+  // Read tab from URL hash on initial load so page refresh stays on current tab
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const hash = window.location.hash.replace('#', '');
+      const validTabs = ['dashboard', 'profile', 'projects', 'attendance', 'tasks', 'leave', 'salary', 'advance', 'notifications', 'safety', 'documents', 'support', 'settings'];
+      if (hash && validTabs.includes(hash)) {
+        setCurrentTab(hash);
+      }
+    }
+  }, []);
+
+  const handleSelectTab = (tab: string) => {
+    setCurrentTab(tab);
+    if (typeof window !== 'undefined') {
+      window.location.hash = tab;
+    }
+  };
 
   // Default initial worker profile (Ramesh Patil - WRK-MUM-104)
   const [worker, setWorker] = useState<WorkerProfile>({
@@ -168,7 +186,7 @@ export default function WorkerPortalCoordinator() {
         worker={worker}
         currentTab={currentTab}
         isOpen={sidebarOpen}
-        onSelectTab={setCurrentTab}
+        onSelectTab={handleSelectTab}
         onClose={() => setSidebarOpen(false)}
         onLogout={handleLogout}
       />
@@ -178,7 +196,7 @@ export default function WorkerPortalCoordinator() {
         <WorkerHeader
           worker={worker}
           activeModuleTitle={getModuleTitle()}
-          onNotificationsClick={() => setCurrentTab('notifications')}
+          onNotificationsClick={() => handleSelectTab('notifications')}
           onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
         />
 
@@ -187,7 +205,7 @@ export default function WorkerPortalCoordinator() {
             <WorkerDashboard
               worker={worker}
               tasks={tasks}
-              onNavigateTab={setCurrentTab}
+              onNavigateTab={handleSelectTab}
             />
           )}
 
@@ -269,7 +287,7 @@ export default function WorkerPortalCoordinator() {
       {/* Mobile Bottom Navigation */}
       <WorkerBottomNavigation
         currentTab={currentTab}
-        onSelectTab={setCurrentTab}
+        onSelectTab={handleSelectTab}
         onMoreClick={() => setSidebarOpen(true)}
       />
     </div>

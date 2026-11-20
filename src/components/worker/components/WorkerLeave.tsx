@@ -94,34 +94,34 @@ export default function WorkerLeaveView({ worker }: WorkerLeaveProps) {
       </div>
 
       {/* Leave Balance Overview */}
-      <div className={styles.grid3} style={{ marginBottom: '1.25rem' }}>
-        <div className={styles.statCard}>
-          <div className={styles.statIcon} style={{ background: '#ECFDF5', color: '#059669' }}>
-            <CalendarDays size={22} />
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '0.65rem', marginBottom: '1.25rem' }}>
+        <div className={styles.statCard} style={{ padding: '0.75rem 0.6rem' }}>
+          <div className={styles.statIcon} style={{ background: '#ECFDF5', color: '#059669', width: '36px', height: '36px' }}>
+            <CalendarDays size={18} />
           </div>
           <div>
-            <div className={styles.statVal}>7 Days</div>
-            <div className={styles.statLabel}>Casual Leave Balance</div>
+            <div className={styles.statVal} style={{ fontSize: '1.1rem' }}>7 Days</div>
+            <div className={styles.statLabel} style={{ fontSize: '0.68rem' }}>Casual Leave</div>
           </div>
         </div>
 
-        <div className={styles.statCard}>
-          <div className={styles.statIcon} style={{ background: '#EFF6FF', color: '#2563EB' }}>
-            <CalendarDays size={22} />
+        <div className={styles.statCard} style={{ padding: '0.75rem 0.6rem' }}>
+          <div className={styles.statIcon} style={{ background: '#EFF6FF', color: '#2563EB', width: '36px', height: '36px' }}>
+            <CalendarDays size={18} />
           </div>
           <div>
-            <div className={styles.statVal}>5 Days</div>
-            <div className={styles.statLabel}>Sick / Medical Leave</div>
+            <div className={styles.statVal} style={{ fontSize: '1.1rem' }}>5 Days</div>
+            <div className={styles.statLabel} style={{ fontSize: '0.68rem' }}>Sick Leave</div>
           </div>
         </div>
 
-        <div className={styles.statCard}>
-          <div className={styles.statIcon} style={{ background: '#FFFBEB', color: '#D97706' }}>
-            <CalendarDays size={22} />
+        <div className={styles.statCard} style={{ padding: '0.75rem 0.6rem' }}>
+          <div className={styles.statIcon} style={{ background: '#FFFBEB', color: '#D97706', width: '36px', height: '36px' }}>
+            <CalendarDays size={18} />
           </div>
           <div>
-            <div className={styles.statVal}>5 Days</div>
-            <div className={styles.statLabel}>Total Availed This Year</div>
+            <div className={styles.statVal} style={{ fontSize: '1.1rem' }}>5 Days</div>
+            <div className={styles.statLabel} style={{ fontSize: '0.68rem' }}>Availed (2026)</div>
           </div>
         </div>
       </div>
