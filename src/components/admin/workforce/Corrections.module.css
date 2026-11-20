@@ -352,3 +352,67 @@
   font-weight: 600;
   cursor: pointer;
 }
+
+@media (max-width: 768px) {
+  .headerCard {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1rem;
+    gap: 0.5rem;
+  }
+  .statsRow {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.5rem !important;
+  }
+  .statCard {
+    padding: 0.75rem 0.65rem !important;
+    gap: 0.2rem !important;
+  }
+  .statLabel {
+    font-size: 0.68rem !important;
+  }
+  .statValue {
+    font-size: 1.15rem !important;
+  }
+  .controlsBar {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 0.75rem;
+    gap: 0.5rem;
+  }
+  .searchBox {
+    max-width: 100% !important;
+  }
+  .filtersGroup {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .selectInput {
+    width: 100% !important;
+  }
+  .diffContainer, .photoComparison {
+    grid-template-columns: 1fr !important;
+    gap: 0.65rem !important;
+  }
+  .modalContent {
+    max-width: 95% !important;
+    padding: 0.5rem !important;
+  }
+  .modalHeader, .modalBody, .modalFooter {
+    padding: 0.85rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .statsRow {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.4rem !important;
+  }
+  .statCard {
+    padding: 0.6rem 0.5rem !important;
+  }
+  .statValue {
+    font-size: 1rem !important;
+  }
+}
+
