@@ -1,166 +1,641 @@
 /* ==========================================================================
-   STRUCTIVA ENTERPRISE OS — WORKER PORTAL MODULE STYLES
-   Theme: Luxury Industrial + Modern Construction Enterprise
+   STRUCTIVA ENTERPRISE OS — WORKER PORTAL LAYOUT & RESPONSIVE DESIGN SYSTEM
+   Fixed Sidebar, Sticky Header, Fluid Content Area, Mobile Drawer
    ========================================================================== */
 
-.container {
+.portalContainer {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  background-color: #F8F9FA;
+  color: #172B32;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  overflow: hidden; /* Lock the outer viewport so body never moves */
+  position: relative;
+}
+
+/* ==========================================================================
+   SIDEBAR (Fixed, Isolated Smooth Scrolling, Collapsible on Mobile)
+   ========================================================================== */
+.sidebar {
+  width: 260px;
+  min-width: 260px;
+  height: 100vh;
+  background: #172B32;
+  color: #ECEBE5;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 1.5rem;
-  color: #172B32;
-  font-family: inherit;
+  flex-shrink: 0;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  position: relative;
+  z-index: 50;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.header {
-  background: linear-gradient(135deg, #172B32 0%, #203A3B 70%, #167C72 100%);
-  border-radius: 12px;
-  padding: 1.5rem 1.75rem;
-  color: #FFFFFF;
+.sidebarBrand {
+  padding: 1.25rem 1.25rem;
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  align-items: center;
-  box-shadow: 0 4px 16px rgba(23, 43, 50, 0.12);
-  flex-wrap: wrap;
-  gap: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  flex-shrink: 0;
 }
 
-.title {
-  font-size: 1.4rem;
+.brandBrandGroup {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.brandLogo {
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, #167C72, #0E564F);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FFFFFF;
   font-weight: 700;
-  margin: 0 0 0.25rem 0;
+  font-size: 1.1rem;
+}
+
+.brandText {
+  display: flex;
+  flex-direction: column;
+}
+
+.brandTitle {
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: #FFFFFF;
+  line-height: 1.2;
+}
+
+.brandSubtitle {
+  font-size: 0.68rem;
+  color: #B58B59;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+}
+
+.mobileCloseBtn {
+  display: none;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: #FFFFFF;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.workerBadge {
+  margin: 0.85rem 1rem 0.5rem;
+  padding: 0.75rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
+}
+
+.workerAvatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #167C72;
   color: #FFFFFF;
   display: flex;
   align-items: center;
-  gap: 0.65rem;
-}
-
-.subtitle {
-  font-size: 0.85rem;
-  color: #ECEBE5;
-  margin: 0;
-  opacity: 0.9;
-}
-
-.btnSync {
-  background: rgba(255, 255, 255, 0.15);
-  color: #FFFFFF;
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  border-radius: 6px;
-  padding: 0.45rem 0.85rem;
-  font-size: 0.8rem;
+  justify-content: center;
   font-weight: 600;
-  display: inline-flex;
+  font-size: 0.88rem;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.workerInfo {
+  overflow: hidden;
+  flex: 1;
+}
+
+.workerName {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #FFFFFF;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.workerTrade {
+  font-size: 0.7rem;
+  color: #A0B2B6;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Nav list scrolls INDEPENDENTLY so footer and brand stay fixed */
+.navSection {
+  flex: 1;
+  padding: 0.5rem 0.65rem;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+}
+
+.navSection::-webkit-scrollbar {
+  width: 5px;
+}
+.navSection::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+}
+
+.navItem {
+  display: flex;
   align-items: center;
-  gap: 0.4rem;
+  gap: 0.75rem;
+  padding: 0.65rem 0.85rem;
+  border-radius: 6px;
+  color: #C3D1D4;
+  font-size: 0.84rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  margin-bottom: 2px;
+  border: none;
+  background: transparent;
+  width: 100%;
+  text-align: left;
+}
+
+.navItem:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #FFFFFF;
+}
+
+.navItemActive {
+  background: #167C72 !important;
+  color: #FFFFFF !important;
+  font-weight: 600;
+  box-shadow: 0 2px 6px rgba(22, 124, 114, 0.3);
+}
+
+.sidebarFooter {
+  padding: 0.85rem 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  flex-shrink: 0;
+  background: #172B32;
+}
+
+.logoutBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  width: 100%;
+  padding: 0.6rem 0.85rem;
+  border-radius: 6px;
+  background: rgba(220, 53, 69, 0.12);
+  color: #FF8585;
+  border: 1px solid rgba(220, 53, 69, 0.25);
+  font-size: 0.82rem;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.15s ease;
 }
 
-.btnSync:hover {
-  background: rgba(255, 255, 255, 0.25);
+.logoutBtn:hover {
+  background: #DC3545;
+  color: #FFFFFF;
 }
 
-.taskCard {
+/* Mobile backdrop overlay */
+.mobileBackdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(2px);
+  z-index: 45;
+}
+
+/* ==========================================================================
+   MAIN CONTENT WRAPPER (Header Stays Fixed, Body Scrolls Independently)
+   ========================================================================== */
+.mainContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  min-width: 0;
+  overflow: hidden; /* Crucial: no window-level scroll */
+  position: relative;
+}
+
+/* Header: Statically pinned to top of mainContent */
+.topHeader {
+  height: 64px;
+  min-height: 64px;
   background: #FFFFFF;
-  border: 1px solid #ECEBE5;
+  border-bottom: 1px solid #E5E7EB;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.5rem;
+  flex-shrink: 0;
+  z-index: 30;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  min-width: 0;
+}
+
+.menuToggleBtn {
+  display: none;
+  background: #F8F9FA;
+  border: 1px solid #E5E7EB;
+  color: #172B32;
+  width: 38px;
+  height: 38px;
+  border-radius: 6px;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.menuToggleBtn:hover {
+  background: #ECEBE5;
+}
+
+.headerTitleWrapper {
+  overflow: hidden;
+}
+
+.headerTitle {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #172B32;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.headerSubtitle {
+  font-size: 0.78rem;
+  color: #6B7280;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
+}
+
+.projectChip {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  background: #F4F2EC;
+  border: 1px solid #E2E0D8;
+  padding: 0.35rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  color: #203A3B;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.headerIconBtn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #F8F9FA;
+  border: 1px solid #E5E7EB;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #4B5563;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.headerIconBtn:hover {
+  background: #ECEBE5;
+  color: #172B32;
+}
+
+.notifBadge {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #EF4444;
+}
+
+/* Page Body: The ONLY element that scrolls vertically */
+.pageBody {
+  flex: 1;
+  padding: 1.5rem;
+  overflow-y: auto;
+  overflow-x: hidden;
+  max-width: 1400px;
+  width: 100%;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+/* ==========================================================================
+   MOBILE BOTTOM NAVIGATION
+   ========================================================================== */
+.bottomNav {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: #FFFFFF;
+  border-top: 1px solid #E5E7EB;
+  z-index: 40;
+  justify-content: space-around;
+  align-items: center;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.bottomNavItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  color: #6B7280;
+  font-size: 0.68rem;
+  font-weight: 500;
+  background: none;
+  border: none;
+  cursor: pointer;
+  flex: 1;
+  height: 100%;
+}
+
+.bottomNavItemActive {
+  color: #167C72;
+  font-weight: 700;
+}
+
+/* ==========================================================================
+   UI CARDS & COMPONENTS
+   ========================================================================== */
+.card {
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
   border-radius: 10px;
   padding: 1.25rem;
-  box-shadow: 0 2px 8px rgba(23, 43, 50, 0.04);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  margin-bottom: 1.25rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
 }
 
-.taskCard:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 14px rgba(23, 43, 50, 0.07);
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #F3F4F6;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }
 
-.priorityBadge {
-  font-size: 0.72rem;
-  font-weight: 700;
-  padding: 0.15rem 0.5rem;
-  border-radius: 4px;
-}
-
-.priorityCritical {
-  background: #FFEBEE;
-  color: #C62828;
-  border: 1px solid #FFCDD2;
-}
-
-.priorityHigh {
-  background: #FFF3E0;
-  color: #E65100;
-  border: 1px solid #FFE0B2;
-}
-
-.categoryBadge {
-  background: #F4F2EC;
-  color: #203A3B;
-  font-size: 0.72rem;
+.cardTitle {
+  font-size: 1rem;
   font-weight: 600;
-  padding: 0.15rem 0.5rem;
-  border-radius: 4px;
+  color: #172B32;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
-.statusBadge {
-  font-size: 0.76rem;
+.grid2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.25rem;
+}
+
+.grid3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+}
+
+.grid4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+
+.statCard {
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.statIcon {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.statVal {
+  font-size: 1.3rem;
   font-weight: 700;
-  padding: 0.2rem 0.6rem;
-  border-radius: 6px;
+  color: #172B32;
+  line-height: 1.2;
 }
 
-.statusProgress {
-  background: #E0F2F1;
-  color: #00695C;
-  border: 1px solid #80CBC4;
+.statLabel {
+  font-size: 0.75rem;
+  color: #6B7280;
+  font-weight: 500;
 }
 
-.statusClosed {
-  background: #E8F5E9;
-  color: #2E7D32;
-  border: 1px solid #C8E6C9;
-}
-
+/* Primary Button */
 .btnPrimary {
   background: #167C72;
   color: #FFFFFF;
   border: none;
   padding: 0.55rem 1rem;
   border-radius: 6px;
-  font-size: 0.82rem;
+  font-size: 0.85rem;
   font-weight: 600;
+  cursor: pointer;
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
-  cursor: pointer;
-  transition: background 0.15s;
+  transition: all 0.15s ease;
+  white-space: nowrap;
 }
 
 .btnPrimary:hover {
-  background: #12635B;
+  background: #0E564F;
 }
 
-.modalOverlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(23, 43, 50, 0.4);
-  backdrop-filter: blur(3px);
-  z-index: 1000;
-  display: flex;
+.btnSecondary {
+  background: #F4F2EC;
+  color: #172B32;
+  border: 1px solid #D1D5DB;
+  padding: 0.55rem 1rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  padding: 1rem;
+  gap: 0.4rem;
+  transition: all 0.15s ease;
+  white-space: nowrap;
 }
 
-.modalCard {
-  background: #FFFFFF;
-  border-radius: 10px;
-  padding: 1.5rem;
-  width: 100%;
-  max-width: 520px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+.btnSecondary:hover {
+  background: #ECEBE5;
+}
+
+/* Badge styles */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.55rem;
+  border-radius: 4px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.badgeSuccess {
+  background: #ECFDF5;
+  color: #059669;
+  border: 1px solid #A7F3D0;
+}
+
+.badgeWarning {
+  background: #FFFBEB;
+  color: #D97706;
+  border: 1px solid #FDE68A;
+}
+
+.badgeDanger {
+  background: #FEF2F2;
+  color: #DC2626;
+  border: 1px solid #FECACA;
+}
+
+.badgeInfo {
+  background: #EFF6FF;
+  color: #2563EB;
+  border: 1px solid #BFDBFE;
+}
+
+/* ==========================================================================
+   TABLET & MOBILE RESPONSIVENESS BREAKPOINTS
+   ========================================================================== */
+@media (max-width: 1024px) {
+  .grid4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 860px) {
+  /* Hide static sidebar, make it an off-canvas drawer */
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    transform: translateX(-100%);
+    box-shadow: 4px 0 25px rgba(0, 0, 0, 0.3);
+  }
+
+  .sidebarOpen {
+    transform: translateX(0) !important;
+  }
+
+  .mobileCloseBtn {
+    display: flex;
+  }
+
+  .mobileBackdrop {
+    display: block;
+  }
+
+  .menuToggleBtn {
+    display: flex;
+  }
+
+  .projectChip {
+    display: none; /* Keep header compact on phones */
+  }
+
+  .topHeader {
+    padding: 0 1rem;
+    height: 58px;
+    min-height: 58px;
+  }
+
+  .bottomNav {
+    display: flex;
+  }
+
+  .pageBody {
+    padding: 1rem;
+    padding-bottom: 75px; /* Leave room for mobile bottom bar */
+  }
+
+  .grid2, .grid3, .grid4 {
+    grid-template-columns: 1fr !important;
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .headerTitle {
+    font-size: 1rem;
+  }
+  .headerSubtitle {
+    font-size: 0.72rem;
+  }
+  .card {
+    padding: 1rem;
+  }
 }

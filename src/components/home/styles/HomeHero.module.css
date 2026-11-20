@@ -1,0 +1,213 @@
+.heroSection {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  background: #172B32;
+  overflow: hidden;
+  padding: 130px 1.5rem 80px 1.5rem;
+  box-sizing: border-box;
+}
+
+.heroBackground {
+  position: absolute;
+  inset: 0;
+  background-image: url('/images/commercial_tower.jpg');
+  background-size: cover;
+  background-position: center 30%;
+  transform: scale(1.05);
+  animation: subtleZoom 20s infinite alternate ease-in-out;
+  filter: brightness(0.38) contrast(1.1);
+  z-index: 1;
+}
+
+@keyframes subtleZoom {
+  0% { transform: scale(1.02); }
+  100% { transform: scale(1.08); }
+}
+
+.heroOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(23, 43, 50, 0.78) 0%,
+    rgba(23, 43, 50, 0.55) 50%,
+    rgba(23, 43, 50, 0.98) 100%
+  );
+  z-index: 2;
+}
+
+.heroContent {
+  position: relative;
+  z-index: 3;
+  max-width: 1320px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.heroBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 1rem;
+  background: rgba(22, 124, 114, 0.35);
+  border: 1px solid rgba(52, 211, 153, 0.4);
+  border-radius: 9999px;
+  color: #34D399;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 1.5rem;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.heroHeadline {
+  font-size: clamp(2.2rem, 5vw, 3.6rem);
+  font-weight: 800;
+  color: #FFFFFF;
+  line-height: 1.15;
+  letter-spacing: -0.5px;
+  max-width: 950px;
+  margin: 0 0 1.5rem 0;
+  word-break: break-word;
+}
+
+.heroHeadlineHighlight {
+  background: linear-gradient(135deg, #FFFFFF 60%, #B58B59 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.heroSubheadline {
+  font-size: clamp(1rem, 2vw, 1.2rem);
+  line-height: 1.65;
+  color: #ECEBE5;
+  max-width: 780px;
+  margin: 0 0 2.5rem 0;
+  font-weight: 400;
+}
+
+.heroActions {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.btnPrimary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 0.95rem 2rem;
+  background: #167C72;
+  color: #FFFFFF;
+  font-weight: 700;
+  font-size: 0.95rem;
+  border-radius: 8px;
+  text-decoration: none;
+  box-shadow: 0 4px 15px rgba(22, 124, 114, 0.4);
+  transition: all 0.25s ease;
+  white-space: nowrap;
+}
+
+.btnPrimary:hover {
+  background: #0E564F;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(22, 124, 114, 0.6);
+}
+
+.btnSecondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 0.95rem 2rem;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #FFFFFF;
+  font-weight: 600;
+  font-size: 0.95rem;
+  border-radius: 8px;
+  text-decoration: none;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: all 0.25s ease;
+  white-space: nowrap;
+}
+
+.btnSecondary:hover {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: #FFFFFF;
+  transform: translateY(-2px);
+}
+
+/* Quick Metrics Strip */
+.metricsStrip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+  margin-top: 4rem;
+  padding-top: 2.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  max-width: 1000px;
+}
+
+.metricItem {
+  display: flex;
+  flex-direction: column;
+}
+
+.metricValue {
+  font-size: clamp(1.8rem, 3.5vw, 2.4rem);
+  font-weight: 800;
+  color: #34D399;
+  letter-spacing: -0.5px;
+}
+
+.metricLabel {
+  font-size: clamp(0.72rem, 1.5vw, 0.85rem);
+  color: #ECEBE5;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+
+@media (max-width: 1024px) {
+  .heroSection {
+    padding-top: 110px;
+    padding-bottom: 60px;
+  }
+  .metricsStrip {
+    grid-template-columns: repeat(2, 1fr);
+    margin-top: 3rem;
+    padding-top: 2rem;
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .heroSection {
+    padding-top: 96px;
+    padding-bottom: 50px;
+    min-height: auto;
+  }
+  .heroActions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.85rem;
+  }
+  .btnPrimary, .btnSecondary {
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .metricsStrip {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem 1rem;
+    margin-top: 2.5rem;
+    padding-top: 1.75rem;
+  }
+}

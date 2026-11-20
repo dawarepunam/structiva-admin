@@ -2,6 +2,8 @@
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .panel {
@@ -10,6 +12,7 @@
   border: 1px solid #e2e8f0;
   padding: 1.25rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  box-sizing: border-box;
 }
 
 .toolbar {
@@ -17,14 +20,17 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 0.75rem;
 }
 
 .datePicker {
   font-size: 0.85rem;
-  padding: 0.4rem 0.75rem;
+  padding: 0.45rem 0.75rem;
   border-radius: 6px;
   border: 1px solid #cbd5e1;
   background-color: #f8fafc;
+  color: #0f172a;
 }
 
 .grid {
@@ -41,18 +47,21 @@
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+  box-sizing: border-box;
 }
 
 .workerHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 0.5rem;
 }
 
 .workerName {
   font-weight: 600;
   font-size: 0.9rem;
   color: #0f172a;
+  word-break: break-word;
 }
 
 .statusButtons {
@@ -64,13 +73,14 @@
 .statusBtn {
   font-size: 0.75rem;
   font-weight: 600;
-  padding: 0.4rem;
+  padding: 0.45rem 0.35rem;
   border-radius: 6px;
   border: 1px solid #cbd5e1;
   background: #ffffff;
   cursor: pointer;
   text-align: center;
   transition: all 0.15s;
+  min-height: 36px;
 }
 
 .activePresent {
@@ -95,4 +105,22 @@
   background-color: #6366f1;
   color: #ffffff;
   border-color: #6366f1;
+}
+
+@media (max-width: 600px) {
+  .panel {
+    padding: 0.85rem;
+  }
+  .toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .datePicker {
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
 }

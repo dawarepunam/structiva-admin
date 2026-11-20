@@ -1,9 +1,10 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import styles from './Layout.module.css';
+import { useSupervisorEnterprise } from '../SupervisorEnterpriseManagement';
 import {
   LayoutDashboard,
   FolderGit2,
@@ -38,10 +39,29 @@ interface SupervisorLayoutProps {
 export default function SupervisorLayoutWrapper({ children }: SupervisorLayoutProps) {
   const pathname = usePathname();
   const router = useRouter();
+  const { supervisorProfile } = useSupervisorEnterprise();
   
+  // Guard against unauthenticated access to protected supervisor routes
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+
   // State for Mobile Drawer and Desktop Fullscreen (Sidebar Collapse)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const session = localStorage.getItem('structiva_supervisor_session');
+      const token = localStorage.getItem('structiva_strapi_jwt');
+
+      if (!session || !token) {
+        setIsAuthenticated(false);
+        const encodedReturn = encodeURIComponent(pathname);
+        router.replace(`/supervisor/login?returnUrl=${encodedReturn}`);
+      } else {
+        setIsAuthenticated(true);
+      }
+    }
+  }, [pathname, router]);
 
   // Exact sidebar navigation items
   const navItems = [
@@ -67,8 +87,9 @@ export default function SupervisorLayoutWrapper({ children }: SupervisorLayoutPr
     if (confirm('Are you sure you want to log out from the Supervisor Portal?')) {
       if (typeof window !== 'undefined') {
         localStorage.removeItem('structiva_supervisor_session');
+        localStorage.removeItem('structiva_strapi_jwt');
       }
-      router.push('/supervisor/login');
+      router.replace('/supervisor/login');
     }
   };
 
@@ -81,8 +102,30 @@ export default function SupervisorLayoutWrapper({ children }: SupervisorLayoutPr
     }
   };
 
+  // Get initials for profile badge
+  const initials = supervisorProfile?.name
+    ? supervisorProfile.name
+        .split(' ')
+        .map(n => n[0])
+        .filter((_, i, arr) => i === 0 || i === arr.length - 1)
+        .join('')
+        .toUpperCase()
+    : 'SP';
+
   const currentNav = navItems.find(item => pathname === item.href || pathname.startsWith(item.href + '/'));
   const pageTitle = currentNav ? currentNav.label : 'Supervisor Portal';
+
+  // If unauthenticated or checking auth status, render minimal loading spinner
+  if (isAuthenticated === null || isAuthenticated === false) {
+    return (
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#F4F2EC' }}>
+        <div style={{ textAlign: 'center', color: '#172B32' }}>
+          <div style={{ width: '40px', height: '40px', border: '3px solid #167C72', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 1s linear infinite', margin: '0 auto 1rem auto' }} />
+          <div style={{ fontSize: '0.9rem', fontWeight: 600 }}>Verifying Supervisor Security Clearance...</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.supervisorContainer}>
@@ -159,13 +202,9 @@ export default function SupervisorLayoutWrapper({ children }: SupervisorLayoutPr
               title={sidebarCollapsed ? "Open Sidebar" : "Hide Sidebar (Full Screen)"}
               aria-label="Toggle Sidebar"
             >
-              {sidebarCollapsed ? (
-                <PanelLeftOpen size={20} />
-              ) : (
-                <MoreVertical size={20} />
-              )}
+              {sidebarCollapsed ? <PanelLeftOpen size={20} /> : <PanelLeftClose size={20} />}
             </button>
-            <h1 className={styles.pageHeading}>{pageTitle}</h1>
+            <h1 className={styles.pageTitle}>{pageTitle}</h1>
           </div>
 
           <div className={styles.navRight}>
@@ -175,10 +214,10 @@ export default function SupervisorLayoutWrapper({ children }: SupervisorLayoutPr
             </div>
 
             <Link href="/supervisor/profile" className={styles.supervisorBadge}>
-              <div className={styles.avatar}>PG</div>
+              <div className={styles.avatar}>{initials}</div>
               <div>
-                <span className={styles.supervisorName}>Er. Pravin Gaikwad</span>
-                <span className={styles.supervisorRole}>Chief Site Supervisor</span>
+                <span className={styles.supervisorName}>{supervisorProfile.name}</span>
+                <span className={styles.supervisorRole}>{supervisorProfile.role}</span>
               </div>
             </Link>
           </div>

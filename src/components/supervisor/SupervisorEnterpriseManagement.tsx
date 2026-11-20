@@ -1,6 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { fetchStrapiCollection, syncOfflineQueue } from '@/services/strapiClient';
 
 export interface SupervisorEnterpriseState {
@@ -9,6 +10,8 @@ export interface SupervisorEnterpriseState {
     role: string;
     assignedProject: string;
     assignedSite: string;
+    supervisorId?: string;
+    email?: string;
   };
   assignedProjects: any[];
   assignedWorkers: any[];
@@ -43,11 +46,22 @@ interface SupervisorEnterpriseManagementProps {
  * ensuring strict multi-supervisor access control across all 16 supervisor modules.
  */
 export default function SupervisorEnterpriseManagement({ children }: SupervisorEnterpriseManagementProps) {
-  const [supervisorProfile, setSupervisorProfile] = useState({
+  const router = useRouter();
+
+  const [supervisorProfile, setSupervisorProfile] = useState<{
+    name: string;
+    role: string;
+    assignedProject: string;
+    assignedSite: string;
+    supervisorId?: string;
+    email?: string;
+  }>({
     name: 'Er. Pravin Gaikwad',
-    role: 'Chief Structural Site Supervisor',
+    role: 'Chief Site Operations Supervisor',
     assignedProject: 'Skyline Commercial Complex (Tower A)',
-    assignedSite: 'Tower A (Podium & Core)'
+    assignedSite: 'Tower A (Core & Podium)',
+    supervisorId: 'SUP-PUN-084',
+    email: 'p.gaikwad@structiva.internal'
   });
 
   const [assignedProjects, setAssignedProjects] = useState<any[]>([]);
@@ -65,20 +79,24 @@ export default function SupervisorEnterpriseManagement({ children }: SupervisorE
       setLoading(true);
 
       // Check for supervisor session override
+      let activeProfile = { ...supervisorProfile };
       if (typeof window !== 'undefined') {
         const sessionStr = localStorage.getItem('structiva_supervisor_session');
         if (sessionStr) {
           try {
             const parsed = JSON.parse(sessionStr);
             if (parsed.name) {
-              setSupervisorProfile(prev => ({
-                ...prev,
+              activeProfile = {
                 name: parsed.name,
-                assignedProject: parsed.assignedProject || prev.assignedProject,
-                assignedSite: parsed.assignedSite || prev.assignedSite
-              }));
+                role: parsed.designation || parsed.role || 'Site Operations Supervisor',
+                assignedProject: parsed.assignedProject || activeProfile.assignedProject,
+                assignedSite: parsed.assignedSite || activeProfile.assignedSite,
+                supervisorId: parsed.supervisorId || activeProfile.supervisorId,
+                email: parsed.email || activeProfile.email
+              };
+              setSupervisorProfile(activeProfile);
             }
-          } catch (e) {}
+          } catch (e) { }
         }
       }
 
@@ -93,46 +111,50 @@ export default function SupervisorEnterpriseManagement({ children }: SupervisorE
         fetchStrapiCollection('supervisor-requests', [])
       ]);
 
-      // Strict project and supervisor isolation
-      const supervisorName = supervisorProfile.name.toLowerCase();
-      const projKeyword = 'skyline';
+      // Dynamic project and supervisor isolation matching the active logged-in supervisor
+      const nameParts = (activeProfile.name || '').toLowerCase().split(' ');
+      const lastName = nameParts[nameParts.length - 1] || 'gaikwad';
+      const assignedProjLower = (activeProfile.assignedProject || '').toLowerCase();
+      const projKeyword = assignedProjLower.includes('expressway') ? 'expressway' : 'skyline';
 
-      const filteredPrj = (allPrj || []).filter((p: any) => 
+      const filteredPrj = (allPrj || []).filter((p: any) =>
         (p.name || '').toLowerCase().includes(projKeyword) ||
-        (p.project_supervisor || '').toLowerCase().includes('gaikwad')
+        (p.project_supervisor || '').toLowerCase().includes(lastName)
       );
 
-      const filteredWrk = (allWrk || []).filter((w: any) => 
+      const filteredWrk = (allWrk || []).filter((w: any) =>
         (w.project || '').toLowerCase().includes(projKeyword) ||
-        (w.site || '').toLowerCase().includes('tower a')
+        (w.site || '').toLowerCase().includes('tower a') ||
+        (w.site || '').toLowerCase().includes('section 3')
       );
 
-      const filteredFlt = (allFlt || []).filter((f: any) => 
+      const filteredFlt = (allFlt || []).filter((f: any) =>
         (f.project || '').toLowerCase().includes(projKeyword) ||
-        (f.assigned_site || '').toLowerCase().includes('tower a')
+        (f.assigned_site || '').toLowerCase().includes('tower a') ||
+        (f.assigned_site || '').toLowerCase().includes('section 3')
       );
 
-      const filteredAtt = (allAtt || []).filter((a: any) => 
+      const filteredAtt = (allAtt || []).filter((a: any) =>
         (a.project || '').toLowerCase().includes(projKeyword) ||
-        (a.supervisor || '').toLowerCase().includes('gaikwad')
+        (a.supervisor || '').toLowerCase().includes(lastName)
       );
 
-      const filteredFul = (allFul || []).filter((fu: any) => 
-        (fu.supervisor_name || '').toLowerCase().includes('gaikwad') ||
+      const filteredFul = (allFul || []).filter((fu: any) =>
+        (fu.supervisor_name || '').toLowerCase().includes(lastName) ||
         (fu.asset_name || '').toLowerCase().includes('jcb') ||
         (fu.asset_name || '').toLowerCase().includes('crane') ||
         (fu.asset_name || '').toLowerCase().includes('tipper')
       );
 
-      const filteredExp = (allExp || []).filter((e: any) => 
+      const filteredExp = (allExp || []).filter((e: any) =>
         (e.project || '').toLowerCase().includes(projKeyword) ||
-        (e.submitted_by || e.submittedBy || '').toLowerCase().includes('gaikwad') ||
+        (e.submitted_by || e.submittedBy || '').toLowerCase().includes(lastName) ||
         (e.submitted_by || e.submittedBy || '').toLowerCase().includes('kulkarni')
       );
 
-      const filteredReq = (allReq || []).filter((r: any) => 
+      const filteredReq = (allReq || []).filter((r: any) =>
         (r.project || '').toLowerCase().includes(projKeyword) ||
-        (r.submitted_by || '').toLowerCase().includes('gaikwad')
+        (r.submitted_by || '').toLowerCase().includes(lastName)
       );
 
       setAssignedProjects(filteredPrj);

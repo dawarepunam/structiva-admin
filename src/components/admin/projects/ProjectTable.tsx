@@ -58,7 +58,7 @@ export default function ProjectTable() {
     code: '',
     client: '',
     location: '',
-    category: 'Commercial Building' as 'Commercial Building' | 'Highway Infrastructure' | 'Metro Rail transit' | 'Industrial Plant',
+    category: 'Commercial Building' as NonNullable<EnterpriseProjectRecord['category']>,
     budget: '',
     spent: '0',
     progress: '0',
@@ -386,10 +386,13 @@ export default function ProjectTable() {
                 className={styles.filterSelect}
               >
                 <option value="All">All Categories</option>
+                <option value="Water Pipeline Infrastructure">Water Pipeline</option>
+                <option value="Solar Infrastructure">Solar Infrastructure</option>
+                <option value="Water Storage Tanks">Water Storage Tanks</option>
+                <option value="Heavy Fabrication">Heavy Fabrication</option>
                 <option value="Commercial Building">Commercial Building</option>
                 <option value="Highway Infrastructure">Highway Infrastructure</option>
-                <option value="Metro Rail transit">Metro Rail transit</option>
-                <option value="Industrial Plant">Industrial Plant</option>
+                <option value="Metro Rail Transit">Metro Rail Transit</option>
               </select>
             </div>
 
@@ -756,10 +759,13 @@ export default function ProjectTable() {
                     value={formData.category}
                     onChange={e => setFormData({ ...formData, category: e.target.value as any })}
                   >
+                    <option value="Water Pipeline Infrastructure">Water Pipeline Infrastructure</option>
+                    <option value="Solar Infrastructure">Solar Infrastructure</option>
+                    <option value="Water Storage Tanks">Water Storage Tanks</option>
+                    <option value="Heavy Fabrication">Heavy Fabrication</option>
                     <option value="Commercial Building">Commercial Building</option>
                     <option value="Highway Infrastructure">Highway Infrastructure</option>
-                    <option value="Metro Rail transit">Metro Rail transit</option>
-                    <option value="Industrial Plant">Industrial Plant</option>
+                    <option value="Metro Rail Transit">Metro Rail Transit</option>
                   </select>
                 </div>
 

@@ -1,0 +1,137 @@
+.clientsSection {
+  padding: 100px 1.5rem;
+  background: #FFFFFF;
+}
+
+.container {
+  max-width: 1320px;
+  margin: 0 auto;
+}
+
+.headerRow {
+  text-align: center;
+  max-width: 780px;
+  margin: 0 auto 3.5rem auto;
+}
+
+.sectionPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #167C72;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 0.75rem;
+}
+
+.sectionTitle {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #172B32;
+  line-height: 1.2;
+  margin: 0 0 1rem 0;
+  letter-spacing: -0.5px;
+}
+
+.sectionSubtitle {
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: #4B5563;
+  margin: 0;
+}
+
+.sectorTabs {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 2.5rem;
+  flex-wrap: wrap;
+}
+
+.tabBtn {
+  padding: 0.6rem 1.4rem;
+  border-radius: 9999px;
+  background: #F4F2EC;
+  border: 1px solid #E2E0D8;
+  color: #172B32;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tabBtnActive {
+  background: #167C72;
+  border-color: #167C72;
+  color: #FFFFFF;
+  box-shadow: 0 4px 12px rgba(22, 124, 114, 0.25);
+}
+
+.clientsGrid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1.25rem;
+}
+
+.clientCard {
+  background: #F8F9FA;
+  border: 1px solid #E5E7EB;
+  border-radius: 10px;
+  padding: 1.5rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  transition: all 0.25s ease;
+  min-height: 110px;
+}
+
+.clientCard:hover {
+  background: #FFFFFF;
+  border-color: #167C72;
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+}
+
+.clientBadge {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  background: #172B32;
+  color: #34D399;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 0.82rem;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.65rem;
+}
+
+.clientName {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #172B32;
+  line-height: 1.3;
+}
+
+.clientSector {
+  font-size: 0.72rem;
+  color: #6B7280;
+  margin-top: 0.25rem;
+}
+
+@media (max-width: 1024px) {
+  .clientsGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .clientsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

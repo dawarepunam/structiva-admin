@@ -1,0 +1,32 @@
+.homePage {
+  min-height: 100vh;
+  background-color: #FFFFFF;
+  color: #172B32;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  overflow-x: hidden;
+}
+
+.backToTop {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: #167C72;
+  color: #FFFFFF;
+  border: none;
+  box-shadow: 0 4px 15px rgba(22, 124, 114, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 999;
+  transition: all 0.25s ease;
+}
+
+.backToTop:hover {
+  background: #0E564F;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(22, 124, 114, 0.6);
+}

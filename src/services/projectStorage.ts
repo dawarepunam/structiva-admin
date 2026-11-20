@@ -48,7 +48,7 @@ export interface EnterpriseProjectRecord {
   code: string;
   client: string;
   location: string;
-  category?: 'Commercial Building' | 'Highway Infrastructure' | 'Metro Rail transit' | 'Industrial Plant';
+  category?: 'Water Pipeline Infrastructure' | 'Solar Infrastructure' | 'Water Storage Tanks' | 'Heavy Fabrication' | 'Commercial Building' | 'Highway Infrastructure' | 'Metro Rail Transit';
   budget: number;
   spent: number;
   status: 'Active' | 'Under Review' | 'Completed';
@@ -60,6 +60,8 @@ export interface EnterpriseProjectRecord {
   projectSupervisor?: string;
   deployedMachinery: number;
   description: string;
+  slug?: string;
+  isProtected?: boolean;
   // Deep detail relations scoped to this project
   gallery?: ProjectGalleryImage[];
   milestones?: ProjectMilestone[];
@@ -70,89 +72,137 @@ export interface EnterpriseProjectRecord {
 export const defaultEnterpriseProjects: EnterpriseProjectRecord[] = [
   { 
     id: '1', 
-    name: 'Skyline Commercial Complex', 
+    name: 'Skyline Commercial Complex (Tower A)', 
     code: 'PRJ-SKY-01', 
-    client: 'K Raheja Corp', 
-    location: 'Kharadi IT Park, Pune', 
+    client: 'Prestige Global Infrastructures Ltd', 
+    location: 'Kalyani Nagar, Pune', 
     category: 'Commercial Building',
-    budget: 42000000, 
-    spent: 28500000, 
+    budget: 142000000, 
+    spent: 102240000, 
     status: 'Active', 
-    progress: 68, 
+    progress: 72, 
     startDate: '01 Jan 2026', 
-    expectedCompletion: '31 Dec 2026',
+    expectedCompletion: '15 Dec 2026',
     image: '/images/commercial_tower.jpg',
     projectManager: 'Er. Rajesh Kulkarni',
     projectSupervisor: 'Er. Pravin Gaikwad',
-    deployedMachinery: 6,
-    description: 'Grade-A 18-storey IT tower with double basement parking, seismic design, and composite steel structure.',
-    gallery: [
-      { id: 'g1', url: '/images/commercial_tower.jpg', caption: 'Level 4 Slab Reinforcement & Column Concreting', sectionTag: 'Tower B Slab', uploadedAt: '17 Nov 2026', uploadedBy: 'Er. Pravin Gaikwad' },
-      { id: 'g2', url: '/images/crane_real.jpg', caption: 'Tower Crane Material Hoisting to 5th Floor', sectionTag: 'Heavy Lift', uploadedAt: '16 Nov 2026', uploadedBy: 'Er. Pravin Gaikwad' },
-      { id: 'g3', url: '/images/project2.jpg', caption: 'Basement 2 Retaining Wall Shotcreting & Anchoring', sectionTag: 'Basement Works', uploadedAt: '14 Nov 2026', uploadedBy: 'Er. Rajesh Kulkarni' },
-      { id: 'g4', url: '/images/worker1.jpg', caption: 'Site Safety Induction & PPE Compliance Check', sectionTag: 'EHS Audit', uploadedAt: '12 Nov 2026', uploadedBy: 'Safety Officer Sawant' }
-    ],
-    milestones: [
-      { id: 'm1', name: 'Substructure & Double Basement RCC', category: 'Civil Foundation', targetDate: '15 Apr 2026', status: 'Completed', completionPercent: 100 },
-      { id: 'm2', name: 'Level 1 to 4 Superstructure Slabs', category: 'RCC Frame', targetDate: '20 Nov 2026', status: 'Completed', completionPercent: 100 },
-      { id: 'm3', name: 'Level 5 to 10 Typical Floor Casting', category: 'RCC Frame', targetDate: '15 Feb 2027', status: 'In Progress', completionPercent: 45 },
-      { id: 'm4', name: 'Facade Glazing & Curtain Wall Installation', category: 'External Finishes', targetDate: '30 Jun 2027', status: 'Pending', completionPercent: 0 },
-      { id: 'm5', name: 'MEP Services & HVAC Chiller Testing', category: 'MEP Engineering', targetDate: '30 Oct 2027', status: 'Pending', completionPercent: 0 }
-    ],
-    documents: [
-      { id: 'd1', name: 'Master EPC Construction Agreement.pdf', category: 'Contract', fileSize: '4.8 MB', uploadedAt: '05 Jan 2026', uploadedBy: 'Legal Dept (Pune)', downloadUrl: '#' },
-      { id: 'd2', name: 'Structural G+18 GFC Drawings Rev-03.dwg', category: 'Drawing / Blueprint', fileSize: '18.4 MB', uploadedAt: '12 Feb 2026', uploadedBy: 'Chief Consultant', downloadUrl: '#' },
-      { id: 'd3', name: 'PMC Environmental Clearances & Fire NOC.pdf', category: 'Statutory Approval', fileSize: '2.1 MB', uploadedAt: '20 Jan 2026', uploadedBy: 'Liaisoning Desk', downloadUrl: '#' }
-    ],
-    dailyReports: [
-      { id: 'DPR-SKY-1711', reportDate: '17 Nov 2026', shift: 'Shift-1 (Day)', workExecuted: '145 m³ Concreting poured on Level 4 Slab, 12 column cages tied.', labourCount: 42, machineryCount: 4, dieselConsumedLitres: 60, submittedBy: 'Er. Pravin Gaikwad', approvalStatus: 'Approved' },
-      { id: 'DPR-SKY-1611', reportDate: '16 Nov 2026', shift: 'Shift-1 (Day)', workExecuted: 'Shuttering staging alignment for beam span B1-B8 verified.', labourCount: 38, machineryCount: 3, dieselConsumedLitres: 45, submittedBy: 'Er. Pravin Gaikwad', approvalStatus: 'Approved' }
-    ]
+    deployedMachinery: 14,
+    description: 'Twin commercial high-rise tower development with multi-level automated basement car park and composite steel frames.',
+    slug: 'skyline-commercial-complex',
+    isProtected: true
   },
   { 
     id: '2', 
-    name: 'Eastern Expressway Bridge Sec-4', 
+    name: 'Eastern Expressway Link Highway', 
     code: 'PRJ-EXP-04', 
-    client: 'NHAI (National Highway Authority)', 
-    location: 'Thane - Bhiwandi Bypass, MH', 
+    client: 'NHAI Maharashtra Div', 
+    location: 'Chakan-Talegaon Corridor, Pune', 
     category: 'Highway Infrastructure',
-    budget: 128000000, 
-    spent: 107500000, 
+    budget: 85000000, 
+    spent: 35700000, 
     status: 'Active', 
-    progress: 84, 
+    progress: 42, 
     startDate: '15 Mar 2025', 
-    expectedCompletion: '30 Jun 2026',
+    expectedCompletion: '30 Nov 2026',
     image: '/images/highway_bridge.jpg',
     projectManager: 'Er. Vikramaditya Deshmukh',
     projectSupervisor: 'Er. Sunil Rao',
-    deployedMachinery: 12,
-    description: 'Six-lane pre-stressed segmental elevated flyover with modern girder launching and pile foundation.',
-    gallery: [
-      { id: 'g21', url: '/images/highway_bridge.jpg', caption: 'Segmental Girder Span Launching over River Bed', sectionTag: 'Pier 4-5 Span', uploadedAt: '17 Nov 2026', uploadedBy: 'Er. Vikramaditya' },
-      { id: 'g22', url: '/images/tipper_real.jpg', caption: 'Tata Prima Material Hauling at Pier 3 Abutment', sectionTag: 'Earthwork', uploadedAt: '15 Nov 2026', uploadedBy: 'Fleet Supervisor' },
-      { id: 'g23', url: '/images/steel_wire.jpg', caption: 'High-Tensile Pre-Stressing Tendons Stressing Check', sectionTag: 'Cable Stressing', uploadedAt: '13 Nov 2026', uploadedBy: 'Quality In-charge' }
-    ],
-    milestones: [
-      { id: 'm21', name: 'Open Well Caisson & Piling Foundation', category: 'Foundation', targetDate: '30 Aug 2025', status: 'Completed', completionPercent: 100 },
-      { id: 'm22', name: 'Pier Shaft & Pier Cap Casting (24 Nos)', category: 'Substructure', targetDate: '15 Jan 2026', status: 'Completed', completionPercent: 100 },
-      { id: 'm23', name: 'Segmental Box Girder Precast Launching', category: 'Superstructure', targetDate: '28 Feb 2026', status: 'In Progress', completionPercent: 88 },
-      { id: 'm24', name: 'Mastic Asphalt Deck Wearing Coat', category: 'Pavement', targetDate: '30 Apr 2026', status: 'Pending', completionPercent: 0 }
-    ],
-    documents: [
-      { id: 'd21', name: 'NHAI Concession Agreement & Package Specs.pdf', category: 'Contract', fileSize: '9.2 MB', uploadedAt: '10 Mar 2025', uploadedBy: 'NHAI Project Cell', downloadUrl: '#' },
-      { id: 'd22', name: 'Bridge Pre-stressing Cable Profile Drawing.dwg', category: 'Drawing / Blueprint', fileSize: '14.5 MB', uploadedAt: '15 Apr 2025', uploadedBy: 'Design Bureau', downloadUrl: '#' }
-    ],
-    dailyReports: [
-      { id: 'DPR-EXP-1711', reportDate: '17 Nov 2026', shift: 'Shift-1 (Day)', workExecuted: 'Pier-4 segmental cable stressing executed. 2 spans anchored at 1800 kN.', labourCount: 28, machineryCount: 8, dieselConsumedLitres: 110, submittedBy: 'Er. Sunil Rao', approvalStatus: 'Approved' }
-    ]
+    deployedMachinery: 8,
+    description: 'Four-lane expressway bypass link corridor with modern pre-cast concrete box drainage culverts and road widening.',
+    slug: 'eastern-expressway-link-highway',
+    isProtected: true
   },
   { 
     id: '3', 
-    name: 'Metro Line Corridor Piling & Station', 
+    name: 'Pune Metro Water Storage & GLS Reservoir System', 
+    code: 'PRJ-WST-03', 
+    client: 'Pune Municipal Corporation (PMC)', 
+    location: 'Wagholi & Hadapsar Hubs, Pune', 
+    category: 'Water Storage Tanks',
+    budget: 45000000, 
+    spent: 39600000, 
+    status: 'Active', 
+    progress: 88, 
+    startDate: '10 Aug 2025', 
+    expectedCompletion: '28 Feb 2026',
+    image: '/images/water_tank_real.jpg',
+    projectManager: 'Er. Santosh Jadhav',
+    projectSupervisor: 'Er. Amit Shinde',
+    deployedMachinery: 10,
+    description: 'Construction of 35 Lakh Litres capacity Glass-Fused-to-Steel (GFS) and RCC Elevated Storage Reservoir with automatic SCADA chlorination pumps.',
+    slug: 'pune-metro-water-storage-reservoir',
+    isProtected: true
+  },
+  { 
+    id: '4', 
+    name: 'Chakan Industrial MS Water Transmission Pipeline (65 Km)', 
+    code: 'PRJ-WTR-01', 
+    client: 'MIDC Water Works Division', 
+    location: 'Chakan Industrial Corridor, Pune', 
+    category: 'Water Pipeline Infrastructure',
+    budget: 125000000, 
+    spent: 92500000, 
+    status: 'Active', 
+    progress: 74, 
+    startDate: '15 Jan 2025', 
+    expectedCompletion: '15 Mar 2026',
+    image: '/images/pipeline_trench.jpg',
+    projectManager: 'Er. Rajesh Kulkarni',
+    projectSupervisor: 'Er. Pravin Gaikwad',
+    deployedMachinery: 16,
+    description: 'Laying and commissioning of 1400mm Mild Steel welded pipeline with epoxy internal lining, micro-tunneling under NH-60, and cathodic protection.',
+    slug: 'chakan-industrial-water-pipeline',
+    isProtected: true
+  },
+  { 
+    id: '5', 
+    name: 'Solapur 250 MWp Utility Solar Balance of Plant (BOP)', 
+    code: 'PRJ-SOL-02', 
+    client: 'Tata Power Renewable Energy', 
+    location: 'Solapur Solar Park, Maharashtra', 
+    category: 'Solar Infrastructure',
+    budget: 180000000, 
+    spent: 147600000, 
+    status: 'Active', 
+    progress: 82, 
+    startDate: '01 Nov 2024', 
+    expectedCompletion: '30 Jan 2026',
+    image: '/images/solar_park_real.jpg',
+    projectManager: 'Er. Santosh Jadhav',
+    projectSupervisor: 'Er. Sunil Rao',
+    deployedMachinery: 22,
+    description: 'Turnkey civil balance of plant including 120,000 driven MMS pile posts, inverter sub-stations, and 33kV internal underground collector power network.',
+    slug: 'solapur-utility-solar-farm',
+    isProtected: true
+  },
+  { 
+    id: '6', 
+    name: 'Bhusawal Heavy Steel Railway Overbridge (ROB) Girders', 
+    code: 'PRJ-ROB-05', 
+    client: 'Central Railway Engineering Div', 
+    location: 'Bhusawal Junction, Maharashtra', 
+    category: 'Heavy Fabrication',
+    budget: 78000000, 
+    spent: 70980000, 
+    status: 'Active', 
+    progress: 91, 
+    startDate: '01 Aug 2024', 
+    expectedCompletion: '10 Jan 2026',
+    image: '/images/steel_fabrication_real.jpg',
+    projectManager: 'Er. Vikramaditya Deshmukh',
+    projectSupervisor: 'Er. Amit Shinde',
+    deployedMachinery: 12,
+    description: 'Fabrication and launch of 72m clear span composite structural steel plate girders with ultrasonic weld verification and polyurethane anti-corrosion coating.',
+    slug: 'bhusawal-railway-overbridge-fabrication',
+    isProtected: true
+  },
+  { 
+    id: '7', 
+    name: 'Metro Line Corridor Piling & Elevated Viaduct', 
     code: 'PRJ-MTR-09', 
     client: 'MMRDA Infrastructure', 
     location: 'Andheri East Line 7, Mumbai', 
-    category: 'Metro Rail transit',
+    category: 'Metro Rail Transit',
     budget: 85000000, 
     spent: 35700000, 
     status: 'Active', 
@@ -163,22 +213,9 @@ export const defaultEnterpriseProjects: EnterpriseProjectRecord[] = [
     projectManager: 'Er. Santosh Jadhav',
     projectSupervisor: 'Er. Amit Shinde',
     deployedMachinery: 8,
-    description: 'High-precision hydraulic bored pile foundation with deep underground utility realignment.',
-    gallery: [
-      { id: 'g31', url: '/images/metro_piling.jpg', caption: 'Bored Cast-in-Situ Piling Rig Operation (1200mm Dia)', sectionTag: 'Station Pier P-102', uploadedAt: '17 Nov 2026', uploadedBy: 'Er. Santosh Jadhav' },
-      { id: 'g32', url: '/images/hydraulic_part.jpg', caption: 'Hydraulic Kelly Bar Maintenance & Rig Assembly', sectionTag: 'Plant Maintenance', uploadedAt: '16 Nov 2026', uploadedBy: 'Mechanical Lead' }
-    ],
-    milestones: [
-      { id: 'm31', name: 'Underground Gas & Water Utility Shifting', category: 'Enabling Works', targetDate: '30 Nov 2025', status: 'Completed', completionPercent: 100 },
-      { id: 'm32', name: 'Station Column Piling (84 Piles)', category: 'Deep Foundations', targetDate: '28 Feb 2026', status: 'In Progress', completionPercent: 55 },
-      { id: 'm33', name: 'Concourse Level Precast Pier Portal Assembly', category: 'Station Superstructure', targetDate: '31 Aug 2026', status: 'Pending', completionPercent: 0 }
-    ],
-    documents: [
-      { id: 'd31', name: 'MMRDA Line 7 Corridor Alignment Sanction.pdf', category: 'Statutory Approval', fileSize: '6.4 MB', uploadedAt: '01 Aug 2025', uploadedBy: 'MMRDA Liaison', downloadUrl: '#' }
-    ],
-    dailyReports: [
-      { id: 'DPR-MTR-1711', reportDate: '17 Nov 2026', shift: 'Shift-1 (Day)', workExecuted: 'Bored piling (1200mm dia) down to 24m bedrock. Bentonite flush completed.', labourCount: 35, machineryCount: 6, dieselConsumedLitres: 95, submittedBy: 'Er. Amit Shinde', approvalStatus: 'Under Review' }
-    ]
+    description: 'High-precision hydraulic bored pile foundation with deep underground utility realignment and segmental viaduct piers.',
+    slug: 'metro-line-corridor-piling',
+    isProtected: true
   }
 ];
 
@@ -199,7 +236,7 @@ export function getStoredProjects(): EnterpriseProjectRecord[] {
 
 export function getProjectById(id: string): EnterpriseProjectRecord | null {
   const all = getStoredProjects();
-  return all.find(p => p.id === id || p.code.toLowerCase() === id.toLowerCase()) || null;
+  return all.find(p => p.id === id || p.code.toLowerCase() === id.toLowerCase() || p.slug === id) || null;
 }
 
 export function saveProjects(projects: EnterpriseProjectRecord[]): void {

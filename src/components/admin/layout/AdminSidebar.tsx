@@ -20,7 +20,8 @@ import {
   ChevronRight,
   TrendingUp,
   X,
-  AlertOctagon
+  AlertOctagon,
+  MessageSquare
 } from 'lucide-react';
 
 const navGroups = [
@@ -36,6 +37,12 @@ const navGroups = [
       { name: 'Projects', href: '/admin/projects', icon: Building2 },
       { name: 'Site Activities', href: '/admin/activities', icon: HardHat },
       { name: 'Issues & Incidents', href: '/admin/issues', icon: AlertOctagon },
+    ]
+  },
+  {
+    group: 'Commercial & Tendering',
+    items: [
+      { name: 'Inquiries & Leads', href: '/admin/enquiries', icon: MessageSquare },
     ]
   },
   {
@@ -100,78 +107,43 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
       </div>
 
       {/* Navigation Group Items */}
-      <div className={styles.navContainer}>
-        {navGroups.map((group, idx) => (
-          <div key={idx} className={styles.navGroup}>
-            <div className={styles.groupHeader}>
-              <span className={styles.groupLabel}>{group.group}</span>
-            </div>
-            
-            <div className={styles.groupItems}>
+      <nav className={styles.nav}>
+        {navGroups.map((group, groupIndex) => (
+          <div key={groupIndex} className={styles.navGroup}>
+            <div className={styles.groupTitle}>{group.group}</div>
+            <ul className={styles.navList}>
               {group.items.map((item) => {
                 const Icon = item.icon;
-                const isActive = pathname === item.href;
+                const isActive = pathname === item.href || (item.href !== '/admin' && pathname.startsWith(item.href));
                 return (
-                  <Link
-                    key={item.href + item.name}
-                    href={item.href}
-                    onClick={onClose}
-                    className={`${styles.navLink} ${isActive ? styles.activeNavLink : ''}`}
-                  >
-                    <Icon size={17} className={styles.navIcon} />
-                    <span className={styles.navText}>{item.name}</span>
-                    {isActive && <div className={styles.activeGlowPill} />}
-                  </Link>
+                  <li key={item.href} className={styles.navItem}>
+                    <Link
+                      href={item.href}
+                      className={`${styles.navLink} ${isActive ? styles.navLinkActive : ''}`}
+                      onClick={onClose}
+                    >
+                      <span className={styles.navIconWrapper}>
+                        <Icon size={18} className={styles.navIcon} />
+                      </span>
+                      <span className={styles.navLabel}>{item.name}</span>
+                      {isActive && <ChevronRight size={14} className={styles.activeIndicator} />}
+                    </Link>
+                  </li>
                 );
               })}
-            </div>
+            </ul>
           </div>
         ))}
-      </div>
+      </nav>
 
-      {/* Bottom Overall Progress Gauge (Matches MNC Reference Mockup) */}
-      <div className={styles.progressGaugeBox}>
-        <div className={styles.gaugeHeader}>
-          <span className={styles.gaugeTitle}>Overall Progress</span>
-        </div>
-        <div className={styles.gaugeContent}>
-          <div className={styles.circularProgress}>
-            <svg viewBox="0 0 36 36" className={styles.circularChart}>
-              <path 
-                className={styles.circleBg}
-                d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-              />
-              <path 
-                className={styles.circleFill}
-                strokeDasharray="78, 100"
-                d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-              />
-            </svg>
-            <span className={styles.gaugePercent}>78%</span>
+      {/* Quick Status Footer */}
+      <div className={styles.sidebarFooter}>
+        <div className={styles.systemStatus}>
+          <div className={styles.statusDot}></div>
+          <div className={styles.statusText}>
+            <span className={styles.statusTitle}>All Nodes Operational</span>
+            <span className={styles.statusSub}>Strapi v5 Active</span>
           </div>
-
-          <div className={styles.sparkMiniTrend}>
-            <div className={styles.trendBars}>
-              <span style={{ height: '40%' }}></span>
-              <span style={{ height: '65%' }}></span>
-              <span style={{ height: '55%' }}></span>
-              <span style={{ height: '85%' }}></span>
-              <span style={{ height: '100%' }}></span>
-            </div>
-            <span className={styles.trendLabel}>Target Met</span>
-          </div>
-        </div>
-      </div>
-
-      {/* User Profile Bar */}
-      <div className={styles.footerProfile}>
-        <div className={styles.avatar}>
-          <span>SA</span>
-          <span className={styles.onlineDot} />
-        </div>
-        <div className={styles.profileDetails}>
-          <span className={styles.userName}>Admin</span>
-          <span className={styles.userRole}>Super Admin • MNC Ops</span>
         </div>
       </div>
     </aside>

@@ -1,0 +1,155 @@
+.aboutSection {
+  padding: clamp(60px, 8vw, 100px) 1.5rem;
+  background: #FFFFFF;
+  box-sizing: border-box;
+}
+
+.aboutContainer {
+  max-width: 1320px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(2rem, 5vw, 4rem);
+  align-items: center;
+}
+
+.imageGrid {
+  position: relative;
+  width: 100%;
+}
+
+.mainImageWrapper {
+  width: 100%;
+  height: clamp(320px, 45vw, 480px);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 16px 36px rgba(23, 43, 50, 0.12);
+}
+
+.mainImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s ease;
+}
+
+.mainImage:hover {
+  transform: scale(1.04);
+}
+
+.badgeOverlay {
+  position: absolute;
+  bottom: -24px;
+  right: -24px;
+  background: #172B32;
+  color: #FFFFFF;
+  padding: 1.25rem 1.75rem;
+  border-radius: 10px;
+  border-left: 4px solid #167C72;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+  max-width: 280px;
+  box-sizing: border-box;
+}
+
+.badgeTagline {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #34D399;
+  line-height: 1.3;
+}
+
+.badgeSub {
+  font-size: 0.72rem;
+  color: #B58B59;
+  margin-top: 0.35rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+
+.contentWrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.sectionPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #167C72;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 0.75rem;
+}
+
+.aboutTitle {
+  font-size: clamp(1.8rem, 3.5vw, 2.3rem);
+  font-weight: 800;
+  color: #172B32;
+  line-height: 1.25;
+  margin: 0 0 1.25rem 0;
+  letter-spacing: -0.5px;
+}
+
+.aboutDesc {
+  font-size: clamp(0.95rem, 1.8vw, 1.05rem);
+  line-height: 1.7;
+  color: #4B5563;
+  margin: 0 0 2rem 0;
+}
+
+.valuesList {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.valueItem {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+}
+
+.valueIcon {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  background: #ECFDF5;
+  color: #059669;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.valueText {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #172B32;
+  line-height: 1.4;
+}
+
+@media (max-width: 1024px) {
+  .aboutContainer {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+  .badgeOverlay {
+    position: static;
+    margin-top: 1rem;
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 640px) {
+  .valuesList {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  .mainImageWrapper {
+    height: 280px;
+  }
+}
