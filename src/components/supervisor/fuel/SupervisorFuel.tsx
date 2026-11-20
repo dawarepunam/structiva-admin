@@ -151,29 +151,29 @@ export default function SupervisorFuelView() {
         </button>
       </div>
 
-      {/* Analytics KPI Row */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem', width: '100%' }}>
-        <div style={{ background: '#FFFFFF', padding: '1rem', borderRadius: '8px', border: '1px solid #ECEBE5' }}>
-          <span style={{ fontSize: '0.75rem', color: '#718096', textTransform: 'uppercase', fontWeight: 600 }}>Total Fuel Issued</span>
-          <h3 style={{ margin: '0.25rem 0', fontSize: '1.5rem', fontWeight: 800, color: '#172B32' }}>{stats.totalLitres} Litres</h3>
-          <span style={{ fontSize: '0.72rem', color: '#167C72', fontWeight: 600 }}>{stats.entriesCount} Verified Allocations</span>
+      {/* Analytics KPI Row - 2x2 grid on mobile screens */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '0.65rem', width: '100%' }}>
+        <div style={{ background: '#FFFFFF', padding: '0.75rem', borderRadius: '8px', border: '1px solid #ECEBE5', display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
+          <span style={{ fontSize: '0.68rem', color: '#718096', textTransform: 'uppercase', fontWeight: 600 }}>Total Fuel Issued</span>
+          <h3 style={{ margin: '0.1rem 0', fontSize: '1.25rem', fontWeight: 800, color: '#172B32' }}>{stats.totalLitres} L</h3>
+          <span style={{ fontSize: '0.68rem', color: '#167C72', fontWeight: 600 }}>{stats.entriesCount} Allocations</span>
         </div>
-        <div style={{ background: '#FFFFFF', padding: '1rem', borderRadius: '8px', border: '1px solid #ECEBE5' }}>
-          <span style={{ fontSize: '0.75rem', color: '#718096', textTransform: 'uppercase', fontWeight: 600 }}>Total Fuel Invoiced</span>
-          <h3 style={{ margin: '0.25rem 0', fontSize: '1.5rem', fontWeight: 800, color: '#167C72' }}>₹{stats.totalCost.toLocaleString('en-IN')}</h3>
-          <span style={{ fontSize: '0.72rem', color: '#718096' }}>Average Rate: ₹92.5/L</span>
+        <div style={{ background: '#FFFFFF', padding: '0.75rem', borderRadius: '8px', border: '1px solid #ECEBE5', display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
+          <span style={{ fontSize: '0.68rem', color: '#718096', textTransform: 'uppercase', fontWeight: 600 }}>Fuel Invoiced</span>
+          <h3 style={{ margin: '0.1rem 0', fontSize: '1.25rem', fontWeight: 800, color: '#167C72' }}>₹{stats.totalCost.toLocaleString('en-IN')}</h3>
+          <span style={{ fontSize: '0.68rem', color: '#718096' }}>Avg ₹92.5/L</span>
         </div>
-        <div style={{ background: '#FFFFFF', padding: '1rem', borderRadius: '8px', border: '1px solid #ECEBE5' }}>
-          <span style={{ fontSize: '0.75rem', color: '#718096', textTransform: 'uppercase', fontWeight: 600 }}>Active Bowser Nodes</span>
-          <h3 style={{ margin: '0.25rem 0', fontSize: '1.5rem', fontWeight: 800, color: '#203A3B' }}>1 Mobile</h3>
-          <span style={{ fontSize: '0.72rem', color: '#718096' }}>Site Tank Capacity: 2,000L</span>
+        <div style={{ background: '#FFFFFF', padding: '0.75rem', borderRadius: '8px', border: '1px solid #ECEBE5', display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
+          <span style={{ fontSize: '0.68rem', color: '#718096', textTransform: 'uppercase', fontWeight: 600 }}>Bowser Nodes</span>
+          <h3 style={{ margin: '0.1rem 0', fontSize: '1.25rem', fontWeight: 800, color: '#203A3B' }}>1 Mobile</h3>
+          <span style={{ fontSize: '0.68rem', color: '#718096' }}>Cap: 2,000L</span>
         </div>
-        <div style={{ background: '#FFFFFF', padding: '1rem', borderRadius: '8px', border: '1px solid #ECEBE5' }}>
-          <span style={{ fontSize: '0.75rem', color: '#718096', textTransform: 'uppercase', fontWeight: 600 }}>Anti-Theft Mismatch</span>
-          <h3 style={{ margin: '0.25rem 0', fontSize: '1.5rem', fontWeight: 800, color: stats.anomalies > 0 ? '#EF4444' : '#10B981' }}>
+        <div style={{ background: '#FFFFFF', padding: '0.75rem', borderRadius: '8px', border: '1px solid #ECEBE5', display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
+          <span style={{ fontSize: '0.68rem', color: '#718096', textTransform: 'uppercase', fontWeight: 600 }}>Anti-Theft Mismatch</span>
+          <h3 style={{ margin: '0.1rem 0', fontSize: '1.25rem', fontWeight: 800, color: stats.anomalies > 0 ? '#EF4444' : '#10B981' }}>
             {stats.anomalies} Flags
           </h3>
-          <span style={{ fontSize: '0.72rem', color: '#718096' }}>Telemetry vs Burn Norm</span>
+          <span style={{ fontSize: '0.68rem', color: '#718096' }}>Telemetry Safe</span>
         </div>
       </div>
 

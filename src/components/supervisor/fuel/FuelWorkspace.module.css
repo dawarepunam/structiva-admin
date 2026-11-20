@@ -108,7 +108,9 @@
 }
 
 @keyframes spin {
-  100% { transform: rotate(360deg); }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* ─────────────────────────────────────────────────────────
@@ -155,10 +157,21 @@
   display: block;
 }
 
-.tagTeal { color: #167C72; }
-.tagGreen { color: #10B981; }
-.tagAmber { color: #D97706; }
-.tagRed { color: #EF4444; }
+.tagTeal {
+  color: #167C72;
+}
+
+.tagGreen {
+  color: #10B981;
+}
+
+.tagAmber {
+  color: #D97706;
+}
+
+.tagRed {
+  color: #EF4444;
+}
 
 /* ─────────────────────────────────────────────────────────
    WORKSPACE NAVIGATION TABS
@@ -426,7 +439,9 @@
   color: #203A3B;
 }
 
-.input, .select, .textarea {
+.input,
+.select,
+.textarea {
   background: #F4F2EC;
   border: 1px solid #ECEBE5;
   border-radius: 6px;
@@ -437,7 +452,9 @@
   font-family: inherit;
 }
 
-.input:focus, .select:focus, .textarea:focus {
+.input:focus,
+.select:focus,
+.textarea:focus {
   border-color: #167C72;
   background: #FFFFFF;
 }
@@ -602,8 +619,13 @@
 }
 
 @keyframes slideIn {
-  from { transform: translateX(100%); }
-  to { transform: translateX(0); }
+  from {
+    transform: translateX(100%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
 }
 
 .drawerHeader {

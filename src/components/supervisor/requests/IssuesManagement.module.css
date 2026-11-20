@@ -17,11 +17,12 @@
   flex-direction: column;
   gap: 1.5rem;
   width: 100%;
-  max-width: 1600px;
+  max-width: 100%;
   margin: 0 auto;
-  padding: 0.5rem 0 3rem 0;
+  padding: 0;
   color: #172B32;
   font-family: inherit;
+  box-sizing: border-box;
 }
 
 /* --------------------------------------------------------------------------

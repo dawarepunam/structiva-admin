@@ -17,11 +17,12 @@
   flex-direction: column;
   gap: 1.5rem;
   width: 100%;
-  max-width: 1600px;
+  max-width: 100%;
   margin: 0 auto;
-  padding: 0.5rem 0 3rem 0;
+  padding: 0;
   color: #172B32;
   font-family: inherit;
+  box-sizing: border-box;
 }
 
 /* --------------------------------------------------------------------------
@@ -625,7 +626,9 @@
   letter-spacing: 0.03em;
 }
 
-.formInput, .formSelect, .formTextarea {
+.formInput,
+.formSelect,
+.formTextarea {
   background: #F4F2EC;
   border: 1px solid #ECEBE5;
   border-radius: 7px;
@@ -637,7 +640,9 @@
   font-family: inherit;
 }
 
-.formInput:focus, .formSelect:focus, .formTextarea:focus {
+.formInput:focus,
+.formSelect:focus,
+.formTextarea:focus {
   background: #FFFFFF;
   border-color: #167C72;
 }

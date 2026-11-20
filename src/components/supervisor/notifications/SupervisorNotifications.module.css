@@ -1,9 +1,11 @@
 .container {
-  padding: 1.5rem;
-  max-width: 1400px;
+  padding: 0;
+  width: 100%;
+  max-width: 100%;
   margin: 0 auto;
   font-family: inherit;
   color: #172B32;
+  box-sizing: border-box;
 }
 
 /* Page Top Header */
