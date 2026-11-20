@@ -456,3 +456,56 @@
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+
+@media (max-width: 768px) {
+  .statsStrip {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.65rem !important;
+  }
+  .statCard {
+    padding: 0.75rem 0.65rem !important;
+    gap: 0.5rem !important;
+  }
+  .statIcon {
+    width: 34px !important;
+    height: 34px !important;
+  }
+  .statLabel {
+    font-size: 0.68rem !important;
+  }
+  .statVal {
+    font-size: 1.15rem !important;
+  }
+  .filterBar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.65rem;
+  }
+  .searchWrapper {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+  .selectWrapper {
+    width: 100% !important;
+  }
+  .selectInput {
+    width: 100% !important;
+  }
+  .actionBtnSec {
+    width: 100% !important;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .statsStrip {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.5rem !important;
+  }
+  .statCard {
+    padding: 0.65rem 0.5rem !important;
+  }
+  .statVal {
+    font-size: 1.05rem !important;
+  }
+}

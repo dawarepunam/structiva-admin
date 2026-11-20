@@ -358,11 +358,61 @@
   .masterNavSwitcher {
     flex-direction: column;
   }
+  .kpiGrid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.65rem !important;
+  }
+  .kpiCard {
+    padding: 0.75rem 0.65rem !important;
+    gap: 0.5rem !important;
+  }
+  .kpiIconWrapper {
+    width: 34px !important;
+    height: 34px !important;
+  }
+  .kpiLabel {
+    font-size: 0.68rem !important;
+  }
+  .kpiValue {
+    font-size: 1.15rem !important;
+  }
+  .kpiSubtitle {
+    font-size: 0.65rem !important;
+    display: none;
+  }
   .toolbarCard {
     flex-direction: column;
     align-items: stretch;
+    gap: 0.65rem;
   }
   .searchBox {
-    min-width: 100%;
+    min-width: 100% !important;
+    width: 100% !important;
+  }
+  .filtersGroup {
+    flex-direction: column;
+    width: 100%;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+  .selectInput {
+    width: 100% !important;
+  }
+  .btnSecondary {
+    width: 100% !important;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .kpiGrid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.5rem !important;
+  }
+  .kpiCard {
+    padding: 0.65rem 0.5rem !important;
+  }
+  .kpiValue {
+    font-size: 1.05rem !important;
   }
 }
