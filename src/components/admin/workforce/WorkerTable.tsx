@@ -5,11 +5,12 @@ import styles from './WorkerTable.module.css';
 import { 
   Search, Phone, ShieldCheck, MapPin, X, ArrowRight, Award, Plus, 
   CheckCircle, Users, UserCheck, UserX, Clock, AlertCircle, LayoutGrid, List,
-  Filter, Calendar, DollarSign, FileText, ChevronRight, Briefcase, Sparkles, UserMinus
+  Filter, Calendar, DollarSign, FileText, ChevronRight, Briefcase, Sparkles, UserMinus, Edit, Save
 } from 'lucide-react';
 import SafeImage from '@/components/admin/ui/SafeImage';
 import { EnterpriseWorkerRecord, getStoredWorkers, saveWorkers } from '@/services/workerStorage';
 import { getStoredProjects, EnterpriseProjectRecord } from '@/services/projectStorage';
+import { getStoredSupervisors, SupervisorOption } from '@/services/supervisorStorage';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
@@ -17,6 +18,7 @@ export default function WorkerTable() {
   const router = useRouter();
   const [workers, setWorkers] = useState<EnterpriseWorkerRecord[]>([]);
   const [availableProjects, setAvailableProjects] = useState<EnterpriseProjectRecord[]>([]);
+  const [supervisors, setSupervisors] = useState<SupervisorOption[]>([]);
   const [search, setSearch] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('All');
   const [statusFilter, setStatusFilter] = useState('All');
@@ -26,6 +28,69 @@ export default function WorkerTable() {
   const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid');
   const [showAddModal, setShowAddModal] = useState(false);
   const [onboardingStep, setOnboardingStep] = useState(1);
+  const [editingWorker, setEditingWorker] = useState<EnterpriseWorkerRecord | null>(null);
+
+  // Edit worker form state
+  const [editFormData, setEditFormData] = useState({
+    name: '',
+    phone: '',
+    category: 'Skilled' as 'Skilled' | 'Semi-Skilled' | 'Unskilled',
+    skill: '',
+    assignedProject: '',
+    supervisorName: '',
+    dailyWage: 950,
+    overtimeHourlyRate: 140,
+    experienceYears: 5,
+    employmentType: 'Direct Payroll' as 'Direct Payroll' | 'Subcontractor Crew' | 'Daily Muster',
+    status: 'Active' as 'Active' | 'Inactive'
+  });
+
+  const openEditWorkerModal = (worker: EnterpriseWorkerRecord, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setEditingWorker(worker);
+    setEditFormData({
+      name: worker.name,
+      phone: worker.phone,
+      category: worker.category,
+      skill: worker.skill,
+      assignedProject: worker.assignedProject || 'Unassigned',
+      supervisorName: worker.supervisorName || '',
+      dailyWage: worker.dailyWage || 950,
+      overtimeHourlyRate: worker.overtimeHourlyRate || 140,
+      experienceYears: worker.experienceYears || 5,
+      employmentType: worker.employmentType || 'Direct Payroll',
+      status: worker.status || 'Active'
+    });
+  };
+
+  const handleUpdateWorker = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingWorker) return;
+
+    const updatedList = workers.map(w => {
+      if (w.id === editingWorker.id) {
+        return {
+          ...w,
+          name: editFormData.name,
+          phone: editFormData.phone,
+          category: editFormData.category,
+          skill: editFormData.skill,
+          assignedProject: editFormData.assignedProject,
+          supervisorName: editFormData.supervisorName,
+          dailyWage: Number(editFormData.dailyWage) || w.dailyWage,
+          overtimeHourlyRate: Number(editFormData.overtimeHourlyRate) || w.overtimeHourlyRate,
+          experienceYears: Number(editFormData.experienceYears) || w.experienceYears,
+          employmentType: editFormData.employmentType,
+          status: editFormData.status
+        };
+      }
+      return w;
+    });
+
+    setWorkers(updatedList);
+    saveWorkers(updatedList);
+    setEditingWorker(null);
+  };
 
   // 5-Section Master Onboarding Form State
   const [formData, setFormData] = useState({
@@ -73,10 +138,12 @@ export default function WorkerTable() {
   useEffect(() => {
     setWorkers(getStoredWorkers());
     setAvailableProjects(getStoredProjects());
+    setSupervisors(getStoredSupervisors());
 
     const handleStorage = () => {
       setWorkers(getStoredWorkers());
       setAvailableProjects(getStoredProjects());
+      setSupervisors(getStoredSupervisors());
     };
     window.addEventListener('storage', handleStorage);
     window.addEventListener('workersUpdated', handleStorage);
@@ -524,16 +591,26 @@ export default function WorkerTable() {
                   </div>
                 </div>
 
-                {/* Footer with Contact & Link */}
+                {/* Footer with Contact, Edit & Link */}
                 <div className={styles.cardFooter}>
                   <div className={styles.phoneChip}>
                     <Phone size={11} />
                     <span>{w.phone}</span>
                   </div>
 
-                  <div className={styles.viewProfileBtn}>
-                    <span>View Profile</span>
-                    <ArrowRight size={13} />
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <button 
+                      onClick={(e) => openEditWorkerModal(w, e)} 
+                      className={styles.editActionBtn}
+                      title="Edit Worker Details"
+                    >
+                      <Edit size={13} />
+                      <span>Edit</span>
+                    </button>
+                    <div className={styles.viewProfileBtn}>
+                      <span>Profile</span>
+                      <ArrowRight size={13} />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -596,10 +673,20 @@ export default function WorkerTable() {
                       </span>
                     </td>
                     <td>
-                      <Link href={`/admin/workforce/${w.id}`} className={styles.tableActionLink} onClick={e => e.stopPropagation()}>
-                        View Profile
-                        <ChevronRight size={14} />
-                      </Link>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <button 
+                          onClick={(e) => openEditWorkerModal(w, e)} 
+                          className={styles.editActionBtn}
+                          title="Edit Worker Details"
+                        >
+                          <Edit size={13} />
+                          <span>Edit</span>
+                        </button>
+                        <Link href={`/admin/workforce/${w.id}`} className={styles.tableActionLink} onClick={e => e.stopPropagation()}>
+                          Profile
+                          <ChevronRight size={14} />
+                        </Link>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -633,9 +720,19 @@ export default function WorkerTable() {
                 </div>
                 <div className={styles.mobileWorkerFooter}>
                   <span>Supervisor: {w.supervisorName || 'Er. Rajesh K.'}</span>
-                  <Link href={`/admin/workforce/${w.id}`} className={styles.tableActionLink} onClick={e => e.stopPropagation()}>
-                    Profile <ChevronRight size={13} />
-                  </Link>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <button 
+                      onClick={(e) => openEditWorkerModal(w, e)} 
+                      className={styles.editActionBtn}
+                      title="Edit Worker"
+                    >
+                      <Edit size={12} />
+                      <span>Edit</span>
+                    </button>
+                    <Link href={`/admin/workforce/${w.id}`} className={styles.tableActionLink} onClick={e => e.stopPropagation()}>
+                      Profile <ChevronRight size={13} />
+                    </Link>
+                  </div>
                 </div>
               </div>
             ))}
@@ -890,12 +987,15 @@ export default function WorkerTable() {
                     </div>
                     <div className={styles.formGroup}>
                       <label>Reporting Supervisor</label>
-                      <input 
-                        type="text" 
+                      <select 
                         value={formData.supervisorName} 
                         onChange={e => setFormData({ ...formData, supervisorName: e.target.value })}
-                        placeholder="Er. Rajesh Kulkarni"
-                      />
+                      >
+                        <option value="">Select Supervisor</option>
+                        {supervisors.map(s => (
+                          <option key={s.id} value={s.name}>{s.name} ({s.supervisorId})</option>
+                        ))}
+                      </select>
                     </div>
                   </div>
 
@@ -1094,6 +1194,166 @@ export default function WorkerTable() {
                     </button>
                   )}
                 </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+      {/* Edit Worker Modal */}
+      {editingWorker && (
+        <div className={styles.modalBackdrop} onClick={() => setEditingWorker(null)}>
+          <div className={styles.onboardingModalBox} onClick={e => e.stopPropagation()} style={{ maxWidth: '640px' }}>
+            <div className={styles.modalHeader}>
+              <div className={styles.modalHeaderTitle}>
+                <div className={styles.modalHeaderIcon}>
+                  <Edit size={20} />
+                </div>
+                <div>
+                  <h3>Edit Worker Record ({editingWorker.code})</h3>
+                  <p>Update deployment, trade skill, wage and reporting supervisor</p>
+                </div>
+              </div>
+              <button onClick={() => setEditingWorker(null)} className={styles.closeBtn}>
+                <X size={18} />
+              </button>
+            </div>
+
+            <form onSubmit={handleUpdateWorker} className={styles.onboardingForm} style={{ padding: '1.25rem' }}>
+              <div className={styles.formRow2}>
+                <div className={styles.formGroup}>
+                  <label>Full Legal Name *</label>
+                  <input 
+                    type="text" 
+                    required 
+                    value={editFormData.name} 
+                    onChange={e => setEditFormData({ ...editFormData, name: e.target.value })}
+                  />
+                </div>
+                <div className={styles.formGroup}>
+                  <label>Mobile Contact *</label>
+                  <input 
+                    type="tel" 
+                    required 
+                    value={editFormData.phone} 
+                    onChange={e => setEditFormData({ ...editFormData, phone: e.target.value })}
+                  />
+                </div>
+              </div>
+
+              <div className={styles.formRow2}>
+                <div className={styles.formGroup}>
+                  <label>Category *</label>
+                  <select 
+                    value={editFormData.category} 
+                    onChange={e => setEditFormData({ ...editFormData, category: e.target.value as any })}
+                  >
+                    <option value="Skilled">Skilled</option>
+                    <option value="Semi-Skilled">Semi-Skilled</option>
+                    <option value="Unskilled">Unskilled</option>
+                  </select>
+                </div>
+                <div className={styles.formGroup}>
+                  <label>Primary Skill / Trade *</label>
+                  <input 
+                    type="text" 
+                    required 
+                    value={editFormData.skill} 
+                    onChange={e => setEditFormData({ ...editFormData, skill: e.target.value })}
+                  />
+                </div>
+              </div>
+
+              <div className={styles.formRow2}>
+                <div className={styles.formGroup}>
+                  <label>Assigned Project *</label>
+                  <select 
+                    value={editFormData.assignedProject} 
+                    onChange={e => setEditFormData({ ...editFormData, assignedProject: e.target.value })}
+                  >
+                    <option value="Unassigned">Unassigned (Reserve Pool)</option>
+                    {availableProjects.map(p => (
+                      <option key={p.id} value={p.name}>{p.name}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className={styles.formGroup}>
+                  <label>Designated Site Supervisor *</label>
+                  <select 
+                    value={editFormData.supervisorName} 
+                    onChange={e => setEditFormData({ ...editFormData, supervisorName: e.target.value })}
+                  >
+                    <option value="">Select Supervisor</option>
+                    {supervisors.map(s => (
+                      <option key={s.id} value={s.name}>{s.name} ({s.supervisorId})</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className={styles.formRow3}>
+                <div className={styles.formGroup}>
+                  <label>Daily Wage (₹ / Day) *</label>
+                  <input 
+                    type="number" 
+                    required 
+                    value={editFormData.dailyWage} 
+                    onChange={e => setEditFormData({ ...editFormData, dailyWage: Number(e.target.value) })}
+                  />
+                </div>
+                <div className={styles.formGroup}>
+                  <label>Overtime Rate (₹ / Hr)</label>
+                  <input 
+                    type="number" 
+                    value={editFormData.overtimeHourlyRate} 
+                    onChange={e => setEditFormData({ ...editFormData, overtimeHourlyRate: Number(e.target.value) })}
+                  />
+                </div>
+                <div className={styles.formGroup}>
+                  <label>Experience (Years)</label>
+                  <input 
+                    type="number" 
+                    value={editFormData.experienceYears} 
+                    onChange={e => setEditFormData({ ...editFormData, experienceYears: Number(e.target.value) })}
+                  />
+                </div>
+              </div>
+
+              <div className={styles.formRow2}>
+                <div className={styles.formGroup}>
+                  <label>Employment Type</label>
+                  <select 
+                    value={editFormData.employmentType} 
+                    onChange={e => setEditFormData({ ...editFormData, employmentType: e.target.value as any })}
+                  >
+                    <option value="Direct Payroll">Direct Payroll</option>
+                    <option value="Subcontractor Crew">Subcontractor Crew</option>
+                    <option value="Daily Muster">Daily Muster</option>
+                  </select>
+                </div>
+                <div className={styles.formGroup}>
+                  <label>Employment Status</label>
+                  <select 
+                    value={editFormData.status} 
+                    onChange={e => setEditFormData({ ...editFormData, status: e.target.value as any })}
+                  >
+                    <option value="Active">Active</option>
+                    <option value="Inactive">Inactive</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className={styles.modalFooter} style={{ marginTop: '1.25rem', padding: '1rem 0 0 0' }}>
+                <button 
+                  type="button" 
+                  onClick={() => setEditingWorker(null)} 
+                  className={styles.btnSecondary}
+                >
+                  Cancel
+                </button>
+                <button type="submit" className={styles.btnSuccess}>
+                  <Save size={15} />
+                  <span>Save Changes</span>
+                </button>
               </div>
             </form>
           </div>

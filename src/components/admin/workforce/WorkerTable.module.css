@@ -1323,6 +1323,27 @@
   color: #334155;
 }
 
+.editActionBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  color: #0f172a;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.editActionBtn:hover {
+  background: #e2e8f0;
+  color: #167C72;
+  border-color: #167C72;
+}
+
 @media (max-width: 768px) {
   .desktopOnlyTable {
     display: none !important;
