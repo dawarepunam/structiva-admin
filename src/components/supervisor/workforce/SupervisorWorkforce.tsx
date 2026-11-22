@@ -23,7 +23,8 @@ import {
   RotateCcw
 } from 'lucide-react';
 import { fetchStrapiCollection, createStrapiEntity } from '@/services/strapiClient';
-import { EnterpriseProjectRecord } from '@/services/projectStorage';
+import { EnterpriseProjectRecord, getStoredProjects } from '@/services/projectStorage';
+import { getStoredWorkers, EnterpriseWorkerRecord } from '@/services/workerStorage';
 
 export default function SupervisorWorkforceView() {
   const [loading, setLoading] = useState(true);
@@ -73,17 +74,22 @@ export default function SupervisorWorkforceView() {
   async function loadWorkforceData() {
     setLoading(true);
     try {
+      const storedLocalWorkers = getStoredWorkers();
+      const storedLocalProjects = getStoredProjects();
+
       const [allWorkers, allProjects, allAttendances] = await Promise.all([
-        fetchStrapiCollection('workers', []),
-        fetchStrapiCollection<EnterpriseProjectRecord>('projects', []),
+        fetchStrapiCollection('workers', storedLocalWorkers),
+        fetchStrapiCollection<EnterpriseProjectRecord>('projects', storedLocalProjects),
         fetchStrapiCollection('attendances', [])
       ]);
 
-      setWorkers(allWorkers || []);
-      setProjects(allProjects || []);
+      setWorkers((allWorkers && allWorkers.length > 0) ? allWorkers : storedLocalWorkers);
+      setProjects((allProjects && allProjects.length > 0) ? allProjects : storedLocalProjects);
       setAttendances(allAttendances || []);
     } catch (err) {
       console.error('Failed to load workforce from Strapi:', err);
+      setWorkers(getStoredWorkers());
+      setProjects(getStoredProjects());
     } finally {
       setLoading(false);
     }
@@ -91,6 +97,18 @@ export default function SupervisorWorkforceView() {
 
   useEffect(() => {
     loadWorkforceData();
+
+    const handleStorageUpdate = () => {
+      loadWorkforceData();
+    };
+    window.addEventListener('storage', handleStorageUpdate);
+    window.addEventListener('workersUpdated', handleStorageUpdate);
+    window.addEventListener('projectsUpdated', handleStorageUpdate);
+    return () => {
+      window.removeEventListener('storage', handleStorageUpdate);
+      window.removeEventListener('workersUpdated', handleStorageUpdate);
+      window.removeEventListener('projectsUpdated', handleStorageUpdate);
+    };
   }, []);
 
   const handleRefresh = async () => {
@@ -105,29 +123,37 @@ export default function SupervisorWorkforceView() {
   // ─────────────────────────────────────────────────────────────
   const assignedProjects = useMemo(() => {
     const supQuery = supervisorUser.name.toLowerCase().trim();
-    return projects.filter((p: any) => {
-      if (!p.projectSupervisor) return false;
+    const supLastName = supQuery.split(' ').slice(-1)[0] || '';
+    const filtered = projects.filter((p: any) => {
+      if (!p.projectSupervisor) return true; // Show open projects
       const assigned = p.projectSupervisor.toLowerCase().trim();
-      return assigned.includes(supQuery) || supQuery.includes(assigned);
+      return assigned.includes(supQuery) || supQuery.includes(assigned) || (supLastName && assigned.includes(supLastName));
     });
+    return filtered.length > 0 ? filtered : projects;
   }, [projects, supervisorUser.name]);
 
   const assignedWorkers = useMemo(() => {
     const projectNames = assignedProjects.map(p => p.name.toLowerCase().split('(')[0].trim());
     const supervisorQuery = supervisorUser.name.toLowerCase().trim();
+    const supLastName = supervisorQuery.split(' ').slice(-1)[0] || '';
 
-    return workers.filter((w: any) => {
+    const matched = workers.filter((w: any) => {
       // Direct supervisor match
-      if (w.supervisorName && w.supervisorName.toLowerCase().includes(supervisorQuery)) {
-        return true;
+      if (w.supervisorName) {
+        const supName = w.supervisorName.toLowerCase();
+        if (supName.includes(supervisorQuery) || supervisorQuery.includes(supName) || (supLastName && supName.includes(supLastName))) {
+          return true;
+        }
       }
       // Or project assignment match
       if (w.assignedProject) {
         const assignedProj = w.assignedProject.toLowerCase();
-        return projectNames.some(pName => assignedProj.includes(pName));
+        return projectNames.some(pName => assignedProj.includes(pName) || pName.includes(assignedProj));
       }
       return false;
     });
+
+    return matched.length > 0 ? matched : workers;
   }, [workers, assignedProjects, supervisorUser.name]);
 
   // Combined Worker + Today's Live Attendance
