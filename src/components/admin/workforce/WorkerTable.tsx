@@ -5,7 +5,7 @@ import styles from './WorkerTable.module.css';
 import { 
   Search, Phone, ShieldCheck, MapPin, X, ArrowRight, Award, Plus, 
   CheckCircle, Users, UserCheck, UserX, Clock, AlertCircle, LayoutGrid, List,
-  Filter, Calendar, DollarSign, FileText, ChevronRight, Briefcase, Sparkles, UserMinus, Edit, Save
+  Filter, Calendar, DollarSign, FileText, ChevronRight, Briefcase, Sparkles, UserMinus, Edit, Save, Trash2
 } from 'lucide-react';
 import SafeImage from '@/components/admin/ui/SafeImage';
 import { EnterpriseWorkerRecord, getStoredWorkers, saveWorkers } from '@/services/workerStorage';
@@ -29,6 +29,15 @@ export default function WorkerTable() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [onboardingStep, setOnboardingStep] = useState(1);
   const [editingWorker, setEditingWorker] = useState<EnterpriseWorkerRecord | null>(null);
+  const [deletingWorkerId, setDeletingWorkerId] = useState<string | null>(null);
+
+  const handleDeleteWorker = (workerId: string, e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    const updated = workers.filter(w => w.id !== workerId);
+    setWorkers(updated);
+    saveWorkers(updated);
+    setDeletingWorkerId(null);
+  };
 
   // Edit worker form state
   const [editFormData, setEditFormData] = useState({
@@ -607,6 +616,13 @@ export default function WorkerTable() {
                       <Edit size={13} />
                       <span>Edit</span>
                     </button>
+                    <button 
+                      onClick={(e) => { e.stopPropagation(); setDeletingWorkerId(w.id); }} 
+                      className={styles.deleteActionBtn}
+                      title="Remove Worker"
+                    >
+                      <Trash2 size={13} />
+                    </button>
                     <div className={styles.viewProfileBtn}>
                       <span>Profile</span>
                       <ArrowRight size={13} />
@@ -682,6 +698,13 @@ export default function WorkerTable() {
                           <Edit size={13} />
                           <span>Edit</span>
                         </button>
+                        <button 
+                          onClick={(e) => { e.stopPropagation(); setDeletingWorkerId(w.id); }} 
+                          className={styles.deleteActionBtn}
+                          title="Remove Worker"
+                        >
+                          <Trash2 size={13} />
+                        </button>
                         <Link href={`/admin/workforce/${w.id}`} className={styles.tableActionLink} onClick={e => e.stopPropagation()}>
                           Profile
                           <ChevronRight size={14} />
@@ -728,6 +751,13 @@ export default function WorkerTable() {
                     >
                       <Edit size={12} />
                       <span>Edit</span>
+                    </button>
+                    <button 
+                      onClick={(e) => { e.stopPropagation(); setDeletingWorkerId(w.id); }} 
+                      className={styles.deleteActionBtn}
+                      title="Remove Worker"
+                    >
+                      <Trash2 size={12} />
                     </button>
                     <Link href={`/admin/workforce/${w.id}`} className={styles.tableActionLink} onClick={e => e.stopPropagation()}>
                       Profile <ChevronRight size={13} />
@@ -1356,6 +1386,46 @@ export default function WorkerTable() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {deletingWorkerId && (
+        <div className={styles.modalBackdrop} onClick={() => setDeletingWorkerId(null)}>
+          <div className={styles.onboardingModalBox} onClick={e => e.stopPropagation()} style={{ maxWidth: '420px', padding: '1.5rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#EF4444', marginBottom: '0.75rem' }}>
+              <Trash2 size={22} />
+              <h3 style={{ margin: 0, fontSize: '1.1rem' }}>Remove Worker</h3>
+            </div>
+            <p style={{ fontSize: '0.85rem', color: '#475569', marginBottom: '1.25rem', lineHeight: '1.5' }}>
+              Are you sure you want to remove this worker from the active enterprise workforce register?
+            </p>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
+              <button 
+                type="button" 
+                onClick={() => setDeletingWorkerId(null)} 
+                className={styles.btnSecondary}
+              >
+                Cancel
+              </button>
+              <button 
+                type="button" 
+                onClick={() => handleDeleteWorker(deletingWorkerId)} 
+                style={{
+                  background: '#EF4444',
+                  color: '#fff',
+                  border: 'none',
+                  borderRadius: '6px',
+                  padding: '8px 16px',
+                  fontWeight: 600,
+                  fontSize: '0.85rem',
+                  cursor: 'pointer'
+                }}
+              >
+                Confirm Delete
+              </button>
+            </div>
           </div>
         </div>
       )}

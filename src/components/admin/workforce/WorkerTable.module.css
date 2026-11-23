@@ -1344,6 +1344,25 @@
   border-color: #167C72;
 }
 
+.deleteActionBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 6px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  color: #ef4444;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.deleteActionBtn:hover {
+  background: #fee2e2;
+  color: #b91c1c;
+  border-color: #ef4444;
+}
+
 @media (max-width: 768px) {
   .desktopOnlyTable {
     display: none !important;
