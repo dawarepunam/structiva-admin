@@ -67,47 +67,118 @@ export async function POST(req: NextRequest) {
       });
 
       // Check external provider credentials:
-      // SMS Gateway (e.g. Twilio / Fast2SMS / MSG91) or WhatsApp Cloud API (Meta)
+      // Production security: Check environment and real provider configuration
+      const isProduction = process.env.NODE_ENV === 'production';
       const twilioSid = process.env.TWILIO_ACCOUNT_SID;
       const twilioAuthToken = process.env.TWILIO_AUTH_TOKEN;
       const twilioPhone = process.env.TWILIO_PHONE_NUMBER;
       const whatsappApiKey = process.env.WHATSAPP_CLOUD_API_KEY;
+      const whatsappPhoneId = process.env.WHATSAPP_PHONE_NUMBER_ID;
 
       const hasSmsConfig = Boolean(twilioSid && twilioAuthToken && twilioPhone);
-      const hasWhatsappConfig = Boolean(whatsappApiKey);
+      const hasWhatsappConfig = Boolean(whatsappApiKey && whatsappPhoneId);
 
       let deliveryStatus = 'simulated_sandbox';
       let providerMessage = '';
 
       if (channel === 'whatsapp') {
         if (hasWhatsappConfig) {
-          // Live WhatsApp Cloud API dispatch
-          deliveryStatus = 'dispatched_whatsapp';
-          providerMessage = 'WhatsApp OTP sent via Meta Cloud API';
+          try {
+            // Live WhatsApp Business Cloud API Integration
+            const waRes = await fetch(`https://graph.facebook.com/v20.0/${whatsappPhoneId}/messages`, {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${whatsappApiKey}`,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                messaging_product: 'whatsapp',
+                recipient_type: 'individual',
+                to: cleanPhone.startsWith('91') ? cleanPhone : `91${cleanPhone}`,
+                type: 'text',
+                text: {
+                  body: `Your STRUCTIVA Workforce verification code is: ${code}. Valid for 5 minutes. Do not share this code.`
+                }
+              })
+            });
+
+            if (waRes.ok) {
+              deliveryStatus = 'dispatched_whatsapp';
+              providerMessage = 'WhatsApp OTP sent via Meta Cloud API.';
+            } else {
+              const waErr = await waRes.json();
+              console.error('WhatsApp API dispatch failed:', waErr);
+              deliveryStatus = 'provider_error';
+              providerMessage = 'WhatsApp gateway failed to deliver. Please try SMS channel.';
+            }
+          } catch (e: any) {
+            console.error('WhatsApp network error:', e);
+            deliveryStatus = 'provider_error';
+            providerMessage = 'WhatsApp connection timed out. Please try SMS.';
+          }
         } else {
           deliveryStatus = 'provider_not_configured';
-          providerMessage = 'WhatsApp Cloud API not configured in environment. Sandbox development mode active.';
+          providerMessage = 'WhatsApp Cloud API credentials not configured in environment.';
         }
       } else {
         if (hasSmsConfig) {
-          // Live SMS dispatch
-          deliveryStatus = 'dispatched_sms';
-          providerMessage = 'SMS OTP sent via Twilio Telecom Gateway';
+          try {
+            // Live Twilio SMS Integration
+            const authHeader = Buffer.from(`${twilioSid}:${twilioAuthToken}`).toString('base64');
+            const twilioBody = new URLSearchParams({
+              To: cleanPhone.startsWith('+') ? cleanPhone : `+91${cleanPhone}`,
+              From: twilioPhone!,
+              Body: `Your STRUCTIVA Workforce verification code is: ${code}. Valid for 5 minutes.`
+            });
+
+            const smsRes = await fetch(`https://api.twilio.com/2010-04-01/Accounts/${twilioSid}/Messages.json`, {
+              method: 'POST',
+              headers: {
+                'Authorization': `Basic ${authHeader}`,
+                'Content-Type': 'application/x-www-form-urlencoded'
+              },
+              body: twilioBody.toString()
+            });
+
+            if (smsRes.ok) {
+              deliveryStatus = 'dispatched_sms';
+              providerMessage = 'SMS OTP sent via Twilio Gateway.';
+            } else {
+              const smsErr = await smsRes.json();
+              console.error('Twilio SMS dispatch failed:', smsErr);
+              deliveryStatus = 'provider_error';
+              providerMessage = 'SMS gateway delivery rejected. Verify phone format.';
+            }
+          } catch (e: any) {
+            console.error('SMS network error:', e);
+            deliveryStatus = 'provider_error';
+            providerMessage = 'Telecom gateway connection timed out.';
+          }
         } else {
           deliveryStatus = 'provider_not_configured';
-          providerMessage = 'SMS Gateway (Twilio/MSG91) not configured in environment. Sandbox development mode active.';
+          providerMessage = 'Telecom SMS Gateway (Twilio/MSG91) credentials not configured in environment.';
         }
+      }
+
+      // In production, NEVER expose OTP code in response under any circumstance
+      const shouldExposeSandbox = !isProduction && deliveryStatus === 'provider_not_configured';
+
+      if (deliveryStatus === 'provider_error') {
+        return NextResponse.json({
+          success: false,
+          error: providerMessage,
+          deliveryStatus
+        }, { status: 502 });
       }
 
       return NextResponse.json({
         success: true,
-        message: 'OTP generated successfully.',
+        message: 'OTP dispatch initiated.',
         channel: channel || 'sms',
         deliveryStatus,
         providerMessage,
-        // In local development / sandbox without telecom credentials, expose sandboxCode
-        // so real browser testing can proceed without blocking on third-party provider accounts
-        sandboxCode: deliveryStatus === 'provider_not_configured' ? code : undefined,
+        // sandboxCode is strictly omitted in production
+        sandboxCode: shouldExposeSandbox ? code : undefined,
         expiresInSeconds: 300
       });
     }

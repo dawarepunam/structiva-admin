@@ -406,6 +406,178 @@ export default function SupervisorWorkforceView() {
     }
   };
 
+  // ─────────────────────────────────────────────────────────────
+  // AVAILABLE WORKERS POOL (UNASSIGNED / REGISTERED)
+  // ─────────────────────────────────────────────────────────────
+  const availableWorkers = useMemo(() => {
+    return workers.filter(w => {
+      const isUnassigned = !w.assignedProject || 
+        w.assignedProject === 'Unassigned' || 
+        w.assignedProject === 'None' ||
+        w.status === 'Available';
+      
+      const matchesSearch = !search || 
+        w.name.toLowerCase().includes(search.toLowerCase()) ||
+        w.code?.toLowerCase().includes(search.toLowerCase()) ||
+        (w.phone && w.phone.includes(search)) ||
+        (w.skill && w.skill.toLowerCase().includes(search.toLowerCase()));
+
+      const matchesCat = categoryFilter === 'All' || w.category === categoryFilter;
+
+      return isUnassigned && matchesSearch && matchesCat;
+    });
+  }, [workers, search, categoryFilter]);
+
+  // Handle Supervisor Deploying an Available Worker to an authorized project
+  const handleAssignAvailableWorker = async (workerId: string, targetProject: string) => {
+    if (!targetProject) return;
+
+    try {
+      const currentAll = getStoredWorkers();
+      const targetWorker = currentAll.find(w => w.id?.toString() === workerId.toString());
+      if (!targetWorker) return;
+
+      const updatedHistory = [
+        ...(targetWorker.projectHistory || []),
+        {
+          project: targetProject,
+          site: 'Assigned Site',
+          role: targetWorker.skill || 'Tradesperson',
+          period: `${new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })} - Present`,
+          supervisor: supervisorUser.name,
+          status: 'Active on Site'
+        }
+      ];
+
+      const updatedWorker = {
+        ...targetWorker,
+        assignedProject: targetProject,
+        status: 'Active',
+        supervisorName: supervisorUser.name,
+        projectHistory: updatedHistory
+      };
+
+      const updatedList = currentAll.map(w => w.id?.toString() === workerId.toString() ? updatedWorker : w);
+      saveWorkers(updatedList);
+      setWorkers(updatedList);
+
+      // Best effort Strapi sync
+      if (targetWorker.documentId) {
+        await updateStrapiEntity('workers', targetWorker.documentId, {
+          assignedProject: targetProject,
+          status: 'Active',
+          supervisorName: supervisorUser.name
+        });
+      }
+
+      setActionFeedback({
+        type: 'success',
+        text: `Worker ${targetWorker.name} (${targetWorker.code}) deployed to ${targetProject}!`
+      });
+      setTimeout(() => setActionFeedback(null), 4000);
+    } catch (err: any) {
+      console.error('Failed to deploy available worker:', err);
+      setActionFeedback({
+        type: 'error',
+        text: 'Failed to deploy worker. Please try again.'
+      });
+      setTimeout(() => setActionFeedback(null), 4000);
+    }
+  };
+
+  // Handle Formal Site Transfer Execution with Task Handover
+  const handleExecuteSiteTransfer = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!transferModalWorker || !transferTargetProject) return;
+
+    setTransferSubmitting(true);
+    try {
+      const currentAll = getStoredWorkers();
+      const workerId = transferModalWorker.id;
+      const prevProject = transferModalWorker.assignedProject || 'Previous Site';
+
+      // 1. Close old assignment in project history
+      const updatedHistory = (transferModalWorker.projectHistory || []).map((h: any, idx: number, arr: any[]) => {
+        if (idx === arr.length - 1 && h.status === 'Active on Site') {
+          return {
+            ...h,
+            period: `${h.period.split(' - ')[0]} - ${new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}`,
+            status: 'Transferred / Closed'
+          };
+        }
+        return h;
+      });
+
+      // 2. Activate new destination site in project history
+      updatedHistory.push({
+        project: transferTargetProject,
+        site: 'Operations',
+        role: transferModalWorker.skill || 'Tradesperson',
+        period: `${new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })} - Present`,
+        supervisor: supervisorUser.name,
+        status: 'Active on Site'
+      });
+
+      const updatedWorker = {
+        ...transferModalWorker,
+        assignedProject: transferTargetProject,
+        supervisorName: supervisorUser.name,
+        projectHistory: updatedHistory
+      };
+
+      const updatedList = currentAll.map(w => w.id?.toString() === workerId.toString() ? updatedWorker : w);
+      saveWorkers(updatedList);
+      setWorkers(updatedList);
+
+      // 3. Update Strapi worker entity
+      if (transferModalWorker.documentId) {
+        await updateStrapiEntity('workers', transferModalWorker.documentId, {
+          assignedProject: transferTargetProject,
+          supervisorName: supervisorUser.name
+        });
+      }
+
+      // 4. Record formal transfer audit in supervisor-requests collection
+      await createStrapiEntity('supervisor-requests', {
+        requestType: 'Labour Requirement',
+        title: `Site Transfer: ${transferModalWorker.name} (${transferModalWorker.code})`,
+        project: transferTargetProject,
+        site: 'Operations',
+        category: 'Workforce Mobilization',
+        priority: 'Standard',
+        status: 'Approved',
+        details: JSON.stringify({
+          workerId: transferModalWorker.id,
+          workerName: transferModalWorker.name,
+          fromProject: prevProject,
+          toProject: transferTargetProject,
+          reason: transferReason,
+          taskHandoverDecision: 'Active and pending site tasks retained and handed over to site supervisor'
+        }),
+        remarks: `Transferred from ${prevProject} to ${transferTargetProject}. Reason: ${transferReason}`,
+        submittedBy: supervisorUser.name,
+        submittedDate: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
+      });
+
+      setActionFeedback({
+        type: 'success',
+        text: `Transferred ${transferModalWorker.name} successfully to ${transferTargetProject}. Prior assignment closed in audit history.`
+      });
+      setTimeout(() => setActionFeedback(null), 4000);
+      setTransferModalWorker(null);
+      setTransferTargetProject('');
+    } catch (err: any) {
+      console.error('Failed to execute site transfer:', err);
+      setActionFeedback({
+        type: 'error',
+        text: 'Error completing site transfer. Please retry.'
+      });
+      setTimeout(() => setActionFeedback(null), 4000);
+    } finally {
+      setTransferSubmitting(false);
+    }
+  };
+
   // Submit transfer request to Admin via central Strapi supervisor-requests
   const handleRequestTransfer = async (worker: any) => {
     const reqPayload = {
@@ -475,6 +647,67 @@ export default function SupervisorWorkforceView() {
             <span>{syncing ? 'Refreshing...' : 'Revalidate'}</span>
           </button>
         </div>
+      </div>
+
+      {/* Navigation View Switcher (Active vs Available Workforce) */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', margin: '1rem 0', flexWrap: 'wrap', gap: '10px' }}>
+        <div style={{ display: 'flex', gap: '8px' }}>
+          <button
+            type="button"
+            onClick={() => setViewTab('active')}
+            style={{
+              padding: '8px 16px',
+              borderRadius: '6px',
+              fontSize: '0.85rem',
+              fontWeight: 600,
+              border: viewTab === 'active' ? '1px solid #167C72' : '1px solid #E2E8F0',
+              backgroundColor: viewTab === 'active' ? '#167C72' : '#FFFFFF',
+              color: viewTab === 'active' ? '#FFFFFF' : '#475569',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px'
+            }}
+          >
+            <Users size={14} />
+            <span>My Active Site Workers ({assignedWorkers.length})</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setViewTab('available')}
+            style={{
+              padding: '8px 16px',
+              borderRadius: '6px',
+              fontSize: '0.85rem',
+              fontWeight: 600,
+              border: viewTab === 'available' ? '1px solid #167C72' : '1px solid #E2E8F0',
+              backgroundColor: viewTab === 'available' ? '#167C72' : '#FFFFFF',
+              color: viewTab === 'available' ? '#FFFFFF' : '#475569',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px'
+            }}
+          >
+            <Clock size={14} />
+            <span>Available Workforce Pool ({availableWorkers.length})</span>
+          </button>
+        </div>
+
+        {actionFeedback && (
+          <div style={{
+            padding: '6px 12px',
+            borderRadius: '6px',
+            fontSize: '0.8rem',
+            fontWeight: 600,
+            backgroundColor: actionFeedback.type === 'success' ? '#ECFDF5' : '#FEF2F2',
+            color: actionFeedback.type === 'success' ? '#047857' : '#B91C1C',
+            border: `1px solid ${actionFeedback.type === 'success' ? '#A7F3D0' : '#FECACA'}`
+          }}>
+            {actionFeedback.text}
+          </div>
+        )}
       </div>
 
       {/* ─────────────────────────────────────────────────────────
@@ -591,9 +824,108 @@ export default function SupervisorWorkforceView() {
       </div>
 
       {/* ─────────────────────────────────────────────────────────
-          WORKFORCE ROSTER TABLE
+          WORKFORCE ROSTER TABLE / AVAILABLE POOL
           ───────────────────────────────────────────────────────── */}
-      {loading ? (
+      {viewTab === 'available' ? (
+        availableWorkers.length === 0 ? (
+          <div className={styles.stateBox}>
+            <Users size={36} className={styles.stateIcon} />
+            <h3 className={styles.stateTitle}>No Available Workers in Pool</h3>
+            <p className={styles.stateText}>
+              All registered tradespersons are currently assigned to active sites, or none matched your criteria.
+            </p>
+          </div>
+        ) : (
+          <div className={styles.tableCard}>
+            <div style={{ padding: '12px 16px', background: '#F8FAFC', borderBottom: '1px solid #E2E8F0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#334155' }}>
+                Unassigned & Available Registered Tradespersons ({availableWorkers.length})
+              </span>
+              <span style={{ fontSize: '0.75rem', color: '#64748B' }}>
+                Select an authorized project to deploy immediately. Single-active-site policy is strictly maintained.
+              </span>
+            </div>
+            <div className={styles.tableWrapper}>
+              <table className={styles.dataTable}>
+                <thead>
+                  <tr>
+                    <th>Worker Name & Code</th>
+                    <th>Skill / Trade</th>
+                    <th>Category</th>
+                    <th>Mobile</th>
+                    <th>Status</th>
+                    <th>Deploy to Project</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {availableWorkers.map((w: any) => {
+                    const initials = (w.name || 'W').split(' ').map((n: string) => n[0]).slice(0, 2).join('').toUpperCase();
+                    return (
+                      <tr key={w.id || w.documentId}>
+                        <td>
+                          <div className={styles.workerCell}>
+                            <div className={styles.avatarCircle}>{initials}</div>
+                            <div>
+                              <span className={styles.workerName}>{w.name}</span>
+                              <span className={styles.workerCode}>{w.code || 'PENDING'}</span>
+                            </div>
+                          </div>
+                        </td>
+                        <td><strong>{w.skill || 'Tradesperson'}</strong></td>
+                        <td>
+                          <span className={styles.categoryTag}>
+                            {w.category || 'General'}
+                          </span>
+                        </td>
+                        <td>{w.phone || '—'}</td>
+                        <td>
+                          <span style={{
+                            display: 'inline-block',
+                            padding: '3px 8px',
+                            borderRadius: '12px',
+                            fontSize: '0.75rem',
+                            fontWeight: 600,
+                            background: '#E0F2FE',
+                            color: '#0369A1'
+                          }}>
+                            Available
+                          </span>
+                        </td>
+                        <td>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <select
+                              defaultValue=""
+                              onChange={(e) => {
+                                if (e.target.value) {
+                                  handleAssignAvailableWorker(w.id, e.target.value);
+                                }
+                              }}
+                              style={{
+                                padding: '6px 10px',
+                                borderRadius: '4px',
+                                border: '1px solid #CBD5E1',
+                                fontSize: '0.8rem',
+                                background: '#FFFFFF',
+                                color: '#1E293B',
+                                cursor: 'pointer'
+                              }}
+                            >
+                              <option value="" disabled>Deploy to Site...</option>
+                              {assignedProjects.map(p => (
+                                <option key={p.id} value={p.name}>{p.name}</option>
+                              ))}
+                            </select>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )
+      ) : loading ? (
         <div className={styles.stateBox}>
           <Clock size={32} />
           <h3 className={styles.stateTitle}>Loading Workforce Records...</h3>
@@ -697,6 +1029,30 @@ export default function SupervisorWorkforceView() {
                           >
                             <Edit size={12} />
                             <span>Edit</span>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setTransferModalWorker(w);
+                              setTransferTargetProject(assignedProjects[0]?.name || '');
+                            }}
+                            style={{
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '4px',
+                              padding: '5px 9px',
+                              background: '#F1F5F9',
+                              border: '1px solid #CBD5E1',
+                              borderRadius: '4px',
+                              color: '#1E293B',
+                              fontSize: '0.75rem',
+                              fontWeight: 600,
+                              cursor: 'pointer'
+                            }}
+                            title="Initiate Formal Site Transfer"
+                          >
+                            <span>Transfer ⇄</span>
                           </button>
                           <button
                             onClick={(e) => { e.stopPropagation(); setDeletingWorkerId(w.id); }}
@@ -1063,6 +1419,97 @@ export default function SupervisorWorkforceView() {
                 <button type="submit" className={styles.submitBtn}>
                   <Save size={14} />
                   <span>Save Changes</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Site Transfer Execution Modal with Handover Documentation */}
+      {transferModalWorker && (
+        <div className={styles.modalOverlay} onClick={() => !transferSubmitting && setTransferModalWorker(null)}>
+          <div className={styles.modalBox} onClick={e => e.stopPropagation()} style={{ maxWidth: '480px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#167C72', marginBottom: '0.75rem' }}>
+              <Building size={22} />
+              <h3 style={{ margin: 0, fontSize: '1.15rem' }}>Authorize Site Transfer & Task Handover</h3>
+            </div>
+            <p style={{ fontSize: '0.85rem', color: '#64748B', lineHeight: '1.5', margin: '0 0 1rem 0' }}>
+              Transferring <strong>{transferModalWorker.name}</strong> ({transferModalWorker.code}) from current active site.
+              Per enterprise single-active-site rules, the prior assignment will be closed in assignment history, pending tasks will be audited, and the destination site will become the sole active assignment.
+            </p>
+
+            <form onSubmit={handleExecuteSiteTransfer}>
+              <div style={{ marginBottom: '1rem' }}>
+                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: '#334155', marginBottom: '4px' }}>
+                  Current Active Site
+                </label>
+                <input
+                  type="text"
+                  disabled
+                  value={transferModalWorker.assignedProject || 'Skyline Commercial Complex'}
+                  style={{ width: '100%', padding: '8px 10px', borderRadius: '4px', border: '1px solid #CBD5E1', background: '#F1F5F9', color: '#64748B', fontSize: '0.85rem' }}
+                />
+              </div>
+
+              <div style={{ marginBottom: '1rem' }}>
+                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: '#334155', marginBottom: '4px' }}>
+                  Destination Project / Site *
+                </label>
+                <select
+                  required
+                  value={transferTargetProject}
+                  onChange={(e) => setTransferTargetProject(e.target.value)}
+                  style={{ width: '100%', padding: '8px 10px', borderRadius: '4px', border: '1px solid #CBD5E1', background: '#FFFFFF', color: '#1E293B', fontSize: '0.85rem' }}
+                >
+                  <option value="" disabled>Select Target Project...</option>
+                  {assignedProjects
+                    .filter(p => p.name !== transferModalWorker.assignedProject)
+                    .map(p => (
+                      <option key={p.id} value={p.name}>{p.name}</option>
+                    ))}
+                </select>
+              </div>
+
+              <div style={{ marginBottom: '1rem' }}>
+                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: '#334155', marginBottom: '4px' }}>
+                  Transfer Justification / Reason *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={transferReason}
+                  onChange={(e) => setTransferReason(e.target.value)}
+                  placeholder="e.g. Concrete cycle shift, foundation piling mobilization"
+                  style={{ width: '100%', padding: '8px 10px', borderRadius: '4px', border: '1px solid #CBD5E1', background: '#FFFFFF', color: '#1E293B', fontSize: '0.85rem' }}
+                />
+              </div>
+
+              <div style={{ marginBottom: '1.25rem' }}>
+                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: '#334155', marginBottom: '4px' }}>
+                  Task Handover & Clearance Status
+                </label>
+                <div style={{ padding: '8px 10px', borderRadius: '4px', background: '#F8FAFC', border: '1px solid #E2E8F0', fontSize: '0.8rem', color: '#475569' }}>
+                  ✓ Any open shift tasks will be retained under Site Supervisor audit for historical tracking.
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px' }}>
+                <button
+                  type="button"
+                  disabled={transferSubmitting}
+                  onClick={() => setTransferModalWorker(null)}
+                  className={styles.cancelBtn}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={transferSubmitting || !transferTargetProject}
+                  className={styles.submitBtn}
+                >
+                  <Send size={14} />
+                  <span>{transferSubmitting ? 'Transferring...' : 'Confirm Transfer & Handover'}</span>
                 </button>
               </div>
             </form>
