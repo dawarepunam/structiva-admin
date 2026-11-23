@@ -52,6 +52,19 @@ export default function ProjectDetailsPage() {
   const [projectWorkers, setProjectWorkers] = useState<EnterpriseWorkerRecord[]>([]);
   const [activeTab, setActiveTab] = useState<'overview' | 'gallery' | 'progress' | 'timeline' | 'budget' | 'team' | 'machinery' | 'documents' | 'reports'>('overview');
 
+  // Lightbox Modal state for Gallery
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+
+  // Modal Dialogs state
+  const [showPhotoModal, setShowPhotoModal] = useState(false);
+  const [showProgressModal, setShowProgressModal] = useState(false);
+  const [showReportModal, setShowReportModal] = useState(false);
+
+  // Form states
+  const [photoForm, setPhotoForm] = useState({ caption: '', sectionTag: 'Site Inspection' });
+  const [progressForm, setProgressForm] = useState({ newProgress: 70, remark: '' });
+  const [reportForm, setReportForm] = useState({ shift: 'Shift-1 (Day)', workExecuted: '', labourCount: 30, machineryCount: 4, fuelLitres: 50 });
+
   // Load project workers
   const loadWorkers = (projectName?: string) => {
     const all = getStoredWorkers();
