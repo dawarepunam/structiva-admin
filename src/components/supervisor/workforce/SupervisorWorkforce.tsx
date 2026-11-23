@@ -20,11 +20,15 @@ import {
   Clock, 
   AlertCircle,
   ExternalLink,
-  RotateCcw
+  RotateCcw,
+  Plus,
+  Edit,
+  Trash2,
+  Save
 } from 'lucide-react';
 import { fetchStrapiCollection, createStrapiEntity } from '@/services/strapiClient';
 import { EnterpriseProjectRecord, getStoredProjects } from '@/services/projectStorage';
-import { getStoredWorkers, EnterpriseWorkerRecord } from '@/services/workerStorage';
+import { getStoredWorkers, saveWorkers, EnterpriseWorkerRecord } from '@/services/workerStorage';
 
 export default function SupervisorWorkforceView() {
   const [loading, setLoading] = useState(true);
@@ -44,10 +48,43 @@ export default function SupervisorWorkforceView() {
 
   // Filters & Search
   const [search, setSearch] = useState('');
+  const [projectFilter, setProjectFilter] = useState('All');
   const [categoryFilter, setCategoryFilter] = useState('All');
   const [statusFilter, setStatusFilter] = useState('All');
   const [attendanceFilter, setAttendanceFilter] = useState('All');
   const [sortBy, setSortBy] = useState<'name' | 'code' | 'category'>('name');
+
+  // Modal States for Add, Edit, Delete
+  const [showAddWorkerModal, setShowAddWorkerModal] = useState(false);
+  const [editingWorker, setEditingWorker] = useState<any | null>(null);
+  const [deletingWorkerId, setDeletingWorkerId] = useState<string | null>(null);
+
+  // New Worker Form State for Supervisor
+  const [newWorkerData, setNewWorkerData] = useState({
+    name: '',
+    phone: '',
+    category: 'Skilled' as 'Skilled' | 'Semi-Skilled' | 'Unskilled',
+    skill: '',
+    assignedProject: '',
+    dailyWage: 950,
+    overtimeHourlyRate: 140,
+    experienceYears: 4,
+    employmentType: 'Direct Payroll' as 'Direct Payroll' | 'Subcontractor Crew' | 'Daily Muster'
+  });
+
+  // Edit Worker Form State
+  const [editWorkerData, setEditWorkerData] = useState({
+    name: '',
+    phone: '',
+    category: 'Skilled' as 'Skilled' | 'Semi-Skilled' | 'Unskilled',
+    skill: '',
+    assignedProject: '',
+    dailyWage: 950,
+    overtimeHourlyRate: 140,
+    experienceYears: 4,
+    employmentType: 'Direct Payroll' as 'Direct Payroll' | 'Subcontractor Crew' | 'Daily Muster',
+    status: 'Active' as 'Active' | 'Inactive'
+  });
 
   // Profile Drawer State
   const [selectedWorker, setSelectedWorker] = useState<any | null>(null);
@@ -205,25 +242,158 @@ export default function SupervisorWorkforceView() {
       const matchesSearch = 
         w.name.toLowerCase().includes(search.toLowerCase()) ||
         w.code.toLowerCase().includes(search.toLowerCase()) ||
-        (w.skill && w.skill.toLowerCase().includes(search.toLowerCase()));
+        (w.skill && w.skill.toLowerCase().includes(search.toLowerCase())) ||
+        (w.assignedProject && w.assignedProject.toLowerCase().includes(search.toLowerCase()));
 
+      const matchesProj = projectFilter === 'All' || w.assignedProject === projectFilter;
       const matchesCat = categoryFilter === 'All' || w.category === categoryFilter;
       const matchesStatus = statusFilter === 'All' || w.status === statusFilter;
       const matchesAtt = attendanceFilter === 'All' || w.attendanceToday === attendanceFilter;
 
-      return matchesSearch && matchesCat && matchesStatus && matchesAtt;
+      return matchesSearch && matchesProj && matchesCat && matchesStatus && matchesAtt;
     }).sort((a, b) => {
       if (sortBy === 'name') return a.name.localeCompare(b.name);
       if (sortBy === 'code') return a.code.localeCompare(b.code);
       return (a.category || '').localeCompare(b.category || '');
     });
-  }, [enrichedWorkers, search, categoryFilter, statusFilter, attendanceFilter, sortBy]);
+  }, [enrichedWorkers, search, projectFilter, categoryFilter, statusFilter, attendanceFilter, sortBy]);
 
   const handleClearFilters = () => {
     setSearch('');
+    setProjectFilter('All');
     setCategoryFilter('All');
     setStatusFilter('All');
     setAttendanceFilter('All');
+  };
+
+  // Supervisor Direct Operations: Add Worker
+  const handleSupervisorAddWorker = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newWorkerData.name.trim()) return;
+
+    const assignedProj = newWorkerData.assignedProject || (assignedProjects[0]?.name || 'Skyline Commercial Complex (Tower A)');
+    const projSlug = assignedProj.slice(0, 3).toUpperCase();
+    const newWorkerId = Date.now().toString();
+    const newCode = `WRK-${projSlug}-${Math.floor(100 + Math.random() * 900)}`;
+
+    const newRec: EnterpriseWorkerRecord = {
+      id: newWorkerId,
+      name: newWorkerData.name,
+      code: newCode,
+      phone: newWorkerData.phone || '+91 98220 00000',
+      category: newWorkerData.category,
+      skill: newWorkerData.skill || 'Site Operations Crew',
+      dailyWage: Number(newWorkerData.dailyWage) || 950,
+      overtimeHourlyRate: Number(newWorkerData.overtimeHourlyRate) || 140,
+      status: 'Active',
+      assignedProject: assignedProj,
+      avatar: '/images/worker1.jpg',
+      dob: '1995-01-01',
+      gender: 'Male',
+      address: 'Site Camp Quarter #4',
+      hometown: 'Maharashtra',
+      aadhaarNumber: 'XXXX-XXXX-9921',
+      bloodGroup: 'B+',
+      emergencyContact: '+91 98220 11223',
+      emergencyRelation: 'Next of Kin',
+      joiningDate: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }),
+      experienceYears: Number(newWorkerData.experienceYears) || 4,
+      employmentType: newWorkerData.employmentType,
+      supervisorName: supervisorUser.name,
+      safetyCertified: true,
+      inductionDate: new Date().toISOString().split('T')[0],
+      bankName: 'State Bank of India',
+      accountNumberMasked: '•••• •••• 1042',
+      ifscCode: 'SBIN0001234',
+      paymentMode: 'Bank Transfer',
+      totalDaysWorked: 1,
+      presentDaysThisMonth: 1,
+      overtimeHoursThisMonth: 0,
+      advanceTakenThisMonth: 0,
+      documents: [],
+      leaves: [],
+      projectHistory: [],
+      recentActivities: []
+    };
+
+    const currentAll = getStoredWorkers();
+    const updated = [newRec, ...currentAll];
+    saveWorkers(updated);
+    setWorkers(updated);
+    setShowAddWorkerModal(false);
+    setNewWorkerData({
+      name: '',
+      phone: '',
+      category: 'Skilled',
+      skill: '',
+      assignedProject: assignedProjects[0]?.name || '',
+      dailyWage: 950,
+      overtimeHourlyRate: 140,
+      experienceYears: 4,
+      employmentType: 'Direct Payroll'
+    });
+  };
+
+  // Supervisor Direct Operations: Edit Worker
+  const openEditWorker = (worker: any, e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    setEditingWorker(worker);
+    setEditWorkerData({
+      name: worker.name,
+      phone: worker.phone || '',
+      category: worker.category || 'Skilled',
+      skill: worker.skill || '',
+      assignedProject: worker.assignedProject || (assignedProjects[0]?.name || ''),
+      dailyWage: worker.dailyWage || 950,
+      overtimeHourlyRate: worker.overtimeHourlyRate || 140,
+      experienceYears: worker.experienceYears || 4,
+      employmentType: worker.employmentType || 'Direct Payroll',
+      status: worker.status || 'Active'
+    });
+  };
+
+  const handleSupervisorUpdateWorker = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingWorker) return;
+
+    const currentAll = getStoredWorkers();
+    const updated = currentAll.map(w => {
+      if (w.id?.toString() === editingWorker.id?.toString()) {
+        return {
+          ...w,
+          name: editWorkerData.name,
+          phone: editWorkerData.phone,
+          category: editWorkerData.category,
+          skill: editWorkerData.skill,
+          assignedProject: editWorkerData.assignedProject,
+          dailyWage: Number(editWorkerData.dailyWage) || w.dailyWage,
+          overtimeHourlyRate: Number(editWorkerData.overtimeHourlyRate) || w.overtimeHourlyRate,
+          experienceYears: Number(editWorkerData.experienceYears) || w.experienceYears,
+          employmentType: editWorkerData.employmentType,
+          status: editWorkerData.status
+        };
+      }
+      return w;
+    });
+
+    saveWorkers(updated);
+    setWorkers(updated);
+    setEditingWorker(null);
+    if (selectedWorker && selectedWorker.id?.toString() === editingWorker.id?.toString()) {
+      setSelectedWorker({ ...selectedWorker, ...editWorkerData });
+    }
+  };
+
+  // Supervisor Direct Operations: Delete Worker
+  const handleSupervisorDeleteWorker = (workerId: string) => {
+    const currentAll = getStoredWorkers();
+    const updated = currentAll.filter(w => w.id?.toString() !== workerId.toString());
+    saveWorkers(updated);
+    setWorkers(updated);
+    setDeletingWorkerId(null);
+    if (selectedWorker && selectedWorker.id?.toString() === workerId.toString()) {
+      setSelectedWorker(null);
+    }
   };
 
   // Submit transfer request to Admin via central Strapi supervisor-requests
@@ -264,7 +434,27 @@ export default function SupervisorWorkforceView() {
           </p>
         </div>
         <div className={styles.headerMeta}>
-          <span className={styles.badge}>ADMIN CONTROLLED ROSTER</span>
+          <button 
+            onClick={() => {
+              setNewWorkerData({
+                name: '',
+                phone: '',
+                category: 'Skilled',
+                skill: '',
+                assignedProject: assignedProjects[0]?.name || '',
+                dailyWage: 950,
+                overtimeHourlyRate: 140,
+                experienceYears: 4,
+                employmentType: 'Direct Payroll'
+              });
+              setShowAddWorkerModal(true);
+            }}
+            className={styles.addWorkerBtn}
+            title="Deploy and Register New Worker to Project"
+          >
+            <Plus size={14} />
+            <span>Add Site Worker</span>
+          </button>
           <button 
             onClick={handleRefresh} 
             disabled={syncing || loading} 
@@ -339,6 +529,17 @@ export default function SupervisorWorkforceView() {
         </div>
 
         <div className={styles.filterGroup}>
+          <select 
+            value={projectFilter} 
+            onChange={(e) => setProjectFilter(e.target.value)}
+            className={styles.filterSelect}
+          >
+            <option value="All">All Assigned Projects ({assignedProjects.length})</option>
+            {assignedProjects.map(p => (
+              <option key={p.id} value={p.name}>{p.name}</option>
+            ))}
+          </select>
+
           <select 
             value={categoryFilter} 
             onChange={(e) => setCategoryFilter(e.target.value)}
@@ -471,12 +672,30 @@ export default function SupervisorWorkforceView() {
                         <span style={{ fontSize: '0.7rem', color: '#8C9990' }}> / day</span>
                       </td>
                       <td>
-                        <button 
-                          onClick={() => setSelectedWorker(w)} 
-                          className={styles.viewBtn}
-                        >
-                          <span>View Profile</span>
-                        </button>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          <button 
+                            onClick={() => setSelectedWorker(w)} 
+                            className={styles.viewBtn}
+                            title="View Full Profile Details"
+                          >
+                            <span>View</span>
+                          </button>
+                          <button 
+                            onClick={(e) => openEditWorker(w, e)} 
+                            className={styles.editBtn}
+                            title="Edit Worker Site Info"
+                          >
+                            <Edit size={12} />
+                            <span>Edit</span>
+                          </button>
+                          <button 
+                            onClick={(e) => { e.stopPropagation(); setDeletingWorkerId(w.id); }} 
+                            className={styles.deleteBtn}
+                            title="Remove Worker from Project"
+                          >
+                            <Trash2 size={12} />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   );
@@ -581,9 +800,22 @@ export default function SupervisorWorkforceView() {
               {/* Supervisor Actions */}
               <div className={styles.drawerSection}>
                 <h4 className={styles.drawerSectionTitle}>Supervisor Field Operations</h4>
-                <p style={{ margin: 0, fontSize: '0.72rem', color: '#64748B', lineHeight: '1.4' }}>
-                  Official worker records and wages are controlled exclusively by the Central Admin desk. You can submit crew re-assignment requests below:
-                </p>
+                <div style={{ display: 'flex', gap: '8px', marginBottom: '0.85rem' }}>
+                  <button 
+                    onClick={() => openEditWorker(selectedWorker)} 
+                    className={styles.drawerActionBtn}
+                  >
+                    <Edit size={14} />
+                    <span>Edit Worker</span>
+                  </button>
+                  <button 
+                    onClick={() => setDeletingWorkerId(selectedWorker.id)} 
+                    className={styles.drawerDeleteBtn}
+                  >
+                    <Trash2 size={14} />
+                    <span>Remove</span>
+                  </button>
+                </div>
                 <button 
                   onClick={() => handleRequestTransfer(selectedWorker)} 
                   className={styles.transferRequestBtn}
@@ -598,6 +830,266 @@ export default function SupervisorWorkforceView() {
         </div>
       )}
 
+      {/* Add Worker Modal for Supervisor */}
+      {showAddWorkerModal && (
+        <div className={styles.modalOverlay} onClick={() => setShowAddWorkerModal(false)}>
+          <div className={styles.modalBox} onClick={e => e.stopPropagation()}>
+            <div className={styles.modalHeader}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Plus size={18} color="#167C72" />
+                <h3 style={{ margin: 0, fontSize: '1.15rem', color: '#172B32' }}>Deploy New Worker to Project</h3>
+              </div>
+              <button onClick={() => setShowAddWorkerModal(false)} className={styles.modalCloseBtn}>
+                <X size={18} />
+              </button>
+            </div>
+
+            <form onSubmit={handleSupervisorAddWorker} className={styles.modalForm}>
+              <div className={styles.formRow2}>
+                <div className={styles.formGroup}>
+                  <label>Full Name *</label>
+                  <input 
+                    type="text" 
+                    required 
+                    placeholder="e.g. Shankar Babu Pawar"
+                    value={newWorkerData.name}
+                    onChange={e => setNewWorkerData({ ...newWorkerData, name: e.target.value })}
+                  />
+                </div>
+                <div className={styles.formGroup}>
+                  <label>Mobile Number *</label>
+                  <input 
+                    type="tel" 
+                    required 
+                    placeholder="+91 98220 12345"
+                    value={newWorkerData.phone}
+                    onChange={e => setNewWorkerData({ ...newWorkerData, phone: e.target.value })}
+                  />
+                </div>
+              </div>
+
+              <div className={styles.formRow2}>
+                <div className={styles.formGroup}>
+                  <label>Category *</label>
+                  <select 
+                    value={newWorkerData.category}
+                    onChange={e => setNewWorkerData({ ...newWorkerData, category: e.target.value as any })}
+                  >
+                    <option value="Skilled">Skilled Tradesperson</option>
+                    <option value="Semi-Skilled">Semi-Skilled Crew</option>
+                    <option value="Unskilled">Unskilled Civil Labour</option>
+                  </select>
+                </div>
+                <div className={styles.formGroup}>
+                  <label>Primary Trade / Skill *</label>
+                  <input 
+                    type="text" 
+                    required 
+                    placeholder="e.g. Scaffolding, Mason, Electrician"
+                    value={newWorkerData.skill}
+                    onChange={e => setNewWorkerData({ ...newWorkerData, skill: e.target.value })}
+                  />
+                </div>
+              </div>
+
+              <div className={styles.formGroup}>
+                <label>Assign to Project *</label>
+                <select 
+                  value={newWorkerData.assignedProject}
+                  onChange={e => setNewWorkerData({ ...newWorkerData, assignedProject: e.target.value })}
+                  required
+                >
+                  {assignedProjects.map(p => (
+                    <option key={p.id} value={p.name}>{p.name}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className={styles.formRow3}>
+                <div className={styles.formGroup}>
+                  <label>Daily Wage (₹/day)</label>
+                  <input 
+                    type="number" 
+                    value={newWorkerData.dailyWage}
+                    onChange={e => setNewWorkerData({ ...newWorkerData, dailyWage: Number(e.target.value) })}
+                  />
+                </div>
+                <div className={styles.formGroup}>
+                  <label>OT Rate (₹/hr)</label>
+                  <input 
+                    type="number" 
+                    value={newWorkerData.overtimeHourlyRate}
+                    onChange={e => setNewWorkerData({ ...newWorkerData, overtimeHourlyRate: Number(e.target.value) })}
+                  />
+                </div>
+                <div className={styles.formGroup}>
+                  <label>Experience (Yrs)</label>
+                  <input 
+                    type="number" 
+                    value={newWorkerData.experienceYears}
+                    onChange={e => setNewWorkerData({ ...newWorkerData, experienceYears: Number(e.target.value) })}
+                  />
+                </div>
+              </div>
+
+              <div className={styles.modalActions}>
+                <button type="button" onClick={() => setShowAddWorkerModal(false)} className={styles.cancelBtn}>
+                  Cancel
+                </button>
+                <button type="submit" className={styles.submitBtn}>
+                  <Plus size={14} />
+                  <span>Deploy Worker</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Worker Modal for Supervisor */}
+      {editingWorker && (
+        <div className={styles.modalOverlay} onClick={() => setEditingWorker(null)}>
+          <div className={styles.modalBox} onClick={e => e.stopPropagation()}>
+            <div className={styles.modalHeader}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Edit size={18} color="#167C72" />
+                <h3 style={{ margin: 0, fontSize: '1.15rem', color: '#172B32' }}>Edit Worker ({editingWorker.code})</h3>
+              </div>
+              <button onClick={() => setEditingWorker(null)} className={styles.modalCloseBtn}>
+                <X size={18} />
+              </button>
+            </div>
+
+            <form onSubmit={handleSupervisorUpdateWorker} className={styles.modalForm}>
+              <div className={styles.formRow2}>
+                <div className={styles.formGroup}>
+                  <label>Full Name *</label>
+                  <input 
+                    type="text" 
+                    required 
+                    value={editWorkerData.name}
+                    onChange={e => setEditWorkerData({ ...editWorkerData, name: e.target.value })}
+                  />
+                </div>
+                <div className={styles.formGroup}>
+                  <label>Mobile Number *</label>
+                  <input 
+                    type="tel" 
+                    required 
+                    value={editWorkerData.phone}
+                    onChange={e => setEditWorkerData({ ...editWorkerData, phone: e.target.value })}
+                  />
+                </div>
+              </div>
+
+              <div className={styles.formRow2}>
+                <div className={styles.formGroup}>
+                  <label>Category</label>
+                  <select 
+                    value={editWorkerData.category}
+                    onChange={e => setEditWorkerData({ ...editWorkerData, category: e.target.value as any })}
+                  >
+                    <option value="Skilled">Skilled</option>
+                    <option value="Semi-Skilled">Semi-Skilled</option>
+                    <option value="Unskilled">Unskilled</option>
+                  </select>
+                </div>
+                <div className={styles.formGroup}>
+                  <label>Trade Skill</label>
+                  <input 
+                    type="text" 
+                    required 
+                    value={editWorkerData.skill}
+                    onChange={e => setEditWorkerData({ ...editWorkerData, skill: e.target.value })}
+                  />
+                </div>
+              </div>
+
+              <div className={styles.formGroup}>
+                <label>Assigned Project</label>
+                <select 
+                  value={editWorkerData.assignedProject}
+                  onChange={e => setEditWorkerData({ ...editWorkerData, assignedProject: e.target.value })}
+                >
+                  {assignedProjects.map(p => (
+                    <option key={p.id} value={p.name}>{p.name}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className={styles.formRow3}>
+                <div className={styles.formGroup}>
+                  <label>Daily Wage (₹)</label>
+                  <input 
+                    type="number" 
+                    value={editWorkerData.dailyWage}
+                    onChange={e => setEditWorkerData({ ...editWorkerData, dailyWage: Number(e.target.value) })}
+                  />
+                </div>
+                <div className={styles.formGroup}>
+                  <label>OT Rate (₹)</label>
+                  <input 
+                    type="number" 
+                    value={editWorkerData.overtimeHourlyRate}
+                    onChange={e => setEditWorkerData({ ...editWorkerData, overtimeHourlyRate: Number(e.target.value) })}
+                  />
+                </div>
+                <div className={styles.formGroup}>
+                  <label>Status</label>
+                  <select 
+                    value={editWorkerData.status}
+                    onChange={e => setEditWorkerData({ ...editWorkerData, status: e.target.value as any })}
+                  >
+                    <option value="Active">Active</option>
+                    <option value="Inactive">Inactive</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className={styles.modalActions}>
+                <button type="button" onClick={() => setEditingWorker(null)} className={styles.cancelBtn}>
+                  Cancel
+                </button>
+                <button type="submit" className={styles.submitBtn}>
+                  <Save size={14} />
+                  <span>Save Changes</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {deletingWorkerId && (
+        <div className={styles.modalOverlay} onClick={() => setDeletingWorkerId(null)}>
+          <div className={styles.modalBox} onClick={e => e.stopPropagation()} style={{ maxWidth: '400px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#EF4444', marginBottom: '0.75rem' }}>
+              <Trash2 size={22} />
+              <h3 style={{ margin: 0, fontSize: '1.15rem' }}>Remove Worker</h3>
+            </div>
+            <p style={{ fontSize: '0.85rem', color: '#64748B', lineHeight: '1.5', margin: '0 0 1.25rem 0' }}>
+              Are you sure you want to remove this worker from your project crew list?
+            </p>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px' }}>
+              <button 
+                type="button" 
+                onClick={() => setDeletingWorkerId(null)} 
+                className={styles.cancelBtn}
+              >
+                Cancel
+              </button>
+              <button 
+                type="button" 
+                onClick={() => handleSupervisorDeleteWorker(deletingWorkerId)} 
+                className={styles.deleteConfirmBtn}
+              >
+                Confirm Remove
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
