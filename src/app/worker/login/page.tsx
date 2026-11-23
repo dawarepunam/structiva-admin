@@ -6,34 +6,29 @@ import {
   HardHat, 
   Truck, 
   Lock, 
-  User, 
+  Mail, 
   ArrowRight, 
   ShieldCheck, 
   AlertCircle, 
-  Smartphone, 
-  Mail, 
   KeyRound, 
-  RotateCcw,
   CheckCircle2
 } from 'lucide-react';
 import Link from 'next/link';
-import { getStoredWorkers } from '@/services/workerStorage';
 
 type UserRole = 'worker' | 'driver';
-type AuthStep = 'identifier' | 'verify_otp' | 'security_pin';
+type AuthStep = 'email_entry' | 'verify_otp' | 'security_pin';
 
 export default function UnifiedWorkerDriverLoginPage() {
   const router = useRouter();
 
-  // 1. Role Selection
+  // 1. Role Selection: Site Worker vs Commercial Driver
   const [selectedRole, setSelectedRole] = useState<UserRole>('worker');
 
-  // 2. Identification input (Mobile or Email)
-  const [identifier, setIdentifier] = useState('WRK-MUM-104');
-  const [channel, setChannel] = useState<'sms' | 'whatsapp' | 'email'>('sms');
+  // 2. Primary Identification: Registered Email Address
+  const [email, setEmail] = useState('ramesh.patil@structiva.internal');
 
   // 3. Two-Step Authentication State
-  const [authStep, setAuthStep] = useState<AuthStep>('identifier');
+  const [authStep, setAuthStep] = useState<AuthStep>('email_entry');
   const [otpCode, setOtpCode] = useState('');
   const [securityPin, setSecurityPin] = useState('1234');
   
@@ -49,13 +44,13 @@ export default function UnifiedWorkerDriverLoginPage() {
     setError('');
     setSuccessMsg('');
     if (role === 'worker') {
-      setIdentifier('WRK-MUM-104');
+      setEmail('ramesh.patil@structiva.internal');
     } else {
-      setIdentifier('WRK-PUN-105'); // Santosh Shinde (Heavy Operator)
+      setEmail('santosh.shinde@structiva.internal'); // Registered Heavy Equipment Operator / Driver
     }
   };
 
-  // Start Cooldown Timer
+  // Cooldown countdown timer
   const startCooldown = (seconds = 45) => {
     setResendCooldown(seconds);
     const interval = setInterval(() => {
@@ -69,26 +64,20 @@ export default function UnifiedWorkerDriverLoginPage() {
     }, 1000);
   };
 
-  // STEP 1: Request OTP Dispatch via API
-  const handleRequestOtp = async (e: React.FormEvent) => {
+  // STEP 1: Request Email OTP Dispatch
+  const handleRequestEmailOtp = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setSuccessMsg('');
     setLoading(true);
 
     try {
-      const isEmail = identifier.includes('@');
-      const selectedDeliveryChannel = isEmail ? 'email' : channel;
-
       const res = await fetch('/api/auth/worker-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           action: 'send',
-          identifier,
-          phone: !isEmail ? identifier : undefined,
-          email: isEmail ? identifier : undefined,
-          channel: selectedDeliveryChannel
+          email: email.trim()
         })
       });
 
@@ -100,7 +89,7 @@ export default function UnifiedWorkerDriverLoginPage() {
       setSuccessMsg(
         data.sandboxCode 
           ? `Verification OTP generated. [Dev Code: ${data.sandboxCode}]` 
-          : `Verification code sent via ${selectedDeliveryChannel.toUpperCase()}. Valid for 5 minutes.`
+          : `Verification code sent to ${email}. Valid for 5 minutes.`
       );
       if (data.sandboxCode) {
         setOtpCode(data.sandboxCode);
@@ -108,13 +97,13 @@ export default function UnifiedWorkerDriverLoginPage() {
       setAuthStep('verify_otp');
       startCooldown(45);
     } catch (err: any) {
-      setError(err.message || 'OTP dispatch failed. Check network or phone format.');
+      setError(err.message || 'Email OTP dispatch failed. Check network or email format.');
     } finally {
       setLoading(false);
     }
   };
 
-  // STEP 2: Verify OTP
+  // STEP 2: Verify Email OTP Code
   const handleVerifyOtp = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -126,18 +115,18 @@ export default function UnifiedWorkerDriverLoginPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           action: 'verify',
-          identifier,
+          email: email.trim(),
           otp: otpCode.trim()
         })
       });
 
       const data = await res.json();
       if (!res.ok || !data.success) {
-        throw new Error(data.error || 'Invalid OTP code.');
+        throw new Error(data.error || 'Invalid verification code.');
       }
 
       // Progress to Step 3: Security PIN confirmation
-      setSuccessMsg('Identity verified! Please enter your 4-digit Security PIN to complete login.');
+      setSuccessMsg('Email verified successfully! Enter your 4-digit Security PIN to complete login.');
       setAuthStep('security_pin');
     } catch (err: any) {
       setError(err.message || 'Verification failed. Please retry.');
@@ -146,7 +135,7 @@ export default function UnifiedWorkerDriverLoginPage() {
     }
   };
 
-  // STEP 3: Complete Unified Login with Strict Role Authorization
+  // STEP 3: Complete Unified Login with Strict Server-Side Role Authorization
   const handleCompleteLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -158,7 +147,7 @@ export default function UnifiedWorkerDriverLoginPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           role: selectedRole,
-          identifier,
+          identifier: email.trim(),
           pin: securityPin.trim(),
           authMethod: 'two_factor'
         })
@@ -192,7 +181,7 @@ export default function UnifiedWorkerDriverLoginPage() {
     }
   };
 
-  // Direct PIN login option for backward compatibility & demo accounts
+  // Direct PIN login option for backward compatibility & recognized field devices
   const handleDirectPinLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -204,7 +193,7 @@ export default function UnifiedWorkerDriverLoginPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           role: selectedRole,
-          identifier,
+          identifier: email.trim(),
           pin: securityPin.trim(),
           authMethod: 'pin'
         })
@@ -320,118 +309,68 @@ export default function UnifiedWorkerDriverLoginPage() {
           </div>
         )}
 
-        {/* ── STEP 1: Identification & OTP Dispatch ── */}
-        {authStep === 'identifier' && (
-          <form onSubmit={handleRequestOtp}>
+        {/* ── STEP 1: Enter Registered Email Address ── */}
+        {authStep === 'email_entry' && (
+          <form onSubmit={handleRequestEmailOtp}>
             <div style={{ marginBottom: '1.25rem' }}>
               <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: '#374151', marginBottom: '0.4rem' }}>
-                Registered Mobile, Email, or {selectedRole === 'worker' ? 'Worker Code' : 'Operator ID'}
+                Registered Email Address *
               </label>
               <div style={{ position: 'relative' }}>
-                <User size={18} color="#9CA3AF" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
+                <Mail size={18} color="#9CA3AF" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
                 <input 
-                  type="text" 
+                  type="email" 
                   required 
-                  value={identifier}
-                  onChange={(e) => setIdentifier(e.target.value)}
-                  placeholder={selectedRole === 'worker' ? 'e.g. WRK-MUM-104 or 9822012345' : 'e.g. WRK-PUN-105 or mobile'}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="e.g. name@structiva.internal"
                   style={{ width: '100%', padding: '0.65rem 0.75rem 0.65rem 2.4rem', border: '1px solid #D1D5DB', borderRadius: '8px', fontSize: '0.9rem', outline: 'none' }}
                 />
               </div>
-            </div>
-
-            {/* OTP Channel Selector if mobile input */}
-            {!identifier.includes('@') && (
-              <div style={{ marginBottom: '1.25rem' }}>
-                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: '#374151', marginBottom: '0.4rem' }}>
-                  OTP Delivery Channel
-                </label>
-                <div style={{ display: 'flex', gap: '8px' }}>
-                  <button
-                    type="button"
-                    onClick={() => setChannel('sms')}
-                    style={{
-                      flex: 1,
-                      padding: '8px 12px',
-                      borderRadius: '6px',
-                      fontSize: '0.8rem',
-                      fontWeight: 600,
-                      border: channel === 'sms' ? '1px solid #167C72' : '1px solid #CBD5E1',
-                      background: channel === 'sms' ? '#F0FDFA' : '#FFFFFF',
-                      color: channel === 'sms' ? '#167C72' : '#64748B',
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: '4px'
-                    }}
-                  >
-                    <Smartphone size={14} /> SMS OTP
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setChannel('whatsapp')}
-                    style={{
-                      flex: 1,
-                      padding: '8px 12px',
-                      borderRadius: '6px',
-                      fontSize: '0.8rem',
-                      fontWeight: 600,
-                      border: channel === 'whatsapp' ? '1px solid #167C72' : '1px solid #CBD5E1',
-                      background: channel === 'whatsapp' ? '#F0FDFA' : '#FFFFFF',
-                      color: channel === 'whatsapp' ? '#167C72' : '#64748B',
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: '4px'
-                    }}
-                  >
-                    <Smartphone size={14} /> WhatsApp OTP
-                  </button>
-                </div>
+              <div style={{ fontSize: '0.74rem', color: '#64748B', marginTop: '0.35rem' }}>
+                Registered email address for two-step OTP verification
               </div>
-            )}
+            </div>
 
             <button 
               type="submit" 
               disabled={loading}
               style={{ width: '100%', padding: '0.75rem', background: selectedRole === 'worker' ? '#167C72' : '#203A3B', color: '#FFFFFF', border: 'none', borderRadius: '8px', fontSize: '0.92rem', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', marginBottom: '0.75rem' }}
             >
-              {loading ? 'Validating Account...' : (
+              {loading ? 'Verifying Account...' : (
                 <>
-                  Send 2-Step Verification Code <ArrowRight size={18} />
+                  Send Email Verification Code <ArrowRight size={18} />
                 </>
               )}
             </button>
 
-            {/* Quick PIN Bypass for recognized field devices */}
+            {/* Quick PIN login option */}
             <div style={{ textAlign: 'center', marginTop: '1rem' }}>
               <button
                 type="button"
                 onClick={() => setAuthStep('security_pin')}
                 style={{ background: 'none', border: 'none', color: '#64748B', fontSize: '0.8rem', cursor: 'pointer', textDecoration: 'underline' }}
               >
-                Already have active credentials? Log in with 4-Digit PIN →
+                Log in directly with Security PIN →
               </button>
             </div>
           </form>
         )}
 
-        {/* ── STEP 2: Verify OTP ── */}
+        {/* ── STEP 2: Verify Email OTP ── */}
         {authStep === 'verify_otp' && (
           <form onSubmit={handleVerifyOtp}>
             <div style={{ marginBottom: '1.25rem' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
                 <label style={{ fontSize: '0.8rem', fontWeight: 600, color: '#374151' }}>
-                  6-Digit OTP Code
+                  6-Digit Email Verification Code
                 </label>
                 {resendCooldown > 0 ? (
                   <span style={{ fontSize: '0.75rem', color: '#64748B' }}>Resend in {resendCooldown}s</span>
                 ) : (
                   <button
                     type="button"
-                    onClick={handleRequestOtp}
+                    onClick={handleRequestEmailOtp}
                     style={{ background: 'none', border: 'none', color: '#167C72', fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer' }}
                   >
                     Resend Code
@@ -466,10 +405,10 @@ export default function UnifiedWorkerDriverLoginPage() {
 
             <button
               type="button"
-              onClick={() => { setAuthStep('identifier'); setError(''); }}
+              onClick={() => { setAuthStep('email_entry'); setError(''); }}
               style={{ width: '100%', background: 'none', border: 'none', color: '#64748B', fontSize: '0.8rem', cursor: 'pointer' }}
             >
-              ← Change Mobile / Identifier
+              ← Change Email Address
             </button>
           </form>
         )}
@@ -479,12 +418,12 @@ export default function UnifiedWorkerDriverLoginPage() {
           <form onSubmit={handleDirectPinLogin}>
             <div style={{ marginBottom: '1.25rem' }}>
               <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: '#374151', marginBottom: '0.4rem' }}>
-                Account Identifier
+                Registered Email
               </label>
               <input
-                type="text"
-                value={identifier}
-                onChange={(e) => setIdentifier(e.target.value)}
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 required
                 style={{ width: '100%', padding: '0.65rem 0.75rem', border: '1px solid #D1D5DB', borderRadius: '8px', fontSize: '0.88rem', background: '#F8FAFC' }}
               />
@@ -527,10 +466,10 @@ export default function UnifiedWorkerDriverLoginPage() {
 
             <button
               type="button"
-              onClick={() => { setAuthStep('identifier'); setError(''); }}
+              onClick={() => { setAuthStep('email_entry'); setError(''); }}
               style={{ width: '100%', background: 'none', border: 'none', color: '#64748B', fontSize: '0.8rem', cursor: 'pointer' }}
             >
-              ← Use 2-Step OTP Verification
+              ← Use Email OTP Verification
             </button>
           </form>
         )}
