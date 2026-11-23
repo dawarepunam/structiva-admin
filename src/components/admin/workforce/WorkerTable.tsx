@@ -221,17 +221,30 @@ export default function WorkerTable() {
 
   // Filter & Search Logic
   let filtered = workers.filter(w => {
+    const isUnassigned = !w.assignedProject || w.assignedProject === 'Unassigned' || w.assignedProject === 'None' || w.status === 'Available';
     const matchSearch = 
       w.name.toLowerCase().includes(search.toLowerCase()) || 
-      w.skill.toLowerCase().includes(search.toLowerCase()) ||
+      (w.skill && w.skill.toLowerCase().includes(search.toLowerCase())) ||
       w.code.toLowerCase().includes(search.toLowerCase()) ||
-      w.phone.includes(search) ||
-      w.assignedProject.toLowerCase().includes(search.toLowerCase()) ||
+      (w.phone && w.phone.includes(search)) ||
+      (w.assignedProject && w.assignedProject.toLowerCase().includes(search.toLowerCase())) ||
       (w.supervisorName && w.supervisorName.toLowerCase().includes(search.toLowerCase()));
 
     const matchCategory = categoryFilter === 'All' || w.category === categoryFilter;
-    const matchStatus = statusFilter === 'All' || w.status === statusFilter;
-    const matchProject = projectFilter === 'All' || w.assignedProject === projectFilter;
+    
+    // Support filtering by 'Available' / 'Unassigned'
+    let matchStatus = true;
+    if (statusFilter === 'Available') {
+      matchStatus = isUnassigned;
+    } else if (statusFilter !== 'All') {
+      matchStatus = w.status === statusFilter;
+    }
+
+    const matchProject = projectFilter === 'All' 
+      ? true 
+      : projectFilter === 'Unassigned'
+        ? isUnassigned
+        : w.assignedProject === projectFilter;
     const matchEmployment = employmentFilter === 'All' || w.employmentType === employmentFilter;
 
     return matchSearch && matchCategory && matchStatus && matchProject && matchEmployment;
@@ -520,6 +533,15 @@ export default function WorkerTable() {
                 {availableProjects.map(p => (
                   <option key={p.id} value={p.name}>{p.name}</option>
                 ))}
+              </select>
+            </div>
+
+            <div className={styles.filterItem}>
+              <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
+                <option value="All">All Statuses</option>
+                <option value="Active">Active on Site</option>
+                <option value="Available">Available (Unassigned)</option>
+                <option value="Inactive">Inactive</option>
               </select>
             </div>
 

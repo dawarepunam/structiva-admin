@@ -135,8 +135,14 @@ export default function WorkerLoginPage() {
           </button>
         </form>
 
-        <div style={{ marginTop: '1.5rem', paddingTop: '1.25rem', borderTop: '1px solid #E5E7EB', textAlign: 'center', fontSize: '0.78rem', color: '#6B7280' }}>
-          <div>First time logging in? <Link href="/worker/activate" style={{ color: '#167C72', fontWeight: 600, textDecoration: 'none' }}>Activate Worker Account</Link></div>
+        <div style={{ marginTop: '1.5rem', paddingTop: '1.25rem', borderTop: '1px solid #E5E7EB', textAlign: 'center', fontSize: '0.82rem', color: '#6B7280' }}>
+          <div style={{ marginBottom: '0.6rem' }}>
+            New Tradesperson?{' '}
+            <Link href="/worker/register" style={{ color: '#167C72', fontWeight: 800, textDecoration: 'underline' }}>
+              Register & Join STRUCTIVA Workforce →
+            </Link>
+          </div>
+          <div>First time logging in? <Link href="/worker/activate" style={{ color: '#B58B59', fontWeight: 600, textDecoration: 'none' }}>Activate Worker Account</Link></div>
           <div style={{ marginTop: '0.75rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.35rem', color: '#059669' }}>
             <ShieldCheck size={14} /> Biometric GPS Geofence Shield
           </div>

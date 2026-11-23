@@ -30,41 +30,63 @@ export default function WorkerDashboard({
   const activeTasks = tasks.filter(t => t.status === 'In Progress' || t.status === 'Assigned');
   const currentTask = activeTasks[0];
 
+  const isAssigned = !!worker.assignedProject && worker.assignedProject !== 'Unassigned' && worker.assignedProject !== 'None';
   const dailyWage = worker.dailyWage || 950;
-  const presentDays = worker.presentDaysThisMonth || 19;
-  const overtimeHours = worker.overtimeHoursThisMonth || 14;
+  const presentDays = isAssigned ? (worker.presentDaysThisMonth || 0) : 0;
+  const overtimeHours = isAssigned ? (worker.overtimeHoursThisMonth || 0) : 0;
   const overtimeRate = worker.overtimeHourlyRate || 140;
   const estimatedEarnings = (presentDays * dailyWage) + (overtimeHours * overtimeRate);
 
   return (
     <div>
       {/* Top Banner / Today's Shift Status */}
-      <div className={styles.card} style={{ background: 'linear-gradient(135deg, #172B32, #203A3B)', color: '#FFFFFF' }}>
+      <div className={styles.card} style={{ 
+        background: isAssigned ? 'linear-gradient(135deg, #172B32, #203A3B)' : 'linear-gradient(135deg, #1F2937, #374151)', 
+        color: '#FFFFFF' 
+      }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.4rem' }}>
-              <span className={styles.badge} style={{ background: '#167C72', color: '#FFFFFF' }}>
-                TODAY'S SHIFT ACTIVE
+              <span className={styles.badge} style={{ 
+                background: isAssigned ? '#167C72' : '#F59E0B', 
+                color: '#FFFFFF',
+                fontWeight: 700 
+              }}>
+                {isAssigned ? "TODAY'S SHIFT ACTIVE" : "AVAILABLE • WAITING FOR SITE ASSIGNMENT"}
               </span>
-              <span style={{ fontSize: '0.8rem', color: '#A0B2B6' }}>19 Nov 2026</span>
+              <span style={{ fontSize: '0.8rem', color: '#A0B2B6' }}>
+                {new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
+              </span>
             </div>
             <h2 style={{ fontSize: '1.4rem', fontWeight: 700, margin: '0 0 0.4rem 0' }}>
               {worker.name} • {worker.code}
             </h2>
             <div style={{ display: 'flex', gap: '1.25rem', fontSize: '0.85rem', color: '#ECEBE5', flexWrap: 'wrap' }}>
               <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                <Building size={15} color="#B58B59" /> {worker.assignedProject}
+                <Building size={15} color="#B58B59" /> 
+                {isAssigned ? worker.assignedProject : 'No Active Site Assignment'}
               </span>
               <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                <UserCheck size={15} color="#167C72" /> Supv: {worker.supervisorName || 'Er. Pravin Gaikwad'}
+                <UserCheck size={15} color={isAssigned ? '#167C72' : '#9CA3AF'} /> 
+                {isAssigned ? `Supv: ${worker.supervisorName || 'Site Operations Lead'}` : 'Awaiting Supervisor Allocation'}
               </span>
             </div>
           </div>
 
           <div style={{ textAlign: 'right' }}>
-            <div style={{ fontSize: '0.75rem', color: '#A0B2B6' }}>Check-in Verified</div>
-            <div style={{ fontSize: '1.15rem', fontWeight: 700, color: '#34D399' }}>08:30 AM (GPS OK)</div>
-            <div style={{ fontSize: '0.75rem', color: '#E2E0D8' }}>Standard 9-Hr Muster Shift</div>
+            {isAssigned ? (
+              <>
+                <div style={{ fontSize: '0.75rem', color: '#A0B2B6' }}>Check-in Verified</div>
+                <div style={{ fontSize: '1.15rem', fontWeight: 700, color: '#34D399' }}>08:30 AM (GPS OK)</div>
+                <div style={{ fontSize: '0.75rem', color: '#E2E0D8' }}>Standard 9-Hr Muster Shift</div>
+              </>
+            ) : (
+              <div style={{ background: 'rgba(255,255,255,0.1)', padding: '8px 12px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.15)' }}>
+                <div style={{ fontSize: '0.75rem', color: '#FCD34D', fontWeight: 700 }}>Workforce Pool Status</div>
+                <div style={{ fontSize: '0.9rem', fontWeight: 700, color: '#FFFFFF' }}>Available for Mobilization</div>
+                <div style={{ fontSize: '0.72rem', color: '#D1D5DB' }}>Supervisor will allocate your site</div>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -130,7 +152,7 @@ export default function WorkerDashboard({
             </button>
           </div>
 
-          {currentTask ? (
+          {isAssigned && currentTask ? (
             <div style={{ display: 'flex', flexDirection: 'column', flex: 1, justifyContent: 'space-between' }}>
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.6rem', flexWrap: 'wrap', gap: '0.5rem' }}>
@@ -165,10 +187,16 @@ export default function WorkerDashboard({
               </div>
             </div>
           ) : (
-            <div style={{ textAlign: 'center', padding: '2rem 1rem', color: '#6B7280' }}>
-              <CheckCircle2 size={36} color="#10B981" style={{ margin: '0 auto 0.5rem auto' }} />
-              <p style={{ margin: 0, fontSize: '0.9rem', fontWeight: 500 }}>All current tasks completed!</p>
-              <span style={{ fontSize: '0.78rem' }}>Check with supervisor Er. Pravin Gaikwad for new work orders.</span>
+            <div style={{ textAlign: 'center', padding: '2rem 1rem', background: '#F8FAFC', borderRadius: '8px', border: '1px dashed #CBD5E1', flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+              <HardHat size={36} color="#94A3B8" style={{ marginBottom: '0.75rem' }} />
+              <strong style={{ fontSize: '0.95rem', color: '#1E293B', display: 'block', marginBottom: '0.25rem' }}>
+                {isAssigned ? 'No Active Task Queue' : 'No Active Site Assignment'}
+              </strong>
+              <p style={{ fontSize: '0.8rem', color: '#64748B', margin: 0, maxWidth: '280px', lineHeight: '1.4' }}>
+                {isAssigned 
+                  ? 'All assigned trade operations are up to date. Stand by for supervisor briefing.'
+                  : 'You are currently in the Available Pool. Once a site supervisor mobilizes you, your daily site tasks and muster checks will appear here.'}
+              </p>
             </div>
           )}
         </div>
