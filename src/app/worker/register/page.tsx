@@ -76,13 +76,30 @@ export default function WorkerRegisterPage() {
         return;
       }
 
-      // 2. Generate secure 6-digit OTP
-      // Note: Live SMS Gateway / WhatsApp Cloud API credentials check
-      const otp = Math.floor(100000 + Math.random() * 900000).toString();
-      setGeneratedOtp(otp);
+      // 2. Call server-side OTP dispatch endpoint
+      const response = await fetch('/api/auth/worker-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'send',
+          phone: cleanPhone,
+          channel: otpChannel
+        })
+      });
 
-      // In production environment without SMS/WhatsApp gateway credentials configured in env,
-      // we display the verified sandbox OTP code clearly on screen as per compliance.
+      const resData = await response.json();
+      if (!resData.success) {
+        setError(resData.error || 'Failed to dispatch verification OTP.');
+        setLoading(false);
+        return;
+      }
+
+      if (resData.sandboxCode) {
+        setGeneratedOtp(resData.sandboxCode);
+      } else {
+        setGeneratedOtp(null);
+      }
+
       setStep(2);
       setResendCooldown(45);
       const timer = setInterval(() => {
@@ -101,18 +118,37 @@ export default function WorkerRegisterPage() {
     }
   };
 
-  // Verify OTP
-  const handleVerifyOtp = (e: React.FormEvent) => {
+  // Verify OTP via Server-Side Route
+  const handleVerifyOtp = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    setLoading(true);
 
-    if (otpCode.trim() !== generatedOtp) {
-      setError('Invalid OTP code. Please enter the correct 6-digit verification code.');
-      return;
+    try {
+      const response = await fetch('/api/auth/worker-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'verify',
+          phone: mobileNumber.trim().replace(/\s+/g, ''),
+          otp: otpCode.trim()
+        })
+      });
+
+      const resData = await response.json();
+      if (!resData.success) {
+        setError(resData.error || 'Invalid or expired OTP code.');
+        setLoading(false);
+        return;
+      }
+
+      // OTP Verified successfully on server -> Proceed to profile completion
+      setStep(3);
+    } catch (err: any) {
+      setError(err?.message || 'Verification failed. Please try again.');
+    } finally {
+      setLoading(false);
     }
-
-    // OTP Verified successfully -> Proceed to profile completion
-    setStep(3);
   };
 
   // Submit Registration Profile

@@ -2,8 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import styles from './WorkerTable.module.css';
-import { 
-  Search, Phone, ShieldCheck, MapPin, X, ArrowRight, Award, Plus, 
+import {
+  Search, Phone, ShieldCheck, MapPin, X, ArrowRight, Award, Plus,
   CheckCircle, Users, UserCheck, UserX, Clock, AlertCircle, LayoutGrid, List,
   Filter, Calendar, DollarSign, FileText, ChevronRight, Briefcase, Sparkles, UserMinus, Edit, Save, Trash2
 } from 'lucide-react';
@@ -161,7 +161,7 @@ export default function WorkerTable() {
     bloodGroup: 'B+',
     emergencyContact: '',
     emergencyRelation: 'Spouse',
-    
+
     // Section 2: Professional
     category: 'Skilled' as 'Skilled' | 'Semi-Skilled' | 'Unskilled',
     skill: '',
@@ -171,16 +171,16 @@ export default function WorkerTable() {
     supervisorName: 'Er. Rajesh Kulkarni',
     safetyCertified: true,
     inductionDate: '2026-11-17',
-    
+
     // Section 3: Project Assignment
     assignedProject: 'Skyline Commercial Complex',
     roleInProject: 'Lead Mason & Bar Bender',
-    
+
     // Section 4: Documents
     docAadhaarProvided: true,
     docSafetyCardProvided: true,
     docMedicalProvided: false,
-    
+
     // Section 5: Salary & Bank
     dailyWage: 950,
     overtimeHourlyRate: 140,
@@ -222,8 +222,8 @@ export default function WorkerTable() {
   // Filter & Search Logic
   let filtered = workers.filter(w => {
     const isUnassigned = !w.assignedProject || w.assignedProject === 'Unassigned' || w.assignedProject === 'None' || w.status === 'Available';
-    const matchSearch = 
-      w.name.toLowerCase().includes(search.toLowerCase()) || 
+    const matchSearch =
+      w.name.toLowerCase().includes(search.toLowerCase()) ||
       (w.skill && w.skill.toLowerCase().includes(search.toLowerCase())) ||
       w.code.toLowerCase().includes(search.toLowerCase()) ||
       (w.phone && w.phone.includes(search)) ||
@@ -231,7 +231,7 @@ export default function WorkerTable() {
       (w.supervisorName && w.supervisorName.toLowerCase().includes(search.toLowerCase()));
 
     const matchCategory = categoryFilter === 'All' || w.category === categoryFilter;
-    
+
     // Support filtering by 'Available' / 'Unassigned'
     let matchStatus = true;
     if (statusFilter === 'Available') {
@@ -240,8 +240,8 @@ export default function WorkerTable() {
       matchStatus = w.status === statusFilter;
     }
 
-    const matchProject = projectFilter === 'All' 
-      ? true 
+    const matchProject = projectFilter === 'All'
+      ? true
       : projectFilter === 'Unassigned'
         ? isUnassigned
         : w.assignedProject === projectFilter;
@@ -279,7 +279,7 @@ export default function WorkerTable() {
       status: 'Active',
       assignedProject: formData.assignedProject,
       avatar: '/images/worker1.jpg',
-      
+
       dob: formData.dob || '1992-05-15',
       gender: formData.gender,
       address: formData.address || 'Site Labour Colony Camp #2, Pune',
@@ -288,24 +288,24 @@ export default function WorkerTable() {
       bloodGroup: formData.bloodGroup,
       emergencyContact: formData.emergencyContact || '+91 94220 00000',
       emergencyRelation: formData.emergencyRelation,
-      
+
       joiningDate: '17 Nov 2026',
       experienceYears: Number(formData.experienceYears) || 4,
       employmentType: formData.employmentType,
       supervisorName: formData.supervisorName,
       safetyCertified: formData.safetyCertified,
       inductionDate: formData.inductionDate,
-      
+
       bankName: formData.bankName,
       accountNumberMasked: formData.accountNumber ? `•••• •••• ${formData.accountNumber.slice(-4)}` : '•••• •••• 5521',
       ifscCode: formData.ifscCode,
       paymentMode: formData.paymentMode,
-      
+
       totalDaysWorked: 1,
       presentDaysThisMonth: 1,
       overtimeHoursThisMonth: 0,
       advanceTakenThisMonth: 0,
-      
+
       documents: [
         {
           id: `doc-${Date.now()}-1`,
@@ -392,7 +392,7 @@ export default function WorkerTable() {
     <div className={styles.container}>
       {/* Top 6 Master Information KPI Cards */}
       <div className={styles.kpiGrid}>
-        <div 
+        <div
           className={`${styles.kpiCard} ${statusFilter === 'All' ? styles.kpiActive : ''}`}
           onClick={() => setStatusFilter('All')}
         >
@@ -409,7 +409,7 @@ export default function WorkerTable() {
           <span className={styles.kpiSubtext}>Permanent worker master records</span>
         </div>
 
-        <div 
+        <div
           className={`${styles.kpiCard} ${statusFilter === 'Active' ? styles.kpiActive : ''}`}
           onClick={() => setStatusFilter(statusFilter === 'Active' ? 'All' : 'Active')}
         >
@@ -426,7 +426,7 @@ export default function WorkerTable() {
           <span className={styles.kpiSubtext}>Available for site allocation</span>
         </div>
 
-        <div 
+        <div
           className={`${styles.kpiCard} ${statusFilter === 'Inactive' ? styles.kpiActive : ''}`}
           onClick={() => setStatusFilter(statusFilter === 'Inactive' ? 'All' : 'Inactive')}
         >
@@ -443,7 +443,7 @@ export default function WorkerTable() {
           <span className={styles.kpiSubtext}>Relieved or past workers</span>
         </div>
 
-        <div 
+        <div
           className={`${styles.kpiCard} ${categoryFilter === 'Skilled' ? styles.kpiActive : ''}`}
           onClick={() => setCategoryFilter(categoryFilter === 'Skilled' ? 'All' : 'Skilled')}
         >
@@ -460,7 +460,7 @@ export default function WorkerTable() {
           <span className={styles.kpiSubtext}>Certified trade masters</span>
         </div>
 
-        <div 
+        <div
           className={`${styles.kpiCard} ${employmentFilter === 'Direct Payroll' ? styles.kpiActive : ''}`}
           onClick={() => setEmploymentFilter(employmentFilter === 'Direct Payroll' ? 'All' : 'Direct Payroll')}
         >
@@ -477,7 +477,7 @@ export default function WorkerTable() {
           <span className={styles.kpiSubtext}>Direct statutory compliance</span>
         </div>
 
-        <div 
+        <div
           className={`${styles.kpiCard} ${projectFilter === 'Unassigned' ? styles.kpiActive : ''}`}
           onClick={() => setProjectFilter(projectFilter === 'Unassigned' ? 'All' : 'Unassigned')}
         >
@@ -501,9 +501,9 @@ export default function WorkerTable() {
           {/* Search Box */}
           <div className={styles.searchBox}>
             <Search size={16} className={styles.searchIcon} />
-            <input 
-              type="text" 
-              placeholder="Search by worker name, code, trade, mobile or supervisor..." 
+            <input
+              type="text"
+              placeholder="Search by worker name, code, trade, mobile or supervisor..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
@@ -568,14 +568,14 @@ export default function WorkerTable() {
         {/* View Toggle & Onboard Button */}
         <div className={styles.actionButtons}>
           <div className={styles.viewToggleGroup}>
-            <button 
+            <button
               className={`${styles.viewBtn} ${viewMode === 'grid' ? styles.viewBtnActive : ''}`}
               onClick={() => setViewMode('grid')}
               title="Grid View"
             >
               <LayoutGrid size={16} />
             </button>
-            <button 
+            <button
               className={`${styles.viewBtn} ${viewMode === 'table' ? styles.viewBtnActive : ''}`}
               onClick={() => setViewMode('table')}
               title="Table View"
@@ -585,14 +585,14 @@ export default function WorkerTable() {
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <button 
+            <button
               onClick={() => {
                 if (availableProjects.length > 0) {
                   const defaultProj = projectFilter !== 'All' ? projectFilter : availableProjects[0].name;
                   handleDeployProjectChange(defaultProj);
                 }
                 setShowQuickDeployModal(true);
-              }} 
+              }}
               className={styles.btnSecondary}
               style={{
                 background: '#167C72',
@@ -629,8 +629,8 @@ export default function WorkerTable() {
               <Users size={44} className={styles.emptyIcon} />
               <h3>No worker master records found</h3>
               <p>Try adjusting your search criteria or filter tags.</p>
-              <button 
-                onClick={() => { setSearch(''); setCategoryFilter('All'); setStatusFilter('All'); setProjectFilter('All'); setEmploymentFilter('All'); }} 
+              <button
+                onClick={() => { setSearch(''); setCategoryFilter('All'); setStatusFilter('All'); setProjectFilter('All'); setEmploymentFilter('All'); }}
                 className={styles.resetBtn}
               >
                 Reset All Filters
@@ -638,8 +638,8 @@ export default function WorkerTable() {
             </div>
           ) : (
             filtered.map(w => (
-              <div 
-                key={w.id} 
+              <div
+                key={w.id}
                 className={styles.card}
                 onClick={() => router.push(`/admin/workforce/${w.id}`)}
                 role="button"
@@ -648,11 +648,11 @@ export default function WorkerTable() {
                 {/* Header with Avatar & Employment Status */}
                 <div className={styles.profileHeader}>
                   <div className={styles.avatarWrapper}>
-                    <SafeImage 
-                      src={w.avatar} 
-                      alt={w.name} 
-                      fallbackType="worker" 
-                      className={styles.avatar} 
+                    <SafeImage
+                      src={w.avatar}
+                      alt={w.name}
+                      fallbackType="worker"
+                      className={styles.avatar}
                     />
                     <span className={`${styles.statusDot} ${styles[w.status.toLowerCase()]}`} />
                   </div>
@@ -707,16 +707,16 @@ export default function WorkerTable() {
                   </div>
 
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <button 
-                      onClick={(e) => openEditWorkerModal(w, e)} 
+                    <button
+                      onClick={(e) => openEditWorkerModal(w, e)}
                       className={styles.editActionBtn}
                       title="Edit Worker Details"
                     >
                       <Edit size={13} />
                       <span>Edit</span>
                     </button>
-                    <button 
-                      onClick={(e) => { e.stopPropagation(); setDeletingWorkerId(w.id); }} 
+                    <button
+                      onClick={(e) => { e.stopPropagation(); setDeletingWorkerId(w.id); }}
                       className={styles.deleteActionBtn}
                       title="Remove Worker"
                     >
@@ -789,16 +789,16 @@ export default function WorkerTable() {
                     </td>
                     <td>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <button 
-                          onClick={(e) => openEditWorkerModal(w, e)} 
+                        <button
+                          onClick={(e) => openEditWorkerModal(w, e)}
                           className={styles.editActionBtn}
                           title="Edit Worker Details"
                         >
                           <Edit size={13} />
                           <span>Edit</span>
                         </button>
-                        <button 
-                          onClick={(e) => { e.stopPropagation(); setDeletingWorkerId(w.id); }} 
+                        <button
+                          onClick={(e) => { e.stopPropagation(); setDeletingWorkerId(w.id); }}
                           className={styles.deleteActionBtn}
                           title="Remove Worker"
                         >
@@ -819,7 +819,7 @@ export default function WorkerTable() {
           {/* Android Mobile Table Mode -> Compact List Cards */}
           <div className={styles.mobileWorkerList}>
             {filtered.map(w => (
-              <div 
+              <div
                 key={w.id}
                 className={styles.mobileWorkerCard}
                 onClick={() => router.push(`/admin/workforce/${w.id}`)}
@@ -843,16 +843,16 @@ export default function WorkerTable() {
                 <div className={styles.mobileWorkerFooter}>
                   <span>Supervisor: {w.supervisorName || 'Er. Rajesh K.'}</span>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <button 
-                      onClick={(e) => openEditWorkerModal(w, e)} 
+                    <button
+                      onClick={(e) => openEditWorkerModal(w, e)}
                       className={styles.editActionBtn}
                       title="Edit Worker"
                     >
                       <Edit size={12} />
                       <span>Edit</span>
                     </button>
-                    <button 
-                      onClick={(e) => { e.stopPropagation(); setDeletingWorkerId(w.id); }} 
+                    <button
+                      onClick={(e) => { e.stopPropagation(); setDeletingWorkerId(w.id); }}
                       className={styles.deleteActionBtn}
                       title="Remove Worker"
                     >
@@ -891,40 +891,40 @@ export default function WorkerTable() {
 
             {/* Stepper Tabs */}
             <div className={styles.stepperTabs}>
-              <button 
-                type="button" 
+              <button
+                type="button"
                 className={`${styles.stepTab} ${onboardingStep === 1 ? styles.stepTabActive : ''}`}
                 onClick={() => setOnboardingStep(1)}
               >
                 <span className={styles.stepNum}>1</span>
                 <span>Personal</span>
               </button>
-              <button 
-                type="button" 
+              <button
+                type="button"
                 className={`${styles.stepTab} ${onboardingStep === 2 ? styles.stepTabActive : ''}`}
                 onClick={() => setOnboardingStep(2)}
               >
                 <span className={styles.stepNum}>2</span>
                 <span>Professional</span>
               </button>
-              <button 
-                type="button" 
+              <button
+                type="button"
                 className={`${styles.stepTab} ${onboardingStep === 3 ? styles.stepTabActive : ''}`}
                 onClick={() => setOnboardingStep(3)}
               >
                 <span className={styles.stepNum}>3</span>
                 <span>Site Allocation</span>
               </button>
-              <button 
-                type="button" 
+              <button
+                type="button"
                 className={`${styles.stepTab} ${onboardingStep === 4 ? styles.stepTabActive : ''}`}
                 onClick={() => setOnboardingStep(4)}
               >
                 <span className={styles.stepNum}>4</span>
                 <span>Documents</span>
               </button>
-              <button 
-                type="button" 
+              <button
+                type="button"
                 className={`${styles.stepTab} ${onboardingStep === 5 ? styles.stepTabActive : ''}`}
                 onClick={() => setOnboardingStep(5)}
               >
@@ -942,20 +942,20 @@ export default function WorkerTable() {
                   <div className={styles.formRow2}>
                     <div className={styles.formGroup}>
                       <label>Full Legal Name *</label>
-                      <input 
-                        type="text" 
-                        required 
-                        value={formData.name} 
+                      <input
+                        type="text"
+                        required
+                        value={formData.name}
                         onChange={e => setFormData({ ...formData, name: e.target.value })}
                         placeholder="e.g. Ramesh Shankar Patil"
                       />
                     </div>
                     <div className={styles.formGroup}>
                       <label>Mobile Number *</label>
-                      <input 
-                        type="tel" 
-                        required 
-                        value={formData.phone} 
+                      <input
+                        type="tel"
+                        required
+                        value={formData.phone}
                         onChange={e => setFormData({ ...formData, phone: e.target.value })}
                         placeholder="+91 98220 12345"
                       />
@@ -965,16 +965,16 @@ export default function WorkerTable() {
                   <div className={styles.formRow3}>
                     <div className={styles.formGroup}>
                       <label>Date of Birth</label>
-                      <input 
-                        type="date" 
-                        value={formData.dob} 
+                      <input
+                        type="date"
+                        value={formData.dob}
                         onChange={e => setFormData({ ...formData, dob: e.target.value })}
                       />
                     </div>
                     <div className={styles.formGroup}>
                       <label>Gender</label>
-                      <select 
-                        value={formData.gender} 
+                      <select
+                        value={formData.gender}
                         onChange={e => setFormData({ ...formData, gender: e.target.value as any })}
                       >
                         <option value="Male">Male</option>
@@ -984,8 +984,8 @@ export default function WorkerTable() {
                     </div>
                     <div className={styles.formGroup}>
                       <label>Blood Group</label>
-                      <select 
-                        value={formData.bloodGroup} 
+                      <select
+                        value={formData.bloodGroup}
                         onChange={e => setFormData({ ...formData, bloodGroup: e.target.value })}
                       >
                         <option value="A+">A+</option>
@@ -1003,18 +1003,18 @@ export default function WorkerTable() {
                   <div className={styles.formRow2}>
                     <div className={styles.formGroup}>
                       <label>Aadhaar / ID Number</label>
-                      <input 
-                        type="text" 
-                        value={formData.aadhaarNumber} 
+                      <input
+                        type="text"
+                        value={formData.aadhaarNumber}
                         onChange={e => setFormData({ ...formData, aadhaarNumber: e.target.value })}
                         placeholder="12-digit Aadhaar number"
                       />
                     </div>
                     <div className={styles.formGroup}>
                       <label>Native Hometown & State</label>
-                      <input 
-                        type="text" 
-                        value={formData.hometown} 
+                      <input
+                        type="text"
+                        value={formData.hometown}
                         onChange={e => setFormData({ ...formData, hometown: e.target.value })}
                         placeholder="e.g. Satara, Maharashtra"
                       />
@@ -1023,9 +1023,9 @@ export default function WorkerTable() {
 
                   <div className={styles.formGroup}>
                     <label>Current Residential Address / Camp Details</label>
-                    <input 
-                      type="text" 
-                      value={formData.address} 
+                    <input
+                      type="text"
+                      value={formData.address}
                       onChange={e => setFormData({ ...formData, address: e.target.value })}
                       placeholder="e.g. Room 14, Kharadi Labour Colony, Pune"
                     />
@@ -1034,18 +1034,18 @@ export default function WorkerTable() {
                   <div className={styles.formRow2}>
                     <div className={styles.formGroup}>
                       <label>Emergency Contact Phone</label>
-                      <input 
-                        type="tel" 
-                        value={formData.emergencyContact} 
+                      <input
+                        type="tel"
+                        value={formData.emergencyContact}
                         onChange={e => setFormData({ ...formData, emergencyContact: e.target.value })}
                         placeholder="+91 94220 88771"
                       />
                     </div>
                     <div className={styles.formGroup}>
                       <label>Emergency Contact Relationship</label>
-                      <input 
-                        type="text" 
-                        value={formData.emergencyRelation} 
+                      <input
+                        type="text"
+                        value={formData.emergencyRelation}
                         onChange={e => setFormData({ ...formData, emergencyRelation: e.target.value })}
                         placeholder="e.g. Sunita Patil (Wife)"
                       />
@@ -1061,8 +1061,8 @@ export default function WorkerTable() {
                   <div className={styles.formRow2}>
                     <div className={styles.formGroup}>
                       <label>Labour Classification *</label>
-                      <select 
-                        value={formData.category} 
+                      <select
+                        value={formData.category}
                         onChange={e => setFormData({ ...formData, category: e.target.value as any })}
                       >
                         <option value="Skilled">Skilled Artisan</option>
@@ -1072,10 +1072,10 @@ export default function WorkerTable() {
                     </div>
                     <div className={styles.formGroup}>
                       <label>Primary Trade / Specialization *</label>
-                      <input 
-                        type="text" 
-                        required 
-                        value={formData.skill} 
+                      <input
+                        type="text"
+                        required
+                        value={formData.skill}
                         onChange={e => setFormData({ ...formData, skill: e.target.value })}
                         placeholder="e.g. Master Bar Bender & Structural Mason"
                       />
@@ -1084,9 +1084,9 @@ export default function WorkerTable() {
 
                   <div className={styles.formGroup}>
                     <label>Additional Skills (comma separated)</label>
-                    <input 
-                      type="text" 
-                      value={formData.additionalSkills} 
+                    <input
+                      type="text"
+                      value={formData.additionalSkills}
                       onChange={e => setFormData({ ...formData, additionalSkills: e.target.value })}
                       placeholder="e.g. Rebar Tying, Shuttering, Aluform, Scaffolding"
                     />
@@ -1095,18 +1095,18 @@ export default function WorkerTable() {
                   <div className={styles.formRow3}>
                     <div className={styles.formGroup}>
                       <label>Years of Site Experience</label>
-                      <input 
-                        type="number" 
-                        min="0" 
-                        max="40" 
-                        value={formData.experienceYears} 
+                      <input
+                        type="number"
+                        min="0"
+                        max="40"
+                        value={formData.experienceYears}
                         onChange={e => setFormData({ ...formData, experienceYears: Number(e.target.value) })}
                       />
                     </div>
                     <div className={styles.formGroup}>
                       <label>Employment Engagement</label>
-                      <select 
-                        value={formData.employmentType} 
+                      <select
+                        value={formData.employmentType}
                         onChange={e => setFormData({ ...formData, employmentType: e.target.value as any })}
                       >
                         <option value="Direct Payroll">Direct Payroll</option>
@@ -1116,8 +1116,8 @@ export default function WorkerTable() {
                     </div>
                     <div className={styles.formGroup}>
                       <label>Reporting Supervisor</label>
-                      <select 
-                        value={formData.supervisorName} 
+                      <select
+                        value={formData.supervisorName}
                         onChange={e => setFormData({ ...formData, supervisorName: e.target.value })}
                       >
                         <option value="">Select Supervisor</option>
@@ -1130,9 +1130,9 @@ export default function WorkerTable() {
 
                   <div className={styles.checkboxGroup}>
                     <label className={styles.checkboxLabel}>
-                      <input 
-                        type="checkbox" 
-                        checked={formData.safetyCertified} 
+                      <input
+                        type="checkbox"
+                        checked={formData.safetyCertified}
                         onChange={e => setFormData({ ...formData, safetyCertified: e.target.checked })}
                       />
                       <span>Safety Induction Completed (EHS Certified with PPE kit issued)</span>
@@ -1148,8 +1148,8 @@ export default function WorkerTable() {
                   <div className={styles.formRow2}>
                     <div className={styles.formGroup}>
                       <label>Assign to Construction Project</label>
-                      <select 
-                        value={formData.assignedProject} 
+                      <select
+                        value={formData.assignedProject}
                         onChange={e => setFormData({ ...formData, assignedProject: e.target.value })}
                       >
                         <option value="Unassigned">Unassigned (Reserve Labour Pool)</option>
@@ -1160,9 +1160,9 @@ export default function WorkerTable() {
                     </div>
                     <div className={styles.formGroup}>
                       <label>Designated Site Role</label>
-                      <input 
-                        type="text" 
-                        value={formData.roleInProject} 
+                      <input
+                        type="text"
+                        value={formData.roleInProject}
                         onChange={e => setFormData({ ...formData, roleInProject: e.target.value })}
                         placeholder="e.g. Lead Bar Bender Pier P-12"
                       />
@@ -1184,9 +1184,9 @@ export default function WorkerTable() {
                   <h4 className={styles.sectionTitle}>Section 4: Verification & Compliance Documents</h4>
                   <div className={styles.docCheckList}>
                     <label className={styles.docItem}>
-                      <input 
-                        type="checkbox" 
-                        checked={formData.docAadhaarProvided} 
+                      <input
+                        type="checkbox"
+                        checked={formData.docAadhaarProvided}
                         onChange={e => setFormData({ ...formData, docAadhaarProvided: e.target.checked })}
                       />
                       <div>
@@ -1196,9 +1196,9 @@ export default function WorkerTable() {
                     </label>
 
                     <label className={styles.docItem}>
-                      <input 
-                        type="checkbox" 
-                        checked={formData.docSafetyCardProvided} 
+                      <input
+                        type="checkbox"
+                        checked={formData.docSafetyCardProvided}
                         onChange={e => setFormData({ ...formData, docSafetyCardProvided: e.target.checked })}
                       />
                       <div>
@@ -1208,9 +1208,9 @@ export default function WorkerTable() {
                     </label>
 
                     <label className={styles.docItem}>
-                      <input 
-                        type="checkbox" 
-                        checked={formData.docMedicalProvided} 
+                      <input
+                        type="checkbox"
+                        checked={formData.docMedicalProvided}
                         onChange={e => setFormData({ ...formData, docMedicalProvided: e.target.checked })}
                       />
                       <div>
@@ -1229,19 +1229,19 @@ export default function WorkerTable() {
                   <div className={styles.formRow2}>
                     <div className={styles.formGroup}>
                       <label>Daily Standard Wage (₹ / Day) *</label>
-                      <input 
-                        type="number" 
-                        required 
-                        value={formData.dailyWage} 
+                      <input
+                        type="number"
+                        required
+                        value={formData.dailyWage}
                         onChange={e => setFormData({ ...formData, dailyWage: Number(e.target.value) })}
                         placeholder="950"
                       />
                     </div>
                     <div className={styles.formGroup}>
                       <label>Overtime Hourly Rate (₹ / Hour)</label>
-                      <input 
-                        type="number" 
-                        value={formData.overtimeHourlyRate} 
+                      <input
+                        type="number"
+                        value={formData.overtimeHourlyRate}
                         onChange={e => setFormData({ ...formData, overtimeHourlyRate: Number(e.target.value) })}
                         placeholder="140"
                       />
@@ -1251,8 +1251,8 @@ export default function WorkerTable() {
                   <div className={styles.formRow3}>
                     <div className={styles.formGroup}>
                       <label>Disbursement Mode</label>
-                      <select 
-                        value={formData.paymentMode} 
+                      <select
+                        value={formData.paymentMode}
                         onChange={e => setFormData({ ...formData, paymentMode: e.target.value as any })}
                       >
                         <option value="Bank Transfer">Bank Transfer (NEFT/IMPS)</option>
@@ -1262,18 +1262,18 @@ export default function WorkerTable() {
                     </div>
                     <div className={styles.formGroup}>
                       <label>Bank Name</label>
-                      <input 
-                        type="text" 
-                        value={formData.bankName} 
+                      <input
+                        type="text"
+                        value={formData.bankName}
                         onChange={e => setFormData({ ...formData, bankName: e.target.value })}
                         placeholder="State Bank of India"
                       />
                     </div>
                     <div className={styles.formGroup}>
                       <label>IFSC Code</label>
-                      <input 
-                        type="text" 
-                        value={formData.ifscCode} 
+                      <input
+                        type="text"
+                        value={formData.ifscCode}
                         onChange={e => setFormData({ ...formData, ifscCode: e.target.value })}
                         placeholder="SBIN0001234"
                       />
@@ -1282,9 +1282,9 @@ export default function WorkerTable() {
 
                   <div className={styles.formGroup}>
                     <label>Bank Account Number</label>
-                    <input 
-                      type="password" 
-                      value={formData.accountNumber} 
+                    <input
+                      type="password"
+                      value={formData.accountNumber}
                       onChange={e => setFormData({ ...formData, accountNumber: e.target.value })}
                       placeholder="Account number for direct salary credit"
                     />
@@ -1296,9 +1296,9 @@ export default function WorkerTable() {
               <div className={styles.modalFooter}>
                 <div className={styles.footerNavLeft}>
                   {onboardingStep > 1 && (
-                    <button 
-                      type="button" 
-                      onClick={() => setOnboardingStep(onboardingStep - 1)} 
+                    <button
+                      type="button"
+                      onClick={() => setOnboardingStep(onboardingStep - 1)}
                       className={styles.btnSecondary}
                     >
                       Back to Step {onboardingStep - 1}
@@ -1308,9 +1308,9 @@ export default function WorkerTable() {
 
                 <div className={styles.footerNavRight}>
                   {onboardingStep < 5 ? (
-                    <button 
-                      type="button" 
-                      onClick={() => setOnboardingStep(onboardingStep + 1)} 
+                    <button
+                      type="button"
+                      onClick={() => setOnboardingStep(onboardingStep + 1)}
                       className={styles.btnPrimary}
                     >
                       <span>Continue</span>
@@ -1351,19 +1351,19 @@ export default function WorkerTable() {
               <div className={styles.formRow2}>
                 <div className={styles.formGroup}>
                   <label>Full Legal Name *</label>
-                  <input 
-                    type="text" 
-                    required 
-                    value={editFormData.name} 
+                  <input
+                    type="text"
+                    required
+                    value={editFormData.name}
                     onChange={e => setEditFormData({ ...editFormData, name: e.target.value })}
                   />
                 </div>
                 <div className={styles.formGroup}>
                   <label>Mobile Contact *</label>
-                  <input 
-                    type="tel" 
-                    required 
-                    value={editFormData.phone} 
+                  <input
+                    type="tel"
+                    required
+                    value={editFormData.phone}
                     onChange={e => setEditFormData({ ...editFormData, phone: e.target.value })}
                   />
                 </div>
@@ -1372,8 +1372,8 @@ export default function WorkerTable() {
               <div className={styles.formRow2}>
                 <div className={styles.formGroup}>
                   <label>Category *</label>
-                  <select 
-                    value={editFormData.category} 
+                  <select
+                    value={editFormData.category}
                     onChange={e => setEditFormData({ ...editFormData, category: e.target.value as any })}
                   >
                     <option value="Skilled">Skilled</option>
@@ -1383,10 +1383,10 @@ export default function WorkerTable() {
                 </div>
                 <div className={styles.formGroup}>
                   <label>Primary Skill / Trade *</label>
-                  <input 
-                    type="text" 
-                    required 
-                    value={editFormData.skill} 
+                  <input
+                    type="text"
+                    required
+                    value={editFormData.skill}
                     onChange={e => setEditFormData({ ...editFormData, skill: e.target.value })}
                   />
                 </div>
@@ -1395,8 +1395,8 @@ export default function WorkerTable() {
               <div className={styles.formRow2}>
                 <div className={styles.formGroup}>
                   <label>Assigned Project *</label>
-                  <select 
-                    value={editFormData.assignedProject} 
+                  <select
+                    value={editFormData.assignedProject}
                     onChange={e => setEditFormData({ ...editFormData, assignedProject: e.target.value })}
                   >
                     <option value="Unassigned">Unassigned (Reserve Pool)</option>
@@ -1407,8 +1407,8 @@ export default function WorkerTable() {
                 </div>
                 <div className={styles.formGroup}>
                   <label>Designated Site Supervisor *</label>
-                  <select 
-                    value={editFormData.supervisorName} 
+                  <select
+                    value={editFormData.supervisorName}
                     onChange={e => setEditFormData({ ...editFormData, supervisorName: e.target.value })}
                   >
                     <option value="">Select Supervisor</option>
@@ -1422,26 +1422,26 @@ export default function WorkerTable() {
               <div className={styles.formRow3}>
                 <div className={styles.formGroup}>
                   <label>Daily Wage (₹ / Day) *</label>
-                  <input 
-                    type="number" 
-                    required 
-                    value={editFormData.dailyWage} 
+                  <input
+                    type="number"
+                    required
+                    value={editFormData.dailyWage}
                     onChange={e => setEditFormData({ ...editFormData, dailyWage: Number(e.target.value) })}
                   />
                 </div>
                 <div className={styles.formGroup}>
                   <label>Overtime Rate (₹ / Hr)</label>
-                  <input 
-                    type="number" 
-                    value={editFormData.overtimeHourlyRate} 
+                  <input
+                    type="number"
+                    value={editFormData.overtimeHourlyRate}
                     onChange={e => setEditFormData({ ...editFormData, overtimeHourlyRate: Number(e.target.value) })}
                   />
                 </div>
                 <div className={styles.formGroup}>
                   <label>Experience (Years)</label>
-                  <input 
-                    type="number" 
-                    value={editFormData.experienceYears} 
+                  <input
+                    type="number"
+                    value={editFormData.experienceYears}
                     onChange={e => setEditFormData({ ...editFormData, experienceYears: Number(e.target.value) })}
                   />
                 </div>
@@ -1450,8 +1450,8 @@ export default function WorkerTable() {
               <div className={styles.formRow2}>
                 <div className={styles.formGroup}>
                   <label>Employment Type</label>
-                  <select 
-                    value={editFormData.employmentType} 
+                  <select
+                    value={editFormData.employmentType}
                     onChange={e => setEditFormData({ ...editFormData, employmentType: e.target.value as any })}
                   >
                     <option value="Direct Payroll">Direct Payroll</option>
@@ -1461,8 +1461,8 @@ export default function WorkerTable() {
                 </div>
                 <div className={styles.formGroup}>
                   <label>Employment Status</label>
-                  <select 
-                    value={editFormData.status} 
+                  <select
+                    value={editFormData.status}
                     onChange={e => setEditFormData({ ...editFormData, status: e.target.value as any })}
                   >
                     <option value="Active">Active</option>
@@ -1472,9 +1472,9 @@ export default function WorkerTable() {
               </div>
 
               <div className={styles.modalFooter} style={{ marginTop: '1.25rem', padding: '1rem 0 0 0' }}>
-                <button 
-                  type="button" 
-                  onClick={() => setEditingWorker(null)} 
+                <button
+                  type="button"
+                  onClick={() => setEditingWorker(null)}
                   className={styles.btnSecondary}
                 >
                   Cancel
@@ -1515,8 +1515,8 @@ export default function WorkerTable() {
                   <label style={{ fontWeight: 600, fontSize: '0.82rem', color: '#334155', marginBottom: '4px' }}>
                     1. Select Construction Project *
                   </label>
-                  <select 
-                    value={selectedDeployProject} 
+                  <select
+                    value={selectedDeployProject}
                     onChange={e => handleDeployProjectChange(e.target.value)}
                     required
                     style={{ padding: '8px 10px', border: '1px solid #CBD5E1', borderRadius: '6px', fontSize: '0.85rem' }}
@@ -1533,8 +1533,8 @@ export default function WorkerTable() {
                   <label style={{ fontWeight: 600, fontSize: '0.82rem', color: '#334155', marginBottom: '4px' }}>
                     2. Designated Site Supervisor
                   </label>
-                  <select 
-                    value={selectedDeploySupervisor} 
+                  <select
+                    value={selectedDeploySupervisor}
                     onChange={e => setSelectedDeploySupervisor(e.target.value)}
                     style={{ padding: '8px 10px', border: '1px solid #CBD5E1', borderRadius: '6px', fontSize: '0.85rem' }}
                   >
@@ -1553,16 +1553,16 @@ export default function WorkerTable() {
                     3. Select Workers to Assign ({selectedWorkerIdsToDeploy.length} Selected) *
                   </label>
                   <div style={{ display: 'flex', gap: '8px' }}>
-                    <button 
-                      type="button" 
+                    <button
+                      type="button"
                       onClick={() => setSelectedWorkerIdsToDeploy(workers.map(w => w.id))}
                       style={{ background: 'none', border: 'none', color: '#167C72', fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer' }}
                     >
                       Select All
                     </button>
                     <span style={{ color: '#CBD5E1' }}>|</span>
-                    <button 
-                      type="button" 
+                    <button
+                      type="button"
                       onClick={() => setSelectedWorkerIdsToDeploy([])}
                       style={{ background: 'none', border: 'none', color: '#64748B', fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer' }}
                     >
@@ -1575,8 +1575,8 @@ export default function WorkerTable() {
                   {workers.map(w => {
                     const isSelected = selectedWorkerIdsToDeploy.includes(w.id);
                     return (
-                      <div 
-                        key={w.id} 
+                      <div
+                        key={w.id}
                         onClick={() => toggleWorkerSelectionForDeploy(w.id)}
                         style={{
                           display: 'flex',
@@ -1591,10 +1591,10 @@ export default function WorkerTable() {
                         }}
                       >
                         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                          <input 
-                            type="checkbox" 
-                            checked={isSelected} 
-                            onChange={() => {}} // handled by row click
+                          <input
+                            type="checkbox"
+                            checked={isSelected}
+                            onChange={() => { }} // handled by row click
                             style={{ cursor: 'pointer' }}
                           />
                           <div>
@@ -1604,7 +1604,7 @@ export default function WorkerTable() {
                         </div>
 
                         <div style={{ textAlign: 'right', fontSize: '0.75rem' }}>
-                          <span style={{ 
+                          <span style={{
                             background: w.assignedProject === selectedDeployProject ? '#D1FAE5' : '#F1F5F9',
                             color: w.assignedProject === selectedDeployProject ? '#065F46' : '#475569',
                             padding: '2px 6px',
@@ -1622,15 +1622,15 @@ export default function WorkerTable() {
 
               {/* Action Buttons */}
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', paddingTop: '1rem', borderTop: '1px solid #E2E8F0' }}>
-                <button 
-                  type="button" 
-                  onClick={() => setShowQuickDeployModal(false)} 
+                <button
+                  type="button"
+                  onClick={() => setShowQuickDeployModal(false)}
                   className={styles.btnSecondary}
                 >
                   Cancel
                 </button>
-                <button 
-                  type="submit" 
+                <button
+                  type="submit"
                   disabled={!selectedDeployProject || selectedWorkerIdsToDeploy.length === 0}
                   className={styles.btnSuccess}
                   style={{ opacity: (!selectedDeployProject || selectedWorkerIdsToDeploy.length === 0) ? 0.6 : 1 }}
@@ -1656,16 +1656,16 @@ export default function WorkerTable() {
               Are you sure you want to remove this worker from the active enterprise workforce register?
             </p>
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
-              <button 
-                type="button" 
-                onClick={() => setDeletingWorkerId(null)} 
+              <button
+                type="button"
+                onClick={() => setDeletingWorkerId(null)}
                 className={styles.btnSecondary}
               >
                 Cancel
               </button>
-              <button 
-                type="button" 
-                onClick={() => handleDeleteWorker(deletingWorkerId)} 
+              <button
+                type="button"
+                onClick={() => handleDeleteWorker(deletingWorkerId)}
                 style={{
                   background: '#EF4444',
                   color: '#fff',

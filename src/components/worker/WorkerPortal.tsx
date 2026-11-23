@@ -175,45 +175,56 @@ export default function WorkerPortalCoordinator() {
         };
       });
 
-      if (reqsRes && reqsRes.length > 0) {
-        const taskItems: WorkerTaskRecord[] = reqsRes
-          .filter((r: any) => r.request_type === 'Task' || r.requestType === 'Task')
-          .map((r: any) => ({
-            id: r.id,
-            documentId: r.documentId || r.document_id,
-            title: r.title,
-            project: r.project || 'Skyline Commercial Complex (Tower A)',
-            site: r.site || 'Tower A (Core & Podium)',
-            category: r.category || 'Structural',
-            priority: r.priority || 'Standard',
-            status: r.status || 'In Progress',
-            details: typeof r.details === 'string' ? r.details : r.details?.workInProgress || r.remarks || 'Active site work assignment.',
-            remarks: r.remarks,
-            adminRemarks: r.adminRemarks || r.admin_remarks,
-            submittedBy: r.submittedBy || r.submitted_by,
-            submittedDate: r.submittedDate || r.submitted_date,
-            assignedSupervisor: r.assigned_supervisor || 'Er. Pravin Gaikwad',
-            assignedWorkerId: r.assigned_worker_id || 1,
-            assignedWorkerName: r.assigned_worker_name || 'Ramesh Patil',
-            workerRemarks: r.worker_remarks,
-            exactLocation: r.exact_location || 'Level 14 Core Zone'
-          }));
+      // Scoped tasks for this logged-in worker & site
+      const isWorkerAssigned = !!worker.assignedProject && worker.assignedProject !== 'Unassigned' && worker.assignedProject !== 'None';
+      
+      let finalTasks: WorkerTaskRecord[] = [];
+      if (isWorkerAssigned) {
+        finalTasks = [...localWorkerTasks];
+        if (reqsRes && reqsRes.length > 0) {
+          const taskItems: WorkerTaskRecord[] = reqsRes
+            .filter((r: any) => r.request_type === 'Task' || r.requestType === 'Task')
+            .map((r: any) => ({
+              id: r.id,
+              documentId: r.documentId || r.document_id,
+              title: r.title,
+              project: r.project || worker.assignedProject,
+              site: r.site || 'Active Site Grid',
+              category: r.category || 'Structural',
+              priority: r.priority || 'Standard',
+              status: r.status || 'In Progress',
+              details: typeof r.details === 'string' ? r.details : r.details?.workInProgress || r.remarks || 'Active site work assignment.',
+              remarks: r.remarks,
+              adminRemarks: r.adminRemarks || r.admin_remarks,
+              submittedBy: r.submittedBy || r.submitted_by,
+              submittedDate: r.submittedDate || r.submitted_date,
+              assignedSupervisor: r.assigned_supervisor || worker.supervisorName || 'Site Supervisor',
+              assignedWorkerId: r.assigned_worker_id || worker.id,
+              assignedWorkerName: r.assigned_worker_name || worker.name,
+              workerRemarks: r.worker_remarks,
+              exactLocation: r.exact_location || 'Site Hub'
+            }));
 
-        // Merge strapi and local tasks
-        const combined = [...localWorkerTasks];
-        taskItems.forEach(item => {
-          if (!combined.some(c => String(c.id) === String(item.id) || (c.documentId && c.documentId === item.documentId))) {
-            combined.push(item);
-          }
-        });
-
-        setTasks(combined.length > 0 ? combined : defaultTasks);
-      } else {
-        setTasks(localWorkerTasks.length > 0 ? localWorkerTasks : defaultTasks);
+          taskItems.forEach(item => {
+            if (!finalTasks.some(c => String(c.id) === String(item.id) || (c.documentId && c.documentId === item.documentId))) {
+              finalTasks.push(item);
+            }
+          });
+        }
       }
 
+      setTasks(finalTasks);
+
       if (attRes && attRes.length > 0) {
-        setAttendance(attRes);
+        // Filter attendance records belonging to this worker
+        const workerAtts = attRes.filter((a: any) => 
+          (a.workerId && String(a.workerId) === String(worker.id)) ||
+          (a.workerCode && a.workerCode === worker.code) ||
+          (a.workerName && a.workerName.toLowerCase() === worker.name.toLowerCase())
+        );
+        setAttendance(workerAtts);
+      } else {
+        setAttendance([]);
       }
     } catch (err) {
       console.error('Error loading worker portal Strapi data:', err);

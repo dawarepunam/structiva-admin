@@ -2,22 +2,22 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import styles from './Workforce.module.css';
-import { 
-  Users, 
-  Phone, 
-  HardHat, 
-  CheckCircle2, 
-  Search, 
-  Filter, 
-  RefreshCw, 
-  X, 
-  ShieldCheck, 
-  Calendar, 
-  Building, 
-  FileText, 
-  Send, 
-  ArrowUpDown, 
-  Clock, 
+import {
+  Users,
+  Phone,
+  HardHat,
+  CheckCircle2,
+  Search,
+  Filter,
+  RefreshCw,
+  X,
+  ShieldCheck,
+  Calendar,
+  Building,
+  FileText,
+  Send,
+  ArrowUpDown,
+  Clock,
   AlertCircle,
   ExternalLink,
   RotateCcw,
@@ -33,12 +33,22 @@ import { getStoredWorkers, saveWorkers, EnterpriseWorkerRecord } from '@/service
 export default function SupervisorWorkforceView() {
   const [loading, setLoading] = useState(true);
   const [syncing, setSyncing] = useState(false);
-  
+
+  // Navigation View: 'active' (My Site Workers) vs 'available' (Unassigned Pool)
+  const [viewTab, setViewTab] = useState<'active' | 'available'>('active');
+
+  // Transfer Modal State
+  const [transferModalWorker, setTransferModalWorker] = useState<any | null>(null);
+  const [transferTargetProject, setTransferTargetProject] = useState<string>('');
+  const [transferReason, setTransferReason] = useState<string>('Site requirement / reallocation');
+  const [transferSubmitting, setTransferSubmitting] = useState(false);
+  const [actionFeedback, setActionFeedback] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+
   // Data Collections from Strapi v5
   const [workers, setWorkers] = useState<any[]>([]);
   const [projects, setProjects] = useState<EnterpriseProjectRecord[]>([]);
   const [attendances, setAttendances] = useState<any[]>([]);
-  
+
   // Authenticated Supervisor Identity
   const [supervisorUser, setSupervisorUser] = useState({
     name: 'Er. Pravin Gaikwad',
@@ -196,8 +206,8 @@ export default function SupervisorWorkforceView() {
   // Combined Worker + Today's Live Attendance
   const enrichedWorkers = useMemo(() => {
     return assignedWorkers.map(w => {
-      const matchAtt = attendances.find((a: any) => 
-        (a.workerId && a.workerId.toString() === w.id?.toString()) || 
+      const matchAtt = attendances.find((a: any) =>
+        (a.workerId && a.workerId.toString() === w.id?.toString()) ||
         (a.workerCode && a.workerCode === w.code) ||
         (a.workerName && a.workerName === w.name)
       );
@@ -239,7 +249,7 @@ export default function SupervisorWorkforceView() {
   // Client-Side Search, Filter, and Sort
   const filteredWorkers = useMemo(() => {
     return enrichedWorkers.filter(w => {
-      const matchesSearch = 
+      const matchesSearch =
         w.name.toLowerCase().includes(search.toLowerCase()) ||
         w.code.toLowerCase().includes(search.toLowerCase()) ||
         (w.skill && w.skill.toLowerCase().includes(search.toLowerCase())) ||
@@ -424,7 +434,7 @@ export default function SupervisorWorkforceView() {
 
   return (
     <div className={styles.container}>
-      
+
       {/* Header Banner */}
       <div className={styles.headerBanner}>
         <div className={styles.titleArea}>
@@ -434,7 +444,7 @@ export default function SupervisorWorkforceView() {
           </p>
         </div>
         <div className={styles.headerMeta}>
-          <button 
+          <button
             onClick={() => {
               setNewWorkerData({
                 name: '',
@@ -455,9 +465,9 @@ export default function SupervisorWorkforceView() {
             <Plus size={14} />
             <span>Add Site Worker</span>
           </button>
-          <button 
-            onClick={handleRefresh} 
-            disabled={syncing || loading} 
+          <button
+            onClick={handleRefresh}
+            disabled={syncing || loading}
             className={styles.refreshBtn}
             title="Refresh crew records from central Strapi backend"
           >
@@ -529,8 +539,8 @@ export default function SupervisorWorkforceView() {
         </div>
 
         <div className={styles.filterGroup}>
-          <select 
-            value={projectFilter} 
+          <select
+            value={projectFilter}
             onChange={(e) => setProjectFilter(e.target.value)}
             className={styles.filterSelect}
           >
@@ -540,8 +550,8 @@ export default function SupervisorWorkforceView() {
             ))}
           </select>
 
-          <select 
-            value={categoryFilter} 
+          <select
+            value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
             className={styles.filterSelect}
           >
@@ -551,8 +561,8 @@ export default function SupervisorWorkforceView() {
             <option value="Unskilled">Unskilled</option>
           </select>
 
-          <select 
-            value={attendanceFilter} 
+          <select
+            value={attendanceFilter}
             onChange={(e) => setAttendanceFilter(e.target.value)}
             className={styles.filterSelect}
           >
@@ -561,8 +571,8 @@ export default function SupervisorWorkforceView() {
             <option value="Absent">Absent</option>
           </select>
 
-          <select 
-            value={sortBy} 
+          <select
+            value={sortBy}
             onChange={(e) => setSortBy(e.target.value as any)}
             className={styles.filterSelect}
           >
@@ -622,10 +632,10 @@ export default function SupervisorWorkforceView() {
               </thead>
               <tbody>
                 {filteredWorkers.map((w: any) => {
-                  const catClass = 
+                  const catClass =
                     w.category === 'Skilled' ? styles.catSkilled :
-                    w.category === 'Semi-Skilled' ? styles.catSemi :
-                    styles.catUnskilled;
+                      w.category === 'Semi-Skilled' ? styles.catSemi :
+                        styles.catUnskilled;
 
                   const initials = w.name.split(' ').map((n: string) => n[0]).slice(0, 2).join('').toUpperCase();
 
@@ -673,23 +683,23 @@ export default function SupervisorWorkforceView() {
                       </td>
                       <td>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                          <button 
-                            onClick={() => setSelectedWorker(w)} 
+                          <button
+                            onClick={() => setSelectedWorker(w)}
                             className={styles.viewBtn}
                             title="View Full Profile Details"
                           >
                             <span>View</span>
                           </button>
-                          <button 
-                            onClick={(e) => openEditWorker(w, e)} 
+                          <button
+                            onClick={(e) => openEditWorker(w, e)}
                             className={styles.editBtn}
                             title="Edit Worker Site Info"
                           >
                             <Edit size={12} />
                             <span>Edit</span>
                           </button>
-                          <button 
-                            onClick={(e) => { e.stopPropagation(); setDeletingWorkerId(w.id); }} 
+                          <button
+                            onClick={(e) => { e.stopPropagation(); setDeletingWorkerId(w.id); }}
                             className={styles.deleteBtn}
                             title="Remove Worker from Project"
                           >
@@ -722,8 +732,8 @@ export default function SupervisorWorkforceView() {
                   {selectedWorker.skill} &middot; {selectedWorker.category}
                 </span>
               </div>
-              <button 
-                onClick={() => setSelectedWorker(null)} 
+              <button
+                onClick={() => setSelectedWorker(null)}
                 className={styles.drawerCloseBtn}
               >
                 <X size={16} />
@@ -731,7 +741,7 @@ export default function SupervisorWorkforceView() {
             </div>
 
             <div className={styles.drawerBody}>
-              
+
               {/* Identity & Employment */}
               <div className={styles.drawerSection}>
                 <h4 className={styles.drawerSectionTitle}>Employment & Allocation</h4>
@@ -801,23 +811,23 @@ export default function SupervisorWorkforceView() {
               <div className={styles.drawerSection}>
                 <h4 className={styles.drawerSectionTitle}>Supervisor Field Operations</h4>
                 <div style={{ display: 'flex', gap: '8px', marginBottom: '0.85rem' }}>
-                  <button 
-                    onClick={() => openEditWorker(selectedWorker)} 
+                  <button
+                    onClick={() => openEditWorker(selectedWorker)}
                     className={styles.drawerActionBtn}
                   >
                     <Edit size={14} />
                     <span>Edit Worker</span>
                   </button>
-                  <button 
-                    onClick={() => setDeletingWorkerId(selectedWorker.id)} 
+                  <button
+                    onClick={() => setDeletingWorkerId(selectedWorker.id)}
                     className={styles.drawerDeleteBtn}
                   >
                     <Trash2 size={14} />
                     <span>Remove</span>
                   </button>
                 </div>
-                <button 
-                  onClick={() => handleRequestTransfer(selectedWorker)} 
+                <button
+                  onClick={() => handleRequestTransfer(selectedWorker)}
                   className={styles.transferRequestBtn}
                 >
                   <Send size={14} />
@@ -848,9 +858,9 @@ export default function SupervisorWorkforceView() {
               <div className={styles.formRow2}>
                 <div className={styles.formGroup}>
                   <label>Full Name *</label>
-                  <input 
-                    type="text" 
-                    required 
+                  <input
+                    type="text"
+                    required
                     placeholder="e.g. Shankar Babu Pawar"
                     value={newWorkerData.name}
                     onChange={e => setNewWorkerData({ ...newWorkerData, name: e.target.value })}
@@ -858,9 +868,9 @@ export default function SupervisorWorkforceView() {
                 </div>
                 <div className={styles.formGroup}>
                   <label>Mobile Number *</label>
-                  <input 
-                    type="tel" 
-                    required 
+                  <input
+                    type="tel"
+                    required
                     placeholder="+91 98220 12345"
                     value={newWorkerData.phone}
                     onChange={e => setNewWorkerData({ ...newWorkerData, phone: e.target.value })}
@@ -871,7 +881,7 @@ export default function SupervisorWorkforceView() {
               <div className={styles.formRow2}>
                 <div className={styles.formGroup}>
                   <label>Category *</label>
-                  <select 
+                  <select
                     value={newWorkerData.category}
                     onChange={e => setNewWorkerData({ ...newWorkerData, category: e.target.value as any })}
                   >
@@ -882,9 +892,9 @@ export default function SupervisorWorkforceView() {
                 </div>
                 <div className={styles.formGroup}>
                   <label>Primary Trade / Skill *</label>
-                  <input 
-                    type="text" 
-                    required 
+                  <input
+                    type="text"
+                    required
                     placeholder="e.g. Scaffolding, Mason, Electrician"
                     value={newWorkerData.skill}
                     onChange={e => setNewWorkerData({ ...newWorkerData, skill: e.target.value })}
@@ -894,7 +904,7 @@ export default function SupervisorWorkforceView() {
 
               <div className={styles.formGroup}>
                 <label>Assign to Project *</label>
-                <select 
+                <select
                   value={newWorkerData.assignedProject}
                   onChange={e => setNewWorkerData({ ...newWorkerData, assignedProject: e.target.value })}
                   required
@@ -908,24 +918,24 @@ export default function SupervisorWorkforceView() {
               <div className={styles.formRow3}>
                 <div className={styles.formGroup}>
                   <label>Daily Wage (₹/day)</label>
-                  <input 
-                    type="number" 
+                  <input
+                    type="number"
                     value={newWorkerData.dailyWage}
                     onChange={e => setNewWorkerData({ ...newWorkerData, dailyWage: Number(e.target.value) })}
                   />
                 </div>
                 <div className={styles.formGroup}>
                   <label>OT Rate (₹/hr)</label>
-                  <input 
-                    type="number" 
+                  <input
+                    type="number"
                     value={newWorkerData.overtimeHourlyRate}
                     onChange={e => setNewWorkerData({ ...newWorkerData, overtimeHourlyRate: Number(e.target.value) })}
                   />
                 </div>
                 <div className={styles.formGroup}>
                   <label>Experience (Yrs)</label>
-                  <input 
-                    type="number" 
+                  <input
+                    type="number"
                     value={newWorkerData.experienceYears}
                     onChange={e => setNewWorkerData({ ...newWorkerData, experienceYears: Number(e.target.value) })}
                   />
@@ -964,18 +974,18 @@ export default function SupervisorWorkforceView() {
               <div className={styles.formRow2}>
                 <div className={styles.formGroup}>
                   <label>Full Name *</label>
-                  <input 
-                    type="text" 
-                    required 
+                  <input
+                    type="text"
+                    required
                     value={editWorkerData.name}
                     onChange={e => setEditWorkerData({ ...editWorkerData, name: e.target.value })}
                   />
                 </div>
                 <div className={styles.formGroup}>
                   <label>Mobile Number *</label>
-                  <input 
-                    type="tel" 
-                    required 
+                  <input
+                    type="tel"
+                    required
                     value={editWorkerData.phone}
                     onChange={e => setEditWorkerData({ ...editWorkerData, phone: e.target.value })}
                   />
@@ -985,7 +995,7 @@ export default function SupervisorWorkforceView() {
               <div className={styles.formRow2}>
                 <div className={styles.formGroup}>
                   <label>Category</label>
-                  <select 
+                  <select
                     value={editWorkerData.category}
                     onChange={e => setEditWorkerData({ ...editWorkerData, category: e.target.value as any })}
                   >
@@ -996,9 +1006,9 @@ export default function SupervisorWorkforceView() {
                 </div>
                 <div className={styles.formGroup}>
                   <label>Trade Skill</label>
-                  <input 
-                    type="text" 
-                    required 
+                  <input
+                    type="text"
+                    required
                     value={editWorkerData.skill}
                     onChange={e => setEditWorkerData({ ...editWorkerData, skill: e.target.value })}
                   />
@@ -1007,7 +1017,7 @@ export default function SupervisorWorkforceView() {
 
               <div className={styles.formGroup}>
                 <label>Assigned Project</label>
-                <select 
+                <select
                   value={editWorkerData.assignedProject}
                   onChange={e => setEditWorkerData({ ...editWorkerData, assignedProject: e.target.value })}
                 >
@@ -1020,23 +1030,23 @@ export default function SupervisorWorkforceView() {
               <div className={styles.formRow3}>
                 <div className={styles.formGroup}>
                   <label>Daily Wage (₹)</label>
-                  <input 
-                    type="number" 
+                  <input
+                    type="number"
                     value={editWorkerData.dailyWage}
                     onChange={e => setEditWorkerData({ ...editWorkerData, dailyWage: Number(e.target.value) })}
                   />
                 </div>
                 <div className={styles.formGroup}>
                   <label>OT Rate (₹)</label>
-                  <input 
-                    type="number" 
+                  <input
+                    type="number"
                     value={editWorkerData.overtimeHourlyRate}
                     onChange={e => setEditWorkerData({ ...editWorkerData, overtimeHourlyRate: Number(e.target.value) })}
                   />
                 </div>
                 <div className={styles.formGroup}>
                   <label>Status</label>
-                  <select 
+                  <select
                     value={editWorkerData.status}
                     onChange={e => setEditWorkerData({ ...editWorkerData, status: e.target.value as any })}
                   >
@@ -1072,16 +1082,16 @@ export default function SupervisorWorkforceView() {
               Are you sure you want to remove this worker from your project crew list?
             </p>
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px' }}>
-              <button 
-                type="button" 
-                onClick={() => setDeletingWorkerId(null)} 
+              <button
+                type="button"
+                onClick={() => setDeletingWorkerId(null)}
                 className={styles.cancelBtn}
               >
                 Cancel
               </button>
-              <button 
-                type="button" 
-                onClick={() => handleSupervisorDeleteWorker(deletingWorkerId)} 
+              <button
+                type="button"
+                onClick={() => handleSupervisorDeleteWorker(deletingWorkerId)}
                 className={styles.deleteConfirmBtn}
               >
                 Confirm Remove
