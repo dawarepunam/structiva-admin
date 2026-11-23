@@ -31,7 +31,7 @@ import {
 } from 'lucide-react';
 import SafeImage from '@/components/admin/ui/SafeImage';
 import { EnterpriseProjectRecord, getStoredProjects, saveProjects } from '@/services/projectStorage';
-import { getStoredWorkers, EnterpriseWorkerRecord } from '@/services/workerStorage';
+import { getStoredWorkers, EnterpriseWorkerRecord, saveWorkers } from '@/services/workerStorage';
 import { getStoredSupervisors, SupervisorOption } from '@/services/supervisorStorage';
 
 export default function ProjectTable() {
@@ -74,6 +74,18 @@ export default function ProjectTable() {
     description: ''
   });
 
+  // Selected Workers for Project Creation / Edit (Multi-select)
+  const [selectedWorkerIds, setSelectedWorkerIds] = useState<string[]>([]);
+  const [showWorkerDropdown, setShowWorkerDropdown] = useState(false);
+
+  const toggleWorkerForProject = (workerId: string) => {
+    if (selectedWorkerIds.includes(workerId)) {
+      setSelectedWorkerIds(selectedWorkerIds.filter(id => id !== workerId));
+    } else {
+      setSelectedWorkerIds([...selectedWorkerIds, workerId]);
+    }
+  };
+
   const loadData = () => {
     setProjects(getStoredProjects());
     setWorkers(getStoredWorkers());
@@ -112,6 +124,8 @@ export default function ProjectTable() {
   // Open Create Form
   const openCreateModal = () => {
     setEditingProject(null);
+    setSelectedWorkerIds([]);
+    setShowWorkerDropdown(false);
     setFormData({
       name: '',
       code: `PRJ-${Math.floor(100 + Math.random() * 900)}`,
@@ -137,6 +151,16 @@ export default function ProjectTable() {
   const openEditModal = (p: EnterpriseProjectRecord, e: React.MouseEvent) => {
     e.stopPropagation();
     setEditingProject(p);
+    setShowWorkerDropdown(false);
+
+    // Pre-select workers already assigned to this project
+    const currentAssigned = workers.filter(w => {
+      const assigned = (w.assignedProject || '').toLowerCase();
+      const target = p.name.toLowerCase();
+      return assigned === target || assigned.includes(target) || target.includes(assigned);
+    }).map(w => w.id);
+    setSelectedWorkerIds(currentAssigned);
+
     setFormData({
       name: p.name,
       code: p.code,
@@ -167,6 +191,9 @@ export default function ProjectTable() {
     const numericSpent = parseFloat(formData.spent) || 0;
     const numericProgress = parseInt(formData.progress, 10) || 0;
     const numericMachinery = parseInt(formData.deployedMachinery, 10) || 4;
+
+    const projectName = formData.name;
+    const supervisorName = formData.projectSupervisor;
 
     if (editingProject) {
       const updated = projects.map(p => {
@@ -218,6 +245,24 @@ export default function ProjectTable() {
       const updated = [newProject, ...projects];
       saveProjects(updated);
       setProjects(updated);
+    }
+
+    // Sync selected workers directly to this project
+    if (selectedWorkerIds.length > 0) {
+      const allStoredWorkers = getStoredWorkers();
+      const updatedWorkers = allStoredWorkers.map(w => {
+        if (selectedWorkerIds.includes(w.id)) {
+          return {
+            ...w,
+            assignedProject: projectName,
+            supervisorName: supervisorName || w.supervisorName,
+            status: 'Active' as const
+          };
+        }
+        return w;
+      });
+      saveWorkers(updatedWorkers);
+      setWorkers(updatedWorkers);
     }
 
     setShowAddModal(false);
@@ -852,6 +897,89 @@ export default function ProjectTable() {
                   onChange={e => setFormData({ ...formData, description: e.target.value })}
                   placeholder="Detail structural scope, steel specifications, design grade..."
                 />
+              </div>
+
+              {/* Multi-Worker Assignment Dropdown with Checkboxes */}
+              <div className={styles.formGroup} style={{ marginTop: '0.5rem', background: '#F8FAFC', padding: '12px', borderRadius: '8px', border: '1px solid #E2E8F0' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                  <label style={{ margin: 0, fontWeight: 700, fontSize: '0.82rem', color: '#0F172A' }}>
+                    Assign Workers to Project ({selectedWorkerIds.length} Selected)
+                  </label>
+                  <button 
+                    type="button" 
+                    onClick={() => setShowWorkerDropdown(!showWorkerDropdown)}
+                    style={{
+                      background: '#167C72',
+                      color: '#FFF',
+                      border: 'none',
+                      borderRadius: '6px',
+                      padding: '4px 10px',
+                      fontSize: '0.75rem',
+                      fontWeight: 600,
+                      cursor: 'pointer'
+                    }}
+                  >
+                    {showWorkerDropdown ? '▲ Hide Worker List' : '▼ Select Workers (Dropdown)'}
+                  </button>
+                </div>
+
+                {showWorkerDropdown && (
+                  <div style={{ marginTop: '8px', borderTop: '1px solid #E2E8F0', paddingTop: '8px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px', marginBottom: '6px' }}>
+                      <button 
+                        type="button" 
+                        onClick={() => setSelectedWorkerIds(workers.map(w => w.id))}
+                        style={{ background: 'none', border: 'none', color: '#167C72', fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer' }}
+                      >
+                        Select All ({workers.length})
+                      </button>
+                      <span style={{ color: '#CBD5E1' }}>|</span>
+                      <button 
+                        type="button" 
+                        onClick={() => setSelectedWorkerIds([])}
+                        style={{ background: 'none', border: 'none', color: '#64748B', fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer' }}
+                      >
+                        Deselect All
+                      </button>
+                    </div>
+
+                    <div style={{ maxHeight: '180px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                      {workers.map(w => {
+                        const isChecked = selectedWorkerIds.includes(w.id);
+                        return (
+                          <label 
+                            key={w.id} 
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'space-between',
+                              padding: '6px 8px',
+                              borderRadius: '6px',
+                              background: isChecked ? '#E6F4F2' : '#FFFFFF',
+                              border: isChecked ? '1px solid #167C72' : '1px solid #E2E8F0',
+                              cursor: 'pointer'
+                            }}
+                          >
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                              <input 
+                                type="checkbox"
+                                checked={isChecked}
+                                onChange={() => toggleWorkerForProject(w.id)}
+                              />
+                              <div>
+                                <strong style={{ fontSize: '0.82rem', color: '#0F172A', display: 'block' }}>{w.name}</strong>
+                                <span style={{ fontSize: '0.7rem', color: '#64748B' }}>{w.code} • {w.skill}</span>
+                              </div>
+                            </div>
+                            <span style={{ fontSize: '0.68rem', color: '#64748B' }}>
+                              {w.assignedProject || 'Unassigned'}
+                            </span>
+                          </label>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div className={styles.modalFooterActions}>

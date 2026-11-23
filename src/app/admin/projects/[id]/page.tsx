@@ -14,6 +14,7 @@ import {
   ProjectDocument,
   ProjectDailyReport
 } from '@/services/projectStorage';
+import { getStoredWorkers, EnterpriseWorkerRecord, saveWorkers } from '@/services/workerStorage';
 import { 
   Building2, 
   MapPin, 
@@ -48,26 +49,46 @@ export default function ProjectDetailsPage() {
   const projectId = params?.id as string;
 
   const [project, setProject] = useState<EnterpriseProjectRecord | null>(null);
+  const [projectWorkers, setProjectWorkers] = useState<EnterpriseWorkerRecord[]>([]);
   const [activeTab, setActiveTab] = useState<'overview' | 'gallery' | 'progress' | 'timeline' | 'budget' | 'team' | 'machinery' | 'documents' | 'reports'>('overview');
 
-  // Lightbox Modal state for Gallery
-  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
-
-  // Modal Dialogs state
-  const [showPhotoModal, setShowPhotoModal] = useState(false);
-  const [showProgressModal, setShowProgressModal] = useState(false);
-  const [showReportModal, setShowReportModal] = useState(false);
-
-  // Form states
-  const [photoForm, setPhotoForm] = useState({ caption: '', sectionTag: 'Site Inspection' });
-  const [progressForm, setProgressForm] = useState({ newProgress: 70, remark: '' });
-  const [reportForm, setReportForm] = useState({ shift: 'Shift-1 (Day)', workExecuted: '', labourCount: 30, machineryCount: 4, fuelLitres: 50 });
+  // Load project workers
+  const loadWorkers = (projectName?: string) => {
+    const all = getStoredWorkers();
+    if (projectName) {
+      const filtered = all.filter(w => {
+        const p = (w.assignedProject || '').toLowerCase();
+        const target = projectName.toLowerCase();
+        return p === target || p.includes(target) || target.includes(p);
+      });
+      setProjectWorkers(filtered);
+    } else {
+      setProjectWorkers([]);
+    }
+  };
 
   useEffect(() => {
     if (projectId) {
       const p = getProjectById(projectId);
       setProject(p);
+      if (p) loadWorkers(p.name);
     }
+
+    const handleStorageUpdate = () => {
+      if (projectId) {
+        const p = getProjectById(projectId);
+        setProject(p);
+        if (p) loadWorkers(p.name);
+      }
+    };
+    window.addEventListener('storage', handleStorageUpdate);
+    window.addEventListener('workersUpdated', handleStorageUpdate);
+    window.addEventListener('projectsUpdated', handleStorageUpdate);
+    return () => {
+      window.removeEventListener('storage', handleStorageUpdate);
+      window.removeEventListener('workersUpdated', handleStorageUpdate);
+      window.removeEventListener('projectsUpdated', handleStorageUpdate);
+    };
   }, [projectId]);
 
   if (!project) {
@@ -747,6 +768,87 @@ export default function ProjectDetailsPage() {
                   <span className={styles.teamContact}>Testing Lab Lead</span>
                 </div>
               </div>
+            </div>
+
+            {/* Assigned Project Site Workforce */}
+            <div style={{ marginTop: '2rem', borderTop: '1px solid #E2E8F0', paddingTop: '1.25rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                <div>
+                  <h4 style={{ margin: 0, fontSize: '1rem', color: '#0F172A', fontWeight: 700 }}>
+                    Active Site Tradespersons & Crew Roster ({projectWorkers.length} Workers Assigned)
+                  </h4>
+                  <span style={{ fontSize: '0.78rem', color: '#64748B' }}>
+                    Workers officially mobilized to {project.name} under {project.projectSupervisor || 'Lead Supervisor'}
+                  </span>
+                </div>
+                <Link 
+                  href="/admin/workforce" 
+                  style={{
+                    background: '#167C72',
+                    color: '#FFF',
+                    padding: '6px 12px',
+                    borderRadius: '6px',
+                    fontSize: '0.78rem',
+                    fontWeight: 600,
+                    textDecoration: 'none',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '4px'
+                  }}
+                >
+                  <Plus size={14} />
+                  <span>Allocate / Manage Workers</span>
+                </Link>
+              </div>
+
+              {projectWorkers.length === 0 ? (
+                <div style={{ textAlign: 'center', padding: '2rem', background: '#F8FAFC', borderRadius: '8px', border: '1px dashed #CBD5E1' }}>
+                  <Users size={32} color="#94A3B8" style={{ margin: '0 auto 0.5rem auto' }} />
+                  <strong style={{ display: 'block', fontSize: '0.9rem', color: '#334155' }}>No Workers Currently Assigned</strong>
+                  <p style={{ margin: '4px 0 0', fontSize: '0.78rem', color: '#64748B' }}>
+                    Use the Workforce Directory or Project Allocation to assign tradespersons to this site.
+                  </p>
+                </div>
+              ) : (
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '0.75rem' }}>
+                  {projectWorkers.map(w => (
+                    <div 
+                      key={w.id} 
+                      style={{
+                        background: '#FFFFFF',
+                        border: '1px solid #E2E8F0',
+                        borderRadius: '8px',
+                        padding: '10px 12px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        gap: '10px'
+                      }}
+                    >
+                      <div>
+                        <Link 
+                          href={`/admin/workforce/${w.id}`}
+                          style={{ fontSize: '0.88rem', fontWeight: 700, color: '#0F172A', textDecoration: 'none' }}
+                        >
+                          {w.name}
+                        </Link>
+                        <span style={{ display: 'block', fontSize: '0.72rem', color: '#64748B' }}>
+                          {w.code} • {w.skill}
+                        </span>
+                        <span style={{ display: 'inline-block', marginTop: '2px', fontSize: '0.68rem', fontWeight: 700, color: '#167C72' }}>
+                          ₹{w.dailyWage}/day • {w.category}
+                        </span>
+                      </div>
+                      <Link 
+                        href={`/admin/workforce/${w.id}`}
+                        style={{ fontSize: '0.72rem', color: '#167C72', fontWeight: 600, textDecoration: 'none' }}
+                      >
+                        Profile →
+                      </Link>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>
