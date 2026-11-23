@@ -232,12 +232,14 @@ export default function WorkerTable() {
 
     const matchCategory = categoryFilter === 'All' || w.category === categoryFilter;
 
-    // Support filtering by 'Available' / 'Unassigned'
+    // Support filtering by lifecycle statuses
     let matchStatus = true;
     if (statusFilter === 'Available') {
       matchStatus = isUnassigned;
+    } else if (statusFilter === 'Active') {
+      matchStatus = !isUnassigned && w.status !== 'Inactive' && w.status !== 'Suspended';
     } else if (statusFilter !== 'All') {
-      matchStatus = w.status === statusFilter;
+      matchStatus = w.status === statusFilter || w.accountStatus === statusFilter;
     }
 
     const matchProject = projectFilter === 'All'
@@ -538,9 +540,14 @@ export default function WorkerTable() {
 
             <div className={styles.filterItem}>
               <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
-                <option value="All">All Statuses</option>
-                <option value="Active">Active on Site</option>
+                <option value="All">All Lifecycle Statuses</option>
+                <option value="Registered">Registered</option>
+                <option value="Verification Pending">Verification Pending</option>
+                <option value="Verified">Verified</option>
                 <option value="Available">Available (Unassigned)</option>
+                <option value="Active">Active on Site</option>
+                <option value="Transfer Pending">Transfer Pending</option>
+                <option value="Suspended">Suspended</option>
                 <option value="Inactive">Inactive</option>
               </select>
             </div>
