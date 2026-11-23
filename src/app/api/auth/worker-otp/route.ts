@@ -68,7 +68,9 @@ export async function POST(req: NextRequest) {
       // Production security: Check Email Provider Credentials
       const isProduction = process.env.NODE_ENV === 'production';
       const resendApiKey = process.env.RESEND_API_KEY;
+      const resendFromEmail = process.env.RESEND_FROM_EMAIL || 'STRUCTIVA OS <onboarding@resend.dev>';
       const sendgridApiKey = process.env.SENDGRID_API_KEY;
+      const sendgridFromEmail = process.env.SENDGRID_FROM_EMAIL || 'auth@structiva.internal';
       const smtpHost = process.env.SMTP_HOST;
       const smtpUser = process.env.SMTP_USER;
       const smtpPass = process.env.SMTP_PASS;
@@ -89,7 +91,7 @@ export async function POST(req: NextRequest) {
               'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-              from: 'STRUCTIVA OS <auth@structiva.internal>',
+              from: resendFromEmail,
               to: [rawEmail],
               subject: 'STRUCTIVA Verification Code',
               text: `Your STRUCTIVA 2-step verification code is: ${code}. Valid for 5 minutes. Do not share this code.`
@@ -100,10 +102,10 @@ export async function POST(req: NextRequest) {
             deliveryStatus = 'dispatched_email';
             providerMessage = `Verification code sent to ${rawEmail}.`;
           } else {
-            const errJson = await res.json();
+            const errJson = await res.json().catch(() => ({}));
             console.error('Resend delivery failed:', errJson);
             deliveryStatus = 'provider_error';
-            providerMessage = 'Email gateway delivery failed. Please check mail provider status.';
+            providerMessage = errJson?.message || 'Email gateway delivery failed. Please check mail provider domain status.';
           }
         } catch (e: any) {
           deliveryStatus = 'provider_error';
