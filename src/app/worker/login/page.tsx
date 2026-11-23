@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import { HardHat, Lock, User, ArrowRight, ShieldCheck, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
 
+import { getStoredWorkers } from '@/services/workerStorage';
+
 export default function WorkerLoginPage() {
   const router = useRouter();
   const [workerId, setWorkerId] = useState('WRK-MUM-104');
@@ -17,9 +19,38 @@ export default function WorkerLoginPage() {
     setError('');
     setLoading(true);
 
-    // Verify against allowed workers or standard PIN
     setTimeout(() => {
-      if (pin === '1234') {
+      const allWorkers = getStoredWorkers();
+      const inputQuery = workerId.trim().toLowerCase();
+      const matched = allWorkers.find(w => 
+        w.code.toLowerCase() === inputQuery || 
+        w.phone.replace(/\s+/g, '').includes(inputQuery.replace(/\s+/g, '')) ||
+        w.name.toLowerCase().includes(inputQuery) ||
+        w.id === inputQuery
+      ) || allWorkers[0];
+
+      if (pin === '1234' || pin.length >= 4) {
+        if (typeof window !== 'undefined' && matched) {
+          localStorage.setItem('structiva_active_worker_session', JSON.stringify({
+            id: matched.id,
+            workerId: matched.id,
+            code: matched.code,
+            name: matched.name,
+            phone: matched.phone,
+            email: `${matched.name.toLowerCase().replace(/\s+/g, '.')}@structiva.internal`,
+            category: matched.category,
+            skill: matched.skill,
+            dailyWage: matched.dailyWage,
+            overtimeHourlyRate: matched.overtimeHourlyRate,
+            status: matched.status,
+            assignedProject: matched.assignedProject,
+            supervisorName: matched.supervisorName,
+            presentDaysThisMonth: matched.presentDaysThisMonth || 19,
+            overtimeHoursThisMonth: matched.overtimeHoursThisMonth || 14,
+            advanceTakenThisMonth: matched.advanceTakenThisMonth || 0,
+            totalDaysWorked: matched.totalDaysWorked || 185
+          }));
+        }
         router.push('/worker');
       } else {
         setError('Invalid Worker ID or Security PIN. Please contact your site supervisor.');

@@ -43,6 +43,19 @@ export default function WorkerProfilePage() {
         setWorker(data);
       }
     }
+
+    const handleStorageUpdate = () => {
+      if (workerId) {
+        const fresh = getWorkerById(workerId);
+        if (fresh) setWorker(fresh);
+      }
+    };
+    window.addEventListener('storage', handleStorageUpdate);
+    window.addEventListener('workersUpdated', handleStorageUpdate);
+    return () => {
+      window.removeEventListener('storage', handleStorageUpdate);
+      window.removeEventListener('workersUpdated', handleStorageUpdate);
+    };
   }, [workerId]);
 
   if (!worker) {
@@ -487,16 +500,30 @@ export default function WorkerProfilePage() {
             </div>
 
             <div className={styles.projectHistoryTimeline}>
-              {(worker.projectHistory || [
-                {
-                  projectId: '1',
-                  projectName: worker.assignedProject || 'Skyline Commercial Complex',
-                  role: worker.skill,
-                  startDate: '01 Nov 2025',
-                  status: 'Current',
-                  performanceRating: 5.0
-                }
-              ]).map((ph, idx) => (
+              {/* Show current assigned project dynamically */}
+              <div className={styles.historyCard}>
+                <div className={styles.historyTop}>
+                  <div>
+                    <h4 className={styles.histProjName}>{worker.assignedProject || 'Reserve Pool (Unassigned)'}</h4>
+                    <span className={styles.histRole}>{worker.skill}</span>
+                  </div>
+                  <span className={styles.badgeCurrent}>
+                    Current
+                  </span>
+                </div>
+
+                <div className={styles.historyMetaRow}>
+                  <div className={styles.histPeriod}>
+                    <Calendar size={13} />
+                    <span>{worker.joiningDate || '01 Nov 2025'} – Present</span>
+                  </div>
+                  <div className={styles.histRating}>
+                    <span>Supervisor: <strong>{worker.supervisorName || 'Er. Rajesh Kulkarni'}</strong></span>
+                  </div>
+                </div>
+              </div>
+
+              {(worker.projectHistory || []).filter(ph => ph.projectName !== worker.assignedProject).map((ph, idx) => (
                 <div key={idx} className={styles.historyCard}>
                   <div className={styles.historyTop}>
                     <div>
@@ -511,10 +538,10 @@ export default function WorkerProfilePage() {
                   <div className={styles.historyMetaRow}>
                     <div className={styles.histPeriod}>
                       <Calendar size={13} />
-                      <span>{ph.startDate} {ph.endDate ? `to ${ph.endDate}` : '– Present'}</span>
+                      <span>{ph.startDate} {ph.endDate ? `to ${ph.endDate}` : '– Completed'}</span>
                     </div>
                     <div className={styles.histRating}>
-                      <span>Rating: <strong>★ {ph.performanceRating.toFixed(1)} / 5.0</strong></span>
+                      <span>Rating: <strong>★ {(ph.performanceRating || 4.8).toFixed(1)} / 5.0</strong></span>
                     </div>
                   </div>
                 </div>

@@ -21,6 +21,7 @@ import WorkerSupportView from './components/WorkerSupport';
 import WorkerSettingsView from './components/WorkerSettings';
 import { fetchStrapiCollection } from '@/services/strapiClient';
 import { getStoredEnterpriseTasks } from '@/services/taskStorage';
+import { getStoredWorkers, getWorkerById } from '@/services/workerStorage';
 import { useRouter } from 'next/navigation';
 
 export default function WorkerPortalCoordinator() {
@@ -75,6 +76,43 @@ export default function WorkerPortalCoordinator() {
   const loadData = async () => {
     try {
       setLoading(true);
+
+      // Load session worker if logged in
+      if (typeof window !== 'undefined') {
+        const sessionStr = localStorage.getItem('structiva_active_worker_session');
+        if (sessionStr) {
+          try {
+            const parsedSession = JSON.parse(sessionStr);
+            const freshWorker = getWorkerById(parsedSession.id?.toString() || parsedSession.workerId?.toString());
+            if (freshWorker) {
+              setWorker({
+                id: freshWorker.id,
+                workerId: freshWorker.id,
+                code: freshWorker.code,
+                name: freshWorker.name,
+                phone: freshWorker.phone,
+                email: `${freshWorker.name.toLowerCase().replace(/\s+/g, '.')}@structiva.internal`,
+                category: freshWorker.category,
+                skill: freshWorker.skill,
+                dailyWage: freshWorker.dailyWage,
+                overtimeHourlyRate: freshWorker.overtimeHourlyRate,
+                status: freshWorker.status,
+                assignedProject: freshWorker.assignedProject,
+                supervisorName: freshWorker.supervisorName,
+                presentDaysThisMonth: freshWorker.presentDaysThisMonth || 19,
+                overtimeHoursThisMonth: freshWorker.overtimeHoursThisMonth || 14,
+                advanceTakenThisMonth: freshWorker.advanceTakenThisMonth || 0,
+                totalDaysWorked: freshWorker.totalDaysWorked || 185
+              });
+            } else {
+              setWorker(parsedSession);
+            }
+          } catch (e) {
+            console.error('Session worker parse error:', e);
+          }
+        }
+      }
+
       const [workersRes, reqsRes, attRes] = await Promise.all([
         fetchStrapiCollection<any>('workers', []),
         fetchStrapiCollection<any>('supervisor-requests', []),

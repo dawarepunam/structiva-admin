@@ -11,6 +11,7 @@ import {
   FileText
 } from 'lucide-react';
 import { WorkerProfile } from '../data/workerTypes';
+import { getWorkerById, updateWorker, WorkerLeaveRecord } from '@/services/workerStorage';
 
 interface WorkerLeaveProps {
   worker: WorkerProfile;
@@ -18,62 +19,70 @@ interface WorkerLeaveProps {
 
 export default function WorkerLeaveView({ worker }: WorkerLeaveProps) {
   const [showApplyModal, setShowApplyModal] = useState(false);
-  const [leaveType, setLeaveType] = useState('Casual Leave');
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
+  const [leaveType, setLeaveType] = useState('Paid Leave');
+  const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]);
+  const [endDate, setEndDate] = useState(new Date().toISOString().split('T')[0]);
+  const [days, setDays] = useState(2);
   const [reason, setReason] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [successMsg, setSuccessMsg] = useState(false);
 
-  const [leaveHistory, setLeaveHistory] = useState([
+  // Sync leaves with central workerStorage
+  const [workerRecord, setWorkerRecord] = useState(() => {
+    return getWorkerById(worker.id?.toString() || worker.workerId?.toString());
+  });
+
+  const leavesList = workerRecord?.leaves && workerRecord.leaves.length > 0 ? workerRecord.leaves : [
     {
       id: 'LV-2026-001',
-      type: 'Casual Leave',
-      dates: '24 Nov 2026 – 26 Nov 2026',
+      workerId: worker.id?.toString(),
+      workerName: worker.name,
+      workerCode: worker.code,
+      type: 'Paid Leave' as const,
+      startDate: '2026-11-24',
+      endDate: '2026-11-26',
       days: 3,
       reason: 'Family festival in Satara hometown',
-      status: 'Approved',
-      approvedBy: 'Er. Pravin Gaikwad',
-      remarks: 'Substitute bar-bender briefed for core cage schedule.'
-    },
-    {
-      id: 'LV-2026-002',
-      type: 'Medical Leave',
-      dates: '12 Sep 2026 – 13 Sep 2026',
-      days: 2,
-      reason: 'Viral fever rest with clinic certificate',
-      status: 'Approved',
-      approvedBy: 'HR Admin Deshmukh',
-      remarks: 'Fitness certificate verified.'
+      status: 'Approved' as const,
+      appliedOn: '2026-11-18',
+      approvedBy: worker.supervisorName || 'Er. Pravin Gaikwad'
     }
-  ]);
+  ];
 
   const handleApplyLeave = (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
+
+    const newLeave: WorkerLeaveRecord = {
+      id: `LV-${Date.now()}`,
+      workerId: worker.id?.toString() || worker.workerId?.toString(),
+      workerName: worker.name,
+      workerCode: worker.code,
+      type: (leaveType === 'Casual Leave' ? 'Paid Leave' : leaveType) as any,
+      startDate: startDate || new Date().toISOString().split('T')[0],
+      endDate: endDate || new Date().toISOString().split('T')[0],
+      days: Number(days) || 1,
+      reason: reason || 'Personal work at hometown',
+      status: 'Pending',
+      appliedOn: new Date().toISOString().split('T')[0]
+    };
+
+    const targetId = worker.id?.toString() || worker.workerId?.toString();
+    const currentRec = getWorkerById(targetId);
+    const updatedLeaves = [newLeave, ...(currentRec?.leaves || [])];
+    const updatedList = updateWorker(targetId, { leaves: updatedLeaves });
+    const fresh = updatedList.find(w => w.id === targetId);
+    setWorkerRecord(fresh);
+
     setTimeout(() => {
       setSubmitting(false);
       setSuccessMsg(true);
-      setLeaveHistory([
-        {
-          id: `LV-2026-00${leaveHistory.length + 1}`,
-          type: leaveType,
-          dates: `${startDate} to ${endDate}`,
-          days: 2,
-          reason,
-          status: 'Pending',
-          approvedBy: 'Under Review',
-          remarks: 'Submitted for supervisor verification.'
-        },
-        ...leaveHistory
-      ]);
-
       setTimeout(() => {
         setSuccessMsg(false);
         setShowApplyModal(false);
         setReason('');
-      }, 1500);
-    }, 600);
+      }, 1200);
+    }, 400);
   };
 
   return (
@@ -136,11 +145,11 @@ export default function WorkerLeaveView({ worker }: WorkerLeaveProps) {
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-          {leaveHistory.map((item) => (
+          {leavesList.map((item) => (
             <div key={item.id} style={{ padding: '1rem', border: '1px solid #E5E7EB', borderRadius: '8px', background: '#F8F9FA' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
                 <div style={{ fontWeight: 600, color: '#172B32', fontSize: '0.95rem' }}>
-                  {item.type} ({item.days} Days) • {item.dates}
+                  {item.type} ({item.days} Days) • {item.startDate} to {item.endDate}
                 </div>
                 <span className={`${styles.badge} ${item.status === 'Approved' ? styles.badgeSuccess : styles.badgeWarning}`}>
                   {item.status}
@@ -152,8 +161,8 @@ export default function WorkerLeaveView({ worker }: WorkerLeaveProps) {
               </div>
 
               <div style={{ fontSize: '0.78rem', color: '#6B7280', display: 'flex', gap: '1rem' }}>
-                <span><strong>Reviewer:</strong> {item.approvedBy}</span>
-                {item.remarks && <span><strong>Remarks:</strong> {item.remarks}</span>}
+                <span><strong>Applied:</strong> {item.appliedOn}</span>
+                {item.approvedBy && <span><strong>Reviewer:</strong> {item.approvedBy}</span>}
               </div>
             </div>
           ))}
