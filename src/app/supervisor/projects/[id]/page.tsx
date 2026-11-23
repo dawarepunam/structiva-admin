@@ -26,6 +26,9 @@ import {
 } from 'lucide-react';
 import { fetchStrapiCollection } from '@/services/strapiClient';
 import { EnterpriseProjectRecord, fetchProjectsFromBackend, getProjectById } from '@/services/projectStorage';
+import { getStoredWorkers, EnterpriseWorkerRecord } from '@/services/workerStorage';
+import { getStoredFleet, EnterpriseAssetRecord } from '@/services/fleetStorage';
+import { getStoredEnterpriseTasks, EnterpriseTaskRecord } from '@/services/taskStorage';
 
 export default function SupervisorProjectDetailsPage() {
   const params = useParams();
@@ -36,9 +39,9 @@ export default function SupervisorProjectDetailsPage() {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'overview' | 'sites' | 'workforce' | 'machinery' | 'requests'>('overview');
 
-  // Related collections from Strapi v5
-  const [workers, setWorkers] = useState<any[]>([]);
-  const [fleets, setFleets] = useState<any[]>([]);
+  // Related collections from Strapi v5 / local storage
+  const [workers, setWorkers] = useState<EnterpriseWorkerRecord[]>([]);
+  const [fleets, setFleets] = useState<EnterpriseAssetRecord[]>([]);
   const [requests, setRequests] = useState<any[]>([]);
 
   // Authenticated Supervisor Session
@@ -66,39 +69,61 @@ export default function SupervisorProjectDetailsPage() {
     }
   }, []);
 
-  useEffect(() => {
-    async function loadProjectDetails() {
-      setLoading(true);
-      try {
-        const [allProjects, allWorkers, allFleets, allRequests] = await Promise.all([
-          fetchProjectsFromBackend(),
-          fetchStrapiCollection('workers', []),
-          fetchStrapiCollection('fleets', []),
-          fetchStrapiCollection('supervisor-requests', [])
-        ]);
+  const loadProjectDetails = async () => {
+    setLoading(true);
+    try {
+      const localWorkers = getStoredWorkers();
+      const localFleet = getStoredFleet();
+      const localTasks = getStoredEnterpriseTasks();
 
-        const target = allProjects?.find((p: any) => 
-          p.code?.toLowerCase() === projectId?.toLowerCase() ||
-          p.id?.toString() === projectId ||
-          p.documentId === projectId ||
-          p.slug?.toLowerCase() === projectId?.toLowerCase()
-        ) || getProjectById(projectId);
+      const [allProjects, strapiWorkers, strapiFleets, strapiRequests] = await Promise.all([
+        fetchProjectsFromBackend(),
+        fetchStrapiCollection<EnterpriseWorkerRecord>('workers', localWorkers),
+        fetchStrapiCollection<EnterpriseAssetRecord>('fleets', localFleet),
+        fetchStrapiCollection('supervisor-requests', localTasks as any[])
+      ]);
 
-        setProject(target || null);
-        setWorkers(allWorkers || []);
-        setFleets(allFleets || []);
-        setRequests(allRequests || []);
-      } catch (err) {
-        console.error('Failed to load project details:', err);
-        setProject(getProjectById(projectId));
-      } finally {
-        setLoading(false);
-      }
+      const target = allProjects?.find((p: any) => 
+        p.code?.toLowerCase() === projectId?.toLowerCase() ||
+        p.id?.toString() === projectId ||
+        p.documentId === projectId ||
+        p.slug?.toLowerCase() === projectId?.toLowerCase()
+      ) || getProjectById(projectId);
+
+      setProject(target || null);
+      setWorkers((strapiWorkers && strapiWorkers.length > 0) ? strapiWorkers : localWorkers);
+      setFleets((strapiFleets && strapiFleets.length > 0) ? strapiFleets : localFleet);
+      setRequests((strapiRequests && strapiRequests.length > 0) ? strapiRequests : (localTasks as any[]));
+    } catch (err) {
+      console.error('Failed to load project details:', err);
+      setProject(getProjectById(projectId));
+      setWorkers(getStoredWorkers());
+      setFleets(getStoredFleet());
+      setRequests(getStoredEnterpriseTasks() as any[]);
+    } finally {
+      setLoading(false);
     }
+  };
 
+  useEffect(() => {
     if (projectId) {
       loadProjectDetails();
     }
+
+    const handleStorageUpdate = () => {
+      loadProjectDetails();
+    };
+
+    window.addEventListener('storage', handleStorageUpdate);
+    window.addEventListener('workersUpdated', handleStorageUpdate);
+    window.addEventListener('projectsUpdated', handleStorageUpdate);
+    window.addEventListener('tasksUpdated', handleStorageUpdate);
+    return () => {
+      window.removeEventListener('storage', handleStorageUpdate);
+      window.removeEventListener('workersUpdated', handleStorageUpdate);
+      window.removeEventListener('projectsUpdated', handleStorageUpdate);
+      window.removeEventListener('tasksUpdated', handleStorageUpdate);
+    };
   }, [projectId]);
 
   // Security Verification: Confirm that this supervisor is permitted to view this project
@@ -118,26 +143,62 @@ export default function SupervisorProjectDetailsPage() {
     );
   }, [project, supervisorUser.name]);
 
-  // Scoped project resources
+  // Scoped project resources with flexible matching
   const projectWorkers = useMemo(() => {
     if (!project) return [];
-    return workers.filter((w: any) => 
-      !w.assignedProject || w.assignedProject.toLowerCase().includes(project.name.toLowerCase().split('(')[0].trim().toLowerCase())
-    );
+    const targetName = project.name.toLowerCase().trim();
+    const shortName = targetName.split('(')[0].trim();
+    const targetCode = (project.code || '').toLowerCase().trim();
+
+    return workers.filter((w: any) => {
+      const assigned = (w.assignedProject || '').toLowerCase().trim();
+      if (!assigned) return false;
+      return (
+        assigned === targetName ||
+        assigned === shortName ||
+        assigned.includes(shortName) ||
+        shortName.includes(assigned) ||
+        (targetCode && assigned.includes(targetCode))
+      );
+    });
   }, [workers, project]);
 
   const projectFleets = useMemo(() => {
     if (!project) return [];
-    return fleets.filter((f: any) => 
-      !f.currentProject || f.currentProject.toLowerCase().includes(project.name.toLowerCase().split('(')[0].trim().toLowerCase())
-    );
+    const targetName = project.name.toLowerCase().trim();
+    const shortName = targetName.split('(')[0].trim();
+    const targetCode = (project.code || '').toLowerCase().trim();
+
+    return fleets.filter((f: any) => {
+      const assigned = (f.currentProject || '').toLowerCase().trim();
+      if (!assigned) return false;
+      return (
+        assigned === targetName ||
+        assigned === shortName ||
+        assigned.includes(shortName) ||
+        shortName.includes(assigned) ||
+        (targetCode && assigned.includes(targetCode))
+      );
+    });
   }, [fleets, project]);
 
   const projectRequests = useMemo(() => {
     if (!project) return [];
-    return requests.filter((r: any) => 
-      !r.project || r.project.toLowerCase().includes(project.name.toLowerCase().split('(')[0].trim().toLowerCase())
-    );
+    const targetName = project.name.toLowerCase().trim();
+    const shortName = targetName.split('(')[0].trim();
+    const targetCode = (project.code || '').toLowerCase().trim();
+
+    return requests.filter((r: any) => {
+      const assigned = (r.project || '').toLowerCase().trim();
+      if (!assigned) return true; // show unassigned or general submissions
+      return (
+        assigned === targetName ||
+        assigned === shortName ||
+        assigned.includes(shortName) ||
+        shortName.includes(assigned) ||
+        (targetCode && assigned.includes(targetCode))
+      );
+    });
   }, [requests, project]);
 
   if (loading) {
