@@ -31,6 +31,53 @@ export default function WorkerTable() {
   const [editingWorker, setEditingWorker] = useState<EnterpriseWorkerRecord | null>(null);
   const [deletingWorkerId, setDeletingWorkerId] = useState<string | null>(null);
 
+  // Quick Project Deployment Modal State
+  const [showQuickDeployModal, setShowQuickDeployModal] = useState(false);
+  const [selectedDeployProject, setSelectedDeployProject] = useState('');
+  const [selectedDeploySupervisor, setSelectedDeploySupervisor] = useState('');
+  const [selectedWorkerIdsToDeploy, setSelectedWorkerIdsToDeploy] = useState<string[]>([]);
+
+  // When project changes in Quick Deploy, auto-populate assigned supervisor
+  const handleDeployProjectChange = (projectName: string) => {
+    setSelectedDeployProject(projectName);
+    const proj = availableProjects.find(p => p.name === projectName);
+    if (proj?.projectSupervisor) {
+      setSelectedDeploySupervisor(proj.projectSupervisor);
+    }
+  };
+
+  const toggleWorkerSelectionForDeploy = (wId: string) => {
+    if (selectedWorkerIdsToDeploy.includes(wId)) {
+      setSelectedWorkerIdsToDeploy(selectedWorkerIdsToDeploy.filter(id => id !== wId));
+    } else {
+      setSelectedWorkerIdsToDeploy([...selectedWorkerIdsToDeploy, wId]);
+    }
+  };
+
+  const handleExecuteQuickDeploy = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedDeployProject || selectedWorkerIdsToDeploy.length === 0) return;
+
+    const updated = workers.map(w => {
+      if (selectedWorkerIdsToDeploy.includes(w.id)) {
+        return {
+          ...w,
+          assignedProject: selectedDeployProject,
+          supervisorName: selectedDeploySupervisor || w.supervisorName,
+          status: 'Active' as const
+        };
+      }
+      return w;
+    });
+
+    setWorkers(updated);
+    saveWorkers(updated);
+    setShowQuickDeployModal(false);
+    setSelectedWorkerIdsToDeploy([]);
+    setSelectedDeployProject('');
+    setSelectedDeploySupervisor('');
+  };
+
   const handleDeleteWorker = (workerId: string, e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
     const updated = workers.filter(w => w.id !== workerId);
@@ -515,10 +562,40 @@ export default function WorkerTable() {
             </button>
           </div>
 
-          <button onClick={() => setShowAddModal(true)} className={styles.btnAddWorker}>
-            <Plus size={16} />
-            <span>Onboard Worker</span>
-          </button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <button 
+              onClick={() => {
+                if (availableProjects.length > 0) {
+                  const defaultProj = projectFilter !== 'All' ? projectFilter : availableProjects[0].name;
+                  handleDeployProjectChange(defaultProj);
+                }
+                setShowQuickDeployModal(true);
+              }} 
+              className={styles.btnSecondary}
+              style={{
+                background: '#167C72',
+                color: '#FFFFFF',
+                border: 'none',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                padding: '8px 14px',
+                borderRadius: '8px',
+                fontWeight: 600,
+                fontSize: '0.85rem',
+                cursor: 'pointer'
+              }}
+              title="Quickly assign multiple workers to a project and supervisor"
+            >
+              <Briefcase size={15} />
+              <span>Project Worker Allocation</span>
+            </button>
+
+            <button onClick={() => setShowAddModal(true)} className={styles.btnAddWorker}>
+              <Plus size={16} />
+              <span>+ Register New</span>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -1383,6 +1460,161 @@ export default function WorkerTable() {
                 <button type="submit" className={styles.btnSuccess}>
                   <Save size={15} />
                   <span>Save Changes</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Quick Project Worker Allocation Dropdown Modal */}
+      {showQuickDeployModal && (
+        <div className={styles.modalBackdrop} onClick={() => setShowQuickDeployModal(false)}>
+          <div className={styles.onboardingModalBox} onClick={e => e.stopPropagation()} style={{ maxWidth: '650px', padding: '1.5rem' }}>
+            <div className={styles.modalHeader} style={{ marginBottom: '1rem', paddingBottom: '0.75rem', borderBottom: '1px solid #E2E8F0' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <div style={{ width: '36px', height: '36px', background: '#E6F4F2', color: '#167C72', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Briefcase size={20} />
+                </div>
+                <div>
+                  <h3 style={{ margin: 0, fontSize: '1.2rem', color: '#0F172A' }}>Project Worker & Supervisor Allocation</h3>
+                  <p style={{ margin: '2px 0 0 0', fontSize: '0.8rem', color: '#64748B' }}>Quickly assign multiple workers to a specific project and supervisor</p>
+                </div>
+              </div>
+              <button onClick={() => setShowQuickDeployModal(false)} className={styles.closeBtn}>
+                <X size={18} />
+              </button>
+            </div>
+
+            <form onSubmit={handleExecuteQuickDeploy}>
+              {/* Step 1: Select Project Dropdown */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.25rem' }}>
+                <div className={styles.formGroup}>
+                  <label style={{ fontWeight: 600, fontSize: '0.82rem', color: '#334155', marginBottom: '4px' }}>
+                    1. Select Construction Project *
+                  </label>
+                  <select 
+                    value={selectedDeployProject} 
+                    onChange={e => handleDeployProjectChange(e.target.value)}
+                    required
+                    style={{ padding: '8px 10px', border: '1px solid #CBD5E1', borderRadius: '6px', fontSize: '0.85rem' }}
+                  >
+                    <option value="">-- Choose Target Project --</option>
+                    {availableProjects.map(p => (
+                      <option key={p.id} value={p.name}>{p.name} ({p.code})</option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Step 2: Select Supervisor Dropdown */}
+                <div className={styles.formGroup}>
+                  <label style={{ fontWeight: 600, fontSize: '0.82rem', color: '#334155', marginBottom: '4px' }}>
+                    2. Designated Site Supervisor
+                  </label>
+                  <select 
+                    value={selectedDeploySupervisor} 
+                    onChange={e => setSelectedDeploySupervisor(e.target.value)}
+                    style={{ padding: '8px 10px', border: '1px solid #CBD5E1', borderRadius: '6px', fontSize: '0.85rem' }}
+                  >
+                    <option value="">-- Choose Supervisor --</option>
+                    {supervisors.map(s => (
+                      <option key={s.id} value={s.name}>{s.name} ({s.supervisorId})</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              {/* Step 3: Select Workers Multi-list */}
+              <div style={{ marginBottom: '1.25rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                  <label style={{ fontWeight: 600, fontSize: '0.82rem', color: '#334155' }}>
+                    3. Select Workers to Assign ({selectedWorkerIdsToDeploy.length} Selected) *
+                  </label>
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    <button 
+                      type="button" 
+                      onClick={() => setSelectedWorkerIdsToDeploy(workers.map(w => w.id))}
+                      style={{ background: 'none', border: 'none', color: '#167C72', fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer' }}
+                    >
+                      Select All
+                    </button>
+                    <span style={{ color: '#CBD5E1' }}>|</span>
+                    <button 
+                      type="button" 
+                      onClick={() => setSelectedWorkerIdsToDeploy([])}
+                      style={{ background: 'none', border: 'none', color: '#64748B', fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer' }}
+                    >
+                      Clear
+                    </button>
+                  </div>
+                </div>
+
+                <div style={{ maxHeight: '220px', overflowY: 'auto', border: '1px solid #CBD5E1', borderRadius: '8px', padding: '6px', background: '#F8FAFC' }}>
+                  {workers.map(w => {
+                    const isSelected = selectedWorkerIdsToDeploy.includes(w.id);
+                    return (
+                      <div 
+                        key={w.id} 
+                        onClick={() => toggleWorkerSelectionForDeploy(w.id)}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          padding: '7px 10px',
+                          borderRadius: '6px',
+                          cursor: 'pointer',
+                          background: isSelected ? '#E6F4F2' : '#FFFFFF',
+                          border: isSelected ? '1px solid #167C72' : '1px solid #F1F5F9',
+                          marginBottom: '4px'
+                        }}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                          <input 
+                            type="checkbox" 
+                            checked={isSelected} 
+                            onChange={() => {}} // handled by row click
+                            style={{ cursor: 'pointer' }}
+                          />
+                          <div>
+                            <strong style={{ fontSize: '0.85rem', color: '#0F172A', display: 'block' }}>{w.name}</strong>
+                            <span style={{ fontSize: '0.72rem', color: '#64748B' }}>{w.code} • {w.skill}</span>
+                          </div>
+                        </div>
+
+                        <div style={{ textAlign: 'right', fontSize: '0.75rem' }}>
+                          <span style={{ 
+                            background: w.assignedProject === selectedDeployProject ? '#D1FAE5' : '#F1F5F9',
+                            color: w.assignedProject === selectedDeployProject ? '#065F46' : '#475569',
+                            padding: '2px 6px',
+                            borderRadius: '4px',
+                            fontSize: '0.7rem'
+                          }}>
+                            {w.assignedProject || 'Unassigned'}
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', paddingTop: '1rem', borderTop: '1px solid #E2E8F0' }}>
+                <button 
+                  type="button" 
+                  onClick={() => setShowQuickDeployModal(false)} 
+                  className={styles.btnSecondary}
+                >
+                  Cancel
+                </button>
+                <button 
+                  type="submit" 
+                  disabled={!selectedDeployProject || selectedWorkerIdsToDeploy.length === 0}
+                  className={styles.btnSuccess}
+                  style={{ opacity: (!selectedDeployProject || selectedWorkerIdsToDeploy.length === 0) ? 0.6 : 1 }}
+                >
+                  <CheckCircle size={15} />
+                  <span>Assign {selectedWorkerIdsToDeploy.length} Workers to Project</span>
                 </button>
               </div>
             </form>
